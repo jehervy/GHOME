@@ -1,1 +1,3 @@
-#include "ctrobien.h"
+#ifdef FUN
+  #include "ctrobien.h"
+#endif
