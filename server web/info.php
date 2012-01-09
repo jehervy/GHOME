@@ -15,9 +15,7 @@ $fp = stream_socket_client("127.0.0.1:2300", $errno, $errstr, 30);
 } else {
     echo "Connexion reussie <br />";
             /* Send instructions. */
-    $msg = "\nWelcome to the PHP Test Client. \n" .
-        "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
-    socket_write($fp, $msg, strlen($msg));
+    fwrite($fp, "BLABLA");
         fclose($fp);
 }
 ?>
