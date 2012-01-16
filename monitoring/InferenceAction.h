@@ -12,6 +12,8 @@ class InferenceAction {
 public:
 	InferenceAction(int metric, int value);
 	virtual ~InferenceAction();
+	int getMetric();
+	int getValue();
 private:
 	int metric;
 	int value;

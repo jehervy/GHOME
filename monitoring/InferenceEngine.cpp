@@ -7,6 +7,7 @@
 
 #include "InferenceEngine.h"
 
+
 InferenceEngine::InferenceEngine(char* file)
 {
 	pugi::xml_document doc;

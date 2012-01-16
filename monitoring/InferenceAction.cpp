@@ -7,11 +7,22 @@
 
 #include "InferenceAction.h"
 
-InferenceAction::InferenceAction(int metric, int value) {
+InferenceAction::InferenceAction(int metric, int value)
+{
 	this->metric = metric;
 	this->value = value;
 }
 
-InferenceAction::~InferenceAction() {
-	// TODO Auto-generated destructor stub
+InferenceAction::~InferenceAction()
+{
+}
+
+int InferenceAction::getMetric()
+{
+	return metric;
+}
+
+int InferenceAction::getValue()
+{
+	return value;
 }
