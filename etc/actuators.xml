@@ -1,0 +1,22 @@
+<actuators>
+    <actuator id="1"> <!-- Température dans la chambre 1 -->
+        <metric>1</metric>
+        <room>3</room>
+    </actuator>
+    <actuator id="2"> <!-- Température dans la chambre 1 -->
+        <metric>1</metric>
+        <room>4</room>
+    </actuator>
+    <actuator id="3"> <!-- Température dans la salle de bain -->
+        <metric>1</metric>
+        <room>5</room>
+    </actuator>
+    <actuator id="4"> <!-- Ouverture de la porte d'entrée -->
+        <metric>4</metric>
+        <room>6</room>
+    </actuator>
+    <actuator id="5"> <!-- Interrupteur dans le salon -->
+        <metric>5</metric>
+        <room>1</room>
+    </actuator>
+</actuators>

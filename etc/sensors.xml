@@ -1,0 +1,26 @@
+<sensors>
+    <sensor id="1"> <!-- Température dans la chambre 1 -->
+        <metric>1</metric>
+        <room>3</room>
+    </sensor>
+    <sensor id="2"> <!-- Température dans la chambre 2 -->
+        <metric>1</metric>
+        <room>4</room>
+    </sensor>
+    <sensor id="3"> <!-- Température dans la salle de bain -->
+        <metric>1</metric>
+        <room>5</room>
+    </sensor>
+    <sensor id="4"> <!-- Présence dans le salon -->
+        <metric>3</metric>
+        <room>1</room>
+    </sensor>
+    <sensor id="5"> <!-- Ouverture de la porte d'entrée -->
+        <metric>4</metric>
+        <room>6</room>
+    </sensor>
+    <sensor id="6"> <!-- Luminosité dans le salon -->
+        <metric>2</metric>
+        <room>1</room>
+    </sensor>
+</sensors>
