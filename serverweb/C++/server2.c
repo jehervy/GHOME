@@ -72,7 +72,7 @@ void dostuff (int sock)
    for (;;)
    {
 	   bzero(buffer,256);
-	   n = read(sock,buffer,255);
+	   n = read(sock,buffer,1);
 	   if (n < 0)
 	   {
 	    error("ERROR reading from socket");
