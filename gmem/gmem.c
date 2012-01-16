@@ -3,27 +3,70 @@
 #include "gmem.h"
 
 /**
- * Meta-data of a memory block.
+ * Metadata of a memory block.
+ *
+ * @var struct
  */
 typedef struct Block Block;
 struct Block
 {
-	unsigned size; //size of the block, in bytes
-	Block *next;   //pointer to the next block, NULL if none
-	char free;     //is the block free?
-	char data[1];  //pointer to the first byte of data
+	unsigned size; //Size of the block, in bytes
+	Block *next;   //Pointer to the next block, NULL if none
+	char free;     //Is the block free?
+	char data[1];  //Pointer to the first byte of data
 };
 
 /**
  * Pointer to the head of allocated space for the gmem module.
+ *
+ * @var void*
  */
 static void *head = NULL;
 
+/**
+ * Finds the metadata of a block as big enough to contain data of the
+ * specified size.
+ *
+ * @param previous Last visited block
+ * @param size Size of the space, in bytes
+ * @return The metadata block
+ */
 static Block *findBlockForSize(Block **previous, unsigned size);
+
+/**
+ * Finds the metadata of the block associated with the given pointer. The
+ * pointer must point at the begining of the space.
+ *
+ * @param previous Last visited block
+ * @param ptr Pointer to the space
+ * @return The metadata block
+ */
 static Block *findBlockForAddress(Block **previous, void *ptr);
+
+/**
+ * Splits a block to match the exact size given as second parameter. The
+ * block's size is reduced and a new block is created in the free space.
+ *
+ * @param *block The block to merge, if possible
+ * @param size The wished size of the block
+ */
 static void splitBlock(Block *block, unsigned size);
+
+/**
+ * Merges a block with the next block if both are free. The block given as
+ * parameter is extended to its new size and the next is removed from the list.
+ *
+ * @param *block The block to merge, if possible
+ */
 static void mergeBlock(Block *block);
 
+/**
+ * Marks a memory block as non free to reserve the managed space. If the block
+ * is bigger than the size, split the block into two blocks.
+ *
+ * @param size The size of the block to allocate
+ * @return The allocated space
+ */
 void *gmalloc (unsigned size)
 {
 #ifndef GMEM
@@ -67,6 +110,12 @@ void *gmalloc (unsigned size)
 #endif
 }
 
+/**
+ * Marks the block as free and merges it with the contiguous blocks if they
+ * are free to limit the memory fragmentation.
+ *
+ * @param ptr The memory space to free
+ */
 void gfree (void *ptr)
 {
 #ifndef GMEM
@@ -94,6 +143,9 @@ void gfree (void *ptr)
 #endif
 }
 
+/**
+ * Loop over all blocks and displays the status and the size of each of them.
+ */
 void gprintmem()
 {
 	Block *block = head;
@@ -120,6 +172,10 @@ void gprintmem()
 	printf("--- End of memory map (meta: %d bytes, data %d bytes, total %d bytes) ---\n", metaTotal, dataTotal, dataTotal + metaTotal);
 }
 
+/**
+ * This function uses the first-fit algorithm and returns the first block with
+ * enough space.
+ */
 static Block *findBlockForSize(Block **previous, unsigned size)
 {
 	Block* block = head;
@@ -139,11 +195,7 @@ static Block *findBlockForSize(Block **previous, unsigned size)
 }
 
 /**
- * Find the metadata of the block associated with the given pointer. This
- * version use a loop in order to return the previous block too.
- *
- * @param Block **previous Last visited block
- * @param void *ptr
+ * This function uses a loop in order to return the previous block too.
  */
 static Block *findBlockForAddress(Block **previous, void *ptr)
 {
@@ -172,12 +224,18 @@ static Block *findBlockForAddress(Block **previous, void *ptr)
 	return NULL;
 }
 
+/**
+ * Inserts a new block after the one given in parameter and rebuilds the
+ * linked list.
+ */
 static void splitBlock(Block *block, unsigned size)
 {
 	Block *newBlock;
 
 	//The new block begins after the block data segment reduced to the specified size.
-	newBlock = block->data + size;
+	//This is correct because the size of a char is a byte, and the size variable is
+	//also in bytes (cf. pointer arithmetic).
+	newBlock = (Block *) (block->data + size);
 
 	newBlock->next = block->next;
 	newBlock->size = block->size - size - sizeof(Block);
@@ -187,6 +245,9 @@ static void splitBlock(Block *block, unsigned size)
 	block->size = size;
 }
 
+/**
+ * Merges two blocks if they are both free.
+ */
 static void mergeBlock(Block *block)
 {
 	unsigned size;
