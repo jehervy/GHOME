@@ -8,7 +8,7 @@
     </head>
     <body>
       <?php
-	$fp = stream_socket_client("127.0.0.1:2300", $errno, $errstr, 30);
+	$fp = stream_socket_client("127.0.0.1:2301", $errno, $errstr, 30);
 	
 	if (!$fp) 
 	{
