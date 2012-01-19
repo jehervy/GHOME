@@ -17,10 +17,9 @@ public:
 	communication_client();
 	communication_client(int sensorServerBox, int actuatorServerBox);
 	virtual ~communication_client();
-	void setSock(int sock);
 private :
-	int p_sock;
-
+	int p_sensorServerBox;
+	int p_actuatorServerBox;
 };
 
 #endif /* COMMUNICATIONCLIENT_H_ */

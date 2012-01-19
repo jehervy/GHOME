@@ -17,11 +17,14 @@ public:
 	server_pere(int sensorServerBox, int actuatorServerBox);
 	virtual ~server_pere();
 	int open_thread_comm_client();
-	void *createCommClient(void* ptr);
+	void *createCommClient();
+	static void  *createCommClient_2(void* ptr);
+	void *open_socket();
+	static void *open_socket_2(void* ptr);
 private :
 	int p_sensorServerBox;
 	int p_actuatorServerBox;
-
+	int p_fd;
 };
 
 #endif /* SERVERPERE_H_ */

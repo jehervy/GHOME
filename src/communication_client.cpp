@@ -12,7 +12,9 @@ communication_client::communication_client() {
 
 }
 
-communication_client::communication_client(int sensorServerBox, int actuatorServerBox){
+communication_client::communication_client(int sensorServerBox, int actuatorServerBox) :
+p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox){
+
 
 }
 
@@ -20,8 +22,5 @@ communication_client::~communication_client() {
 
 }
 
-void communication_client::setSock(int sock)
-{
-	p_sock=sock;
-}
+
 

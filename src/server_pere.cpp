@@ -27,30 +27,38 @@ server_pere::server_pere(int sensorServerBox,int actuatorServerBox) : p_sensorSe
 	open_thread_comm_client();
 }
 
-
-void *server_pere::createCommClient(void* ptr)
+void *server_pere::createCommClient_2(void * ptr)
 {
-	int sock;
-	int*  data = reinterpret_cast<int*>(ptr);
-	sock = *data;
-	delete data;
-	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox);
-	cout << "Create comm client : Socket" << endl;
+	server_pere* p = (server_pere*)ptr;
+	p->createCommClient();
 	return (0);
 }
 
-void *open_socket(void * lire)
+void *server_pere::createCommClient()
+{
+	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox);
+	cout << "Create comm client : Socket : " << p_fd << endl;
+	return (0);
+}
+
+void *server_pere::open_socket_2(void * ptr)
+{
+	server_pere* p = (server_pere*)ptr;
+	p->open_socket();
+	return (0);
+}
+
+void *server_pere::open_socket()
 {
 	cout << "Open Socket" << endl;
 	int sockfd;
-	int *newfd;
 	unsigned int size;
 	struct sockaddr_in local;
 	struct sockaddr_in remote;
 
 	bzero(&local, sizeof(local));
 	local.sin_family = AF_INET;
-	local.sin_port = htons(2301);
+	local.sin_port = htons(2302);
 	local.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(local.sin_zero), 8);
 
@@ -73,10 +81,12 @@ void *open_socket(void * lire)
 
 	while(1)
 	{
-	*newfd = accept(sockfd, (struct sockaddr *)&remote, &size);
+	p_fd = accept(sockfd, (struct sockaddr *)&remote, &size);
+	cout << "File descriptor" << endl;
+	cout << p_fd << endl ;
 	int reussite;
 	pthread_t thread_sock;
-	reussite = pthread_create(&thread_sock, NULL, createCommClient, (void*) newfd);
+	reussite = pthread_create(&thread_sock, NULL, &server_pere::createCommClient_2, this);
 
 	}
 	close(sockfd);
@@ -87,9 +97,9 @@ void *open_socket(void * lire)
 
 int server_pere::open_thread_comm_client()
 {
-	int *ecrire;
+
 	pthread_t thread_comm_client;
-	int check = pthread_create(&thread_comm_client, NULL, open_socket, (void*) ecrire);
+	int check = pthread_create(&thread_comm_client, NULL, &server_pere::open_socket_2, this);
 	return check;
 }
 
