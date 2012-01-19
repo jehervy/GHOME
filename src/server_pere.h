@@ -14,11 +14,13 @@
 class server_pere {
 public:
 	server_pere();
-	server_pere(int port_ecoute);
+	server_pere(int sensorServerBox, int actuatorServerBox);
 	virtual ~server_pere();
+	int open_thread_comm_client();
 	void *createCommClient(void* ptr);
 private :
-	int p_port_ecoute;
+	int p_sensorServerBox;
+	int p_actuatorServerBox;
 
 };
 

@@ -48,7 +48,7 @@ int main()
 
 	//Creation des taches filles
 
-	createServerPere();
+	createServerPere(sensorServerBox, actuatorServerBox);
 	
 	
 
@@ -76,10 +76,9 @@ int main()
 
 }
 
-void createServerPere()
+void createServerPere(int sensorServerBox, int actuatorServerBox)
 {
 	cout << "Test classe" << endl;
-	server_pere papa(2300);
-	//server_pere papa = new server_pere(2300);
+	server_pere papa(sensorServerBox, actuatorServerBox);
 	cout << "Classe reussie" << endl;
 }

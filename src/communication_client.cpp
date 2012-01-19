@@ -12,6 +12,10 @@ communication_client::communication_client() {
 
 }
 
+communication_client::communication_client(int sensorServerBox, int actuatorServerBox){
+
+}
+
 communication_client::~communication_client() {
 
 }

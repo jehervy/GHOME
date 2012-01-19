@@ -13,7 +13,7 @@ using namespace std;
 
 #include <pthread.h> 	
 #include <sys/msg.h>	//pour la boite aux lettres
-//#include <sys/sem.h>	//pour les sémaphore
+#include <sys/sem.h>	//pour les sémaphore
 #include <sys/shm.h>	//pour les mémoires partagées
 #include "server_pere.h"
 
@@ -36,4 +36,4 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void createServerPere();
+void createServerPere(int sensorServerBox, int actuatorServerBox);

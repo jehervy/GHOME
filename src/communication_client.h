@@ -15,6 +15,7 @@ using namespace std;
 class communication_client {
 public:
 	communication_client();
+	communication_client(int sensorServerBox, int actuatorServerBox);
 	virtual ~communication_client();
 	void setSock(int sock);
 private :

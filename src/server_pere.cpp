@@ -17,11 +17,24 @@ using namespace std;
 #include <netinet/in.h>
 #include <pthread.h>
 
-void *createCommClient(void* ptr)
+server_pere::~server_pere() {
+	// TODO Auto-generated destructor stub
+}
+
+
+server_pere::server_pere(int sensorServerBox,int actuatorServerBox) : p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)  {
+
+	open_thread_comm_client();
+}
+
+
+void *server_pere::createCommClient(void* ptr)
 {
-	//int sock;
-	//sock = (int)*ptr;
-	//communication_client comm_client();
+	int sock;
+	int*  data = reinterpret_cast<int*>(ptr);
+	sock = *data;
+	delete data;
+	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox);
 	cout << "Create comm client : Socket" << endl;
 	return (0);
 }
@@ -29,7 +42,8 @@ void *createCommClient(void* ptr)
 void *open_socket(void * lire)
 {
 	cout << "Open Socket" << endl;
-	int sockfd, newfd;
+	int sockfd;
+	int *newfd;
 	unsigned int size;
 	struct sockaddr_in local;
 	struct sockaddr_in remote;
@@ -59,42 +73,25 @@ void *open_socket(void * lire)
 
 	while(1)
 	{
-	newfd=accept(sockfd, (struct sockaddr *)&remote, &size);
+	*newfd = accept(sockfd, (struct sockaddr *)&remote, &size);
 	int reussite;
 	pthread_t thread_sock;
 	reussite = pthread_create(&thread_sock, NULL, createCommClient, (void*) newfd);
 
 	}
-
+	close(sockfd);
 	return(0);
 }
 
 
 
-void print_port(int p_port_ecoute)
+int server_pere::open_thread_comm_client()
 {
-	cout << "On Žcoute sur le port : ";
-	cout <<p_port_ecoute << endl;
-}
-
-int open_thread_comm_client()
-{
-
-	char *ecrire = "test thread";
+	int *ecrire;
 	pthread_t thread_comm_client;
 	int check = pthread_create(&thread_comm_client, NULL, open_socket, (void*) ecrire);
 	return check;
 }
 
-server_pere::~server_pere() {
-	// TODO Auto-generated destructor stub
-}
 
-
-server_pere::server_pere(int port_ecoute) : p_port_ecoute(port_ecoute) {
-	print_port(p_port_ecoute);
-
-	open_thread_comm_client();
-
-}
 
