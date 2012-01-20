@@ -22,7 +22,8 @@ server_pere::~server_pere() {
 }
 
 
-server_pere::server_pere(int sensorServerBox,int actuatorServerBox) : p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)  {
+server_pere::server_pere(int sensorServerBox,int actuatorServerBox) :
+		p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)  {
 
 	open_thread_comm_client();
 }
@@ -36,8 +37,8 @@ void *server_pere::createCommClient_2(void * ptr)
 
 void *server_pere::createCommClient()
 {
-	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox);
 	cout << "Create comm client : Socket : " << p_fd << endl;
+	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox, p_fd);
 	return (0);
 }
 
@@ -58,7 +59,7 @@ void *server_pere::open_socket()
 
 	bzero(&local, sizeof(local));
 	local.sin_family = AF_INET;
-	local.sin_port = htons(2302);
+	local.sin_port = htons(3006);
 	local.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(local.sin_zero), 8);
 
@@ -79,6 +80,7 @@ void *server_pere::open_socket()
 	}
 	size = sizeof(struct sockaddr_in);
 
+
 	while(1)
 	{
 	p_fd = accept(sockfd, (struct sockaddr *)&remote, &size);
@@ -87,8 +89,8 @@ void *server_pere::open_socket()
 	int reussite;
 	pthread_t thread_sock;
 	reussite = pthread_create(&thread_sock, NULL, &server_pere::createCommClient_2, this);
-
 	}
+
 	close(sockfd);
 	return(0);
 }

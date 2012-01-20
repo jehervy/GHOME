@@ -6,33 +6,20 @@
     </head>
     <body>
       <?php
-	$fd = pfsockopen("127.0.0.1",3006, $errno, $errstr,30);
-	echo "File descriptor : ".$fd."<br />";
-	
-	if (!$fd) 
-	{
-    		echo "Connexion echouee : $errstr ($errno)<br />\n";
-	} 
-	
-	else 
-	{
-    		echo "Connexion reussie <br />";
-           	 /* Send instructions. */
-           	 //fwrite($fp, "YOO");
-   		 //echo fread($fp, 26);
-	}
-	
+		$fd = pfsockopen("127.0.0.1",3006, $errno, $errstr,30);
 	if (isset($_POST['submit']) AND isset($_POST['apero']))
 	{
 		echo "CA RENTRE LA <br />";
+		echo "File descriptor: ".$fd;
+
 		fwrite($fd, $_POST['apero']);
-		
-   		 echo fread($fd , 26);
+		   		 echo fread($fd, 26);
    		 
 	}
-		?>
+
+	?>
 	
-	<form method="post" action="message.php"> 
+	<form method="post" action="info.php"> 
 		<p>
 		    On insèrera ici les éléments de notre formulaire.
 		</p> 
@@ -44,5 +31,3 @@
         
     </body>
 </html>
-
-<?php session_write_close() ?>
