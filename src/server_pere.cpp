@@ -16,6 +16,7 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include "pugixml.hpp"
 
 server_pere::~server_pere() {
 	// TODO Auto-generated destructor stub
@@ -24,8 +25,13 @@ server_pere::~server_pere() {
 
 server_pere::server_pere(int sensorServerBox,int actuatorServerBox) :
 		p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)  {
+	parse_home();
+	//open_thread_comm_client();
+}
 
-	open_thread_comm_client();
+int server_pere::parse_home()
+{
+	return 0;
 }
 
 void *server_pere::createCommClient_2(void * ptr)

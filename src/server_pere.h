@@ -21,6 +21,7 @@ public:
 	static void  *createCommClient_2(void* ptr);
 	void *open_socket();
 	static void *open_socket_2(void* ptr);
+	int parse_home();
 private :
 	int p_sensorServerBox;
 	int p_actuatorServerBox;
