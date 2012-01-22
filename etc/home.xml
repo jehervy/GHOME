@@ -1,40 +1,7 @@
 <home>
     <rooms>
-        <room id="1">
-            <name>Salon</name>
-        </room>
-        <room id="2">
-            <name>Cuisine</name>
-        </room>
-        <room id="3">
-            <name>Chambre 1</name>
-        </room>
-        <room id="4">
-            <name>Chambre 2<name>
-        </room>
-        <room id="5">
-            <name>Salle de bains</name>
-        </room>
-        <room id="6">
-            <name>Porte d'entrée</name>
-        </room>
+    	<room>
+    		<name>Chambre</name>
+    	</room>
     </rooms>
-    
-    <metrics>
-        <metric id="1">
-            <name>Température</name>
-        </metric>
-        <metric id="2">
-            <name>Luminosité</name>
-        </metric>
-        <metric id="3">
-            <name>Présence</name>
-        </metric>
-        <metric id="4">
-            <name>Ouverture</name>
-        </metric>
-        <metric id="5">
-            <name>Interrupteur</name>
-        </metric>
-    </metrics>
 </home>
