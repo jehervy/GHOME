@@ -21,11 +21,13 @@ public:
 	static void  *createCommClient_2(void* ptr);
 	void *open_socket();
 	static void *open_socket_2(void* ptr);
-	int parse_home();
+    static void close_all();
+	static 	bool  s_opened;
 private :
 	int p_sensorServerBox;
 	int p_actuatorServerBox;
 	int p_fd;
+	int sockfd;
 };
 
 #endif /* SERVERPERE_H_ */

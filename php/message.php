@@ -6,13 +6,17 @@
     </head>
     <body>
       <?php
-		$fd = pfsockopen("127.0.0.1",3006, $errno, $errstr,30);
+		$fd = pfsockopen("127.0.0.1",3011, $errno, $errstr,30);
 	if (isset($_POST['submit']) AND isset($_POST['apero']))
 	{
 		echo "CA RENTRE LA <br />";
 		echo "File descriptor: ".$fd;
 
-		fwrite($fd, $_POST['apero']);
+		//fwrite($fd, 2|8<<32|32<<64);
+		//fwrite($fd, 2, 4);
+		//fwrite($fd, 8, 4);
+		//fwrite($fd, 32, 4);
+		fwrite($fd, 13213251);
 		   		 echo fread($fd, 26);
    		 
 	}
