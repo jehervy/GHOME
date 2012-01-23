@@ -13,7 +13,7 @@
 //#include <sys/sem.h>	//pour les sémaphore
 #include <sys/shm.h>	//pour les mémoires partagées
 #include "tache_mere.h"
-
+#include <stdio.h>
 
 
 
@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
-#define DROITS 0660 	// Droits d'accès
+#define DROITS 0666 	// Droits d'accès
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
@@ -43,29 +43,34 @@ int main()
 	cout << "Test" << endl;
 
 	int sensorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
+
+	  cout <<"message queue" << sensorServerBox <<  "created\n";
+
+
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
 
 	//Creation des taches filles
 
-	createServerPere(sensorServerBox, actuatorServerBox);
-	
-	
+	//createServerPere(sensorServerBox, actuatorServerBox);
 
+	cout << "demande de creation de thread"<<endl;
+	
+	//pthread_t thread_sensor_box_reader;
+	sensor_box_reader tache_sensor_box_reader(sensorServerBox, actuatorServerBox);
+
+	//cout << "Tache construite"<<endl;
 
 	//=====================================
 	//PHASE DE DESTRUCTION DE LA TACHE MERE
 	//=====================================
-	
-	//pthread_join( thread, résultat )	
-	
+	tache_sensor_box_reader.wait();
 
-
+    cout << "destruction" <<endl;
 	
 
 	//Destruction des ressources 
-
-	msgctl(sensorServerBox,IPC_RMID,0);
+    msgctl(sensorServerBox,IPC_RMID,0);
 	msgctl(actuatorServerBox,IPC_RMID,0);
 
 	
@@ -76,9 +81,9 @@ int main()
 
 }
 
-void createServerPere(int sensorServerBox, int actuatorServerBox)
+/*void createServerPere(int sensorServerBox, int actuatorServerBox)
 {
 	cout << "Test classe" << endl;
 	server_pere papa(sensorServerBox, actuatorServerBox);
 	cout << "Classe reussie" << endl;
-}
+}*/
