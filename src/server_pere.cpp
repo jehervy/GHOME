@@ -16,6 +16,10 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include "../xml/pugixml.hpp"
+
+
+
 
 server_pere::~server_pere() {
 	// TODO Auto-generated destructor stub
@@ -24,8 +28,26 @@ server_pere::~server_pere() {
 
 server_pere::server_pere(int sensorServerBox,int actuatorServerBox) :
 		p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)  {
+	parse_home();
+	//open_thread_comm_client();
+}
 
-	open_thread_comm_client();
+int server_pere::parse_home()
+{
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file("/Users/remi/Sites/GHome/GHOME/etc/home.xml");
+    cout << "Load result: " << result.description() << endl;
+    pugi::xml_node home = doc.child("home");
+    cout << "Home : " << home << endl;
+    pugi::xml_node rooms = home.child("rooms");
+    cout << "Rooms : " << rooms << endl;
+    for(pugi::xml_node_iterator room_it = rooms.begin(); room_it!=rooms.end(); ++room_it)
+    {
+    	pugi::xml_node room_name = room_it->child("name");
+    	string s_name = room_name.value();
+    	cout << s_name << endl;
+    }
+	return 0;
 }
 
 void *server_pere::createCommClient_2(void * ptr)
