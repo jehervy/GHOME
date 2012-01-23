@@ -3,23 +3,19 @@
         <metric>1</metric>
         <room>3</room>
     </sensor>
-    <sensor id="2"> <!-- Température dans la chambre 2 -->
-        <metric>1</metric>
-        <room>4</room>
-    </sensor>
-    <sensor id="3"> <!-- Température dans la salle de bain -->
-        <metric>1</metric>
-        <room>5</room>
-    </sensor>
-    <sensor id="4"> <!-- Présence dans le salon -->
-        <metric>3</metric>
+    <sensor id="2"> <!-- Ouverture fenêtre dans le salon -->
+        <metric>4</metric>
         <room>1</room>
     </sensor>
-    <sensor id="5"> <!-- Ouverture de la porte d'entrée -->
+    <sensor id="3"> <!-- Ouverture fenêtre dans la chambre 1 -->
         <metric>4</metric>
-        <room>6</room>
+        <room>3</room>
     </sensor>
-    <sensor id="6"> <!-- Luminosité dans le salon -->
+    <sensor id="4"> <!-- Interrupteur salon -->
+        <metric>5</metric>
+        <room>1</room>
+    </sensor>
+    <sensor id="5"> <!-- Luminosité salon -->
         <metric>2</metric>
         <room>1</room>
     </sensor>
