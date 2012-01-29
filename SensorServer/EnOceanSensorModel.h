@@ -9,6 +9,11 @@
 #define ENOCEANSENSORMODEL_H_
 
 #include "AbstractModel.h"
+#include <vector>
+#include <utility>
+#include "../xml/pugixml.hpp"
+
+typedef std::vector<std::pair<int,const char*> > vectorSensorsId;
 
 class EnOceanSensorModel : public AbstractModel{
 
@@ -22,12 +27,15 @@ public:
 private:
 	virtual void run();
 
+	void parserXml(const char *xmlFile);
+
+	char* get_id(char data[29]);
+
+	char* get_data(char data[29]);
+
+	vectorSensorsId sensorsId;
 	pthread_t threadNetwork;
 	int balNetwork;
-
-
-
-
 
 };
 

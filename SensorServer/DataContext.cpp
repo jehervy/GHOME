@@ -52,7 +52,7 @@ void* DataContext::rcvData(void* args)
 	    }
 	  catch ( SocketException& e )
 	    {
-	      std::cout << "fait chier putain !!! Exception was caught:" << e.description() << "\n";
+	      std::cout << "Exception was caught:" << e.description() << "\n";
 	      pthread_exit(NULL);
 	    }
 

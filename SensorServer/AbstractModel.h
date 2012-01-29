@@ -41,6 +41,11 @@ public:
 		pthread_cancel(thread);
 	}
 
+	virtual void wait()
+	{
+		pthread_join(thread, NULL);
+	}
+
 protected:
 	int balCenter;
 	pthread_t thread;
