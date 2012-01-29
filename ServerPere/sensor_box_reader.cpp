@@ -54,16 +54,17 @@ int sensor_box_reader::run()
 
 	  for(;;)
 	  {
-//		  ghome_box::receive_message(p_sensorServerBox);
+		  ghome_box::receive_message(p_sensorServerBox, id, metric, room, value);
 
-//		  if(id==1) //C'est un message de type information
-//		  {
-//		  	// TODO : base de donnee
-//		  } else if(id==2) { //C'est un message de type pilotage
-//		  	// TODO : base de donnee et actuatorServerBox
-//		  ghome_box::send_actuator_box(p_actuatorServerBox, id,metric,room,value);
-//		  					  }
-//				//msgctl(sensorServerBox,IPC_RMID,0);
+		  if(id==1) //C'est un message de type information
+		  {
+		  	// TODO : base de donnee
+			  cout<<"Base de donnŽe"<<endl;
+		  } else if(id==2) { //C'est un message de type pilotage
+		  	// TODO : base de donnee et actuatorServerBox
+		  ghome_box::send_actuator_box(p_actuatorServerBox, id,metric,room,value);
+		  					  }
+				//msgctl(sensorServerBox,IPC_RMID,0);
 		  }
 
 	//}
