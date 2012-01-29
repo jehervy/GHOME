@@ -54,7 +54,7 @@ int sensor_box_reader::run()
 
 	  for(;;)
 	  {
-		  ghome_box::receive_message(p_sensorServerBox);
+//		  ghome_box::receive_message(p_sensorServerBox);
 
 //		  if(id==1) //C'est un message de type information
 //		  {

@@ -18,10 +18,10 @@ struct msg_buf {
 
 class ghome_box {
 public:
-	ghome_box();
-	virtual ~ghome_box();
-    static void send_actuator_box(int box,int typeMes, int metric, int room, int value);
-    static void receive_message(int box);
+	ghome_box(){};
+	virtual ~ghome_box(){};
+    static void send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value);
+    static void receive_message(int box, int &typeMes, int &metric, int &room, int &value);
 
 private :
 
