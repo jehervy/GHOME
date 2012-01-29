@@ -59,7 +59,7 @@ int sensor_box_reader::run()
 		  if(id==1) //C'est un message de type information
 		  {
 		  	// TODO : base de donnee
-			  cout<<"Base de donnŽe"<<endl;
+
 		  } else if(id==2) { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
 		  ghome_box::send_actuator_box(p_actuatorServerBox, id,metric,room,value);

@@ -7,6 +7,7 @@
 
 #include "ghome_box.h"
 #include <iostream>
+using namespace std;
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
