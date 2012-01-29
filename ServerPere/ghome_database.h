@@ -7,7 +7,7 @@
 
 #ifndef GHOME_DATABASE_H_
 #define GHOME_DATABASE_H_
-#include "sqlite3.h"
+//#include "sqlite3.h"
 #include <iostream>
 using namespace std;
 

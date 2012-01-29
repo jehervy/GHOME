@@ -76,9 +76,9 @@ void *server_pere::open_socket()
 
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	int on = 1;
-	int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-	ret = bind(sockfd, (struct sockaddr *)&local, sizeof(sockaddr));
+	//int on = 1;
+//	int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+//	ret = bind(sockfd, (struct sockaddr *)&local, sizeof(sockaddr));
 
 
 	/*if(bind(sockfd, (struct sockaddr *)&local, sizeof(struct sockaddr)) == -1)
@@ -102,9 +102,9 @@ void *server_pere::open_socket()
 			cout << "File descriptor" << endl;
 			cout << p_fd << endl ;
 			cout << s_opened << endl;
-			int reussite;
-			pthread_t thread_sock;
-			reussite = pthread_create(&thread_sock, NULL, &server_pere::createCommClient_2, this);
+			//int reussite;
+			//pthread_t thread_sock;
+			//reussite = pthread_create(&thread_sock, NULL, &server_pere::createCommClient_2, this);
 	}
 
 	}

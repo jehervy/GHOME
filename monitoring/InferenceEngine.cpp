@@ -6,7 +6,7 @@
  */
 
 #include "InferenceEngine.h"
-
+#include <stdlib.h>
 
 InferenceEngine::InferenceEngine(char* file)
 {

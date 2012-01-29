@@ -10,8 +10,8 @@
 
 int ghome_database::open_database()
 {
-	sqlite3 *db;
-	int rc;
+	//sqlite3 *db;
+	//int rc;
 	cout<<"Tentative d'ouverture"<<endl;
 	/*rc = sqlite3_open("../ghome", &db);
 	if( rc ){

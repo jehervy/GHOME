@@ -6,7 +6,6 @@
  */
 
 #include "ghome_box.h"
-#include "sensor_box_reader.h"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -15,7 +14,7 @@ using namespace std;
 #include <string.h>
 #include<sys/errno.h>
 #include <sys/msg.h>
-#include <sqlite3.h>
+//#include <sqlite3.h>
 
 ghome_box::ghome_box()
 		 {
@@ -48,10 +47,10 @@ void ghome_box::receive_message(int box)
 					  memcpy ( &intMsg[2],&msg.mtext[8], sizeof(intMsg[2]));
 					  memcpy ( &intMsg[3],&msg.mtext[12], sizeof(intMsg[3]));
 
-					 sensor_box_reader::id=intMsg[0];
-					 sensor_box_reader::metric=intMsg[1];
-					 sensor_box_reader::room=intMsg[2];
-					 sensor_box_reader::value=intMsg[3];
+//					 sensor_box_reader::id=intMsg[0];
+//					 sensor_box_reader::metric=intMsg[1];
+//					 sensor_box_reader::room=intMsg[2];
+//					 sensor_box_reader::value=intMsg[3];
 
 
 
@@ -91,7 +90,7 @@ void ghome_box::send_actuator_box(int box,int typeMes, int metric, int room, int
 			  }
 			  else
 			  {
-				  cout << "Message envoyŽ"<<endl;
+				  cout << "Message envoyï¿½"<<endl;
 
 			  }
 }

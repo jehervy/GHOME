@@ -10,7 +10,7 @@
 #include <sstream>
 #include <sys/types.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 communication_client::communication_client() {
 
@@ -41,7 +41,7 @@ void communication_client::transfer_message()
 	   int n;
 
 	   p_opened=true;
-	   int taille_message;
+	   //int taille_message;
 
 	   /*Fonctionnement d'une lecture d'un ordre de pilotage
 	    * d'un client :

@@ -6,8 +6,7 @@
  */
 
 #include "sensor_box_reader.h"
-#include "ghome_box.h"
-#include "tache_mere.h"
+#include "../Utils/ghome_box.h"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -57,14 +56,14 @@ int sensor_box_reader::run()
 	  {
 		  ghome_box::receive_message(p_sensorServerBox);
 
-		  if(id==1) //C'est un message de type information
-		  {
-		  	// TODO : base de donnee
-		  } else if(id==2) { //C'est un message de type pilotage
-		  	// TODO : base de donnee et actuatorServerBox
-		  ghome_box::send_actuator_box(p_actuatorServerBox, id,metric,room,value);
-		  					  }
-				//msgctl(sensorServerBox,IPC_RMID,0);
+//		  if(id==1) //C'est un message de type information
+//		  {
+//		  	// TODO : base de donnee
+//		  } else if(id==2) { //C'est un message de type pilotage
+//		  	// TODO : base de donnee et actuatorServerBox
+//		  ghome_box::send_actuator_box(p_actuatorServerBox, id,metric,room,value);
+//		  					  }
+//				//msgctl(sensorServerBox,IPC_RMID,0);
 		  }
 
 	//}

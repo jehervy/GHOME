@@ -15,7 +15,7 @@ using namespace std;
 #include <sys/msg.h>	//pour la boite aux lettres
 #include <sys/sem.h>	//pour les sémaphore
 #include <sys/shm.h>	//pour les mémoires partagées
-#include "server_pere.h"
+#include "ServerPere/server_pere.h"
 
 
 

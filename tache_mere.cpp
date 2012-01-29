@@ -3,18 +3,18 @@
 
 *************************************************************************/
 
-//---------- Réalisation de la tâche <MERE> (fichier MERE.cpp) ---
+//---------- RÔøΩalisation de la tÔøΩche <MERE> (fichier MERE.cpp) ---
 
 /////////////////////////////////////////////////////////////////  INCLUDE
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÔøΩme
 
 
 #include <sys/msg.h>	//pour la boite aux lettres
-//#include <sys/sem.h>	//pour les sémaphore
-#include <sys/shm.h>	//pour les mémoires partagées
+//#include <sys/sem.h>	//pour les sÔøΩmaphore
+#include <sys/shm.h>	//pour les mÔøΩmoires partagÔøΩes
 #include "tache_mere.h"
-#include "sensor_box_reader.h"
-#include "ghome_database.h"
+#include "ServerPere/sensor_box_reader.h"
+#include "ServerPere/ghome_database.h"
 
 
 //------------------------------------------------------ Include personnel
@@ -23,12 +23,12 @@
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
-#define DROITS 0660 	// Droits d'accès
+#define DROITS 0660 	// Droits d'accÔøΩs
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
 
-//------------------------------------------------------ Fonctions privées
+//------------------------------------------------------ Fonctions privÔøΩes
 
 
 //////////////////////////////////////////////////////////////////  PUBLIC
@@ -69,7 +69,7 @@ int main()
 	msgctl(actuatorServerBox,IPC_RMID,0);
 
 
-	//Terminaison de la tâche mère avec une autodestruction
+	//Terminaison de la tÔøΩche mÔøΩre avec une autodestruction
 	pthread_exit(0);
 
 	return 0;

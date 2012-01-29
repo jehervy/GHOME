@@ -6,6 +6,7 @@
  */
 
 #include "InferenceRule.h"
+#include <string.h>
 
 InferenceRule::InferenceRule()
 {
