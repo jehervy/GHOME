@@ -31,15 +31,15 @@ int main()
 	//Creation des taches filles
 
 	//server_pere papa(sensorServerBox, actuatorServerBox);
-	//sensor_box_reader sb(sensorServerBox, actuatorServerBox);
-	ghome_database::open_database();
+	sensor_box_reader sb(sensorServerBox, actuatorServerBox);
+	//ghome_database::open_database();
 
 
 	//=====================================
 	//PHASE DE DESTRUCTION DE LA TACHE MERE
 	//=====================================
 
-	//sb.wait(); //Attente de fermeture du serveur
+	sb.wait(); //Attente de fermeture du serveur
 
 
 

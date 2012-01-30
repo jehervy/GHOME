@@ -27,7 +27,7 @@ public:
 	static void *init(void * ptr);
 	int run();
 	virtual ~sensor_box_reader();
-	static int id, metric, room, value;
+	int id, metric, room, value;
 private :
 	int p_sensorServerBox;
 	int p_actuatorServerBox;

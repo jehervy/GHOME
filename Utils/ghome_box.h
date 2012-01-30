@@ -20,8 +20,11 @@ class ghome_box {
 public:
 	ghome_box(){};
 	virtual ~ghome_box(){};
-    static void send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value);
-    static void receive_message(int box, int &typeMes, int &metric, int &room, int &value);
+    static bool send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value);
+    static bool receive_message(int box, int &typeMes, int &metric, int &room, int &value);
+
+    static bool send_message(int box, const int int1, const int int2);
+    static bool receive_message(int box, int &int1, int &int2);
 
 private :
 

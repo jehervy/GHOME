@@ -6,7 +6,7 @@
 #define GMEM
 
 //Define TESTING to switch to test mode.
-#define TESTING
+//#define TESTING
 
 #endif
 
