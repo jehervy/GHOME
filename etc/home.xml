@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <home>
     <rooms>
         <room id="1">
@@ -10,7 +11,7 @@
             <name>Chambre 1</name>
         </room>
         <room id="4">
-            <name>Chambre 2<name>
+            <name>Chambre 2</name>
         </room>
         <room id="5">
             <name>Salle de bains</name>
@@ -23,18 +24,23 @@
     <metrics>
         <metric id="1">
             <name>Température</name>
+            <format type="value" display="{{ value }} °C" />
         </metric>
-        <metric id="2">
+        <metric id="2" dir="inout">
             <name>Luminosité</name>
+            <format type="value" display="{{ value }} lx" />
         </metric>
         <metric id="3">
             <name>Présence</name>
+            <format type="boolean" yes="Présence détectée" no="Aucune présence détectée" />
         </metric>
         <metric id="4">
             <name>Ouverture</name>
+            <format type="boolean" yes="Ouvert" no="Fermé" />
         </metric>
         <metric id="5">
             <name>Interrupteur</name>
+            <format type="boolean" yes="Actif" no="Inactif" />
         </metric>
     </metrics>
 </home>

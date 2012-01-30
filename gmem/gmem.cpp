@@ -148,7 +148,7 @@ void gfree (void *ptr)
  */
 void gprintmem()
 {
-	Block *block = head;
+	Block *block = (Block *) head;
 	unsigned metaTotal = 0;
 	unsigned dataTotal = 0;
 
@@ -178,7 +178,7 @@ void gprintmem()
  */
 static Block *findBlockForSize(Block **previous, unsigned size)
 {
-	Block* block = head;
+	Block* block = (Block *) head;
 
 	do
 	{
@@ -199,10 +199,10 @@ static Block *findBlockForSize(Block **previous, unsigned size)
  */
 static Block *findBlockForAddress(Block **previous, void *ptr)
 {
-	Block *block = head;
+	Block *block = (Block *) head;
 
 	//Checks that the pointed space is the result of a previous gmalloc call.
-	if (ptr >= head + GMEM_SIZE)
+	if (ptr >= block + GMEM_SIZE)
 	{
 		return NULL;
 	}

@@ -1,0 +1,53 @@
+#include "test.h"
+
+using namespace std;
+
+Test::Test() : testsLaunched(0), testsFailed(0)
+{
+}
+
+void Test::assert(int condition, string message)
+{
+	testsLaunched++;
+
+	if (!condition)
+	{
+		testsFailed++;
+		cout << "#" << testsLaunched << " failed: " << message << endl;
+	}
+	else
+	{
+		cout << "#" << testsLaunched << " passed: " << message << endl;
+	}
+}
+
+void Test::add(TestFunction callback)
+{
+	tests.push_back(callback);
+}
+
+int Test::run()
+{
+	for (Tests::iterator it = tests.begin(); it != tests.end(); ++it)
+	{
+		(**it)(this);
+	}
+
+	cout << endl;
+	if (testsFailed == 0)
+	{
+		cout << "All tests passed: " << testsLaunched << " tests OK." << endl;
+	}
+	else
+	{
+		cout << 100*(testsLaunched - testsFailed)/testsLaunched << " % sucessful: ";
+		cout << testsFailed << " tests failed (" << testsLaunched << " total)." << endl;
+	}
+
+	int retval = testsFailed;
+
+	testsLaunched = 0;
+	testsFailed = 0;
+
+	return retval;
+}
