@@ -16,6 +16,9 @@ using namespace std;
 #include <sys/sem.h>	//pour les sémaphore
 #include <sys/shm.h>	//pour les mémoires partagées
 #include "ServerPere/server_pere.h"
+#include "ServerPere/sensor_box_reader.h"
+#include "ServerPere/ghome_database.h"
+
 
 
 
