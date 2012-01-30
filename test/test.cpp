@@ -21,9 +21,10 @@ void Test::assert(int condition, string message)
 	}
 }
 
-void Test::add(TestFunction callback)
+void Test::add(TestFunction callback, string prefix)
 {
 	tests.push_back(callback);
+	prefixes.push_back(prefix);
 }
 
 int Test::run()

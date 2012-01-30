@@ -14,11 +14,8 @@
 
 #include "InferenceRule.h"
 #include "InferenceAction.h"
+#include "typedefs.h"
 #include "../xml/pugixml.hpp"
-
-typedef std::vector<InferenceAction> InferenceActions;
-typedef std::vector<InferenceRule> InferenceRules;
-typedef std::map<int, int> State;
 
 class InferenceEngine {
 public:

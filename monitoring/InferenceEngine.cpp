@@ -61,14 +61,11 @@ InferenceActions InferenceEngine::run(int metric, int value)
 
 	for (InferenceRules::iterator rulesIt = rules.begin(); rulesIt != rules.end(); ++rulesIt)
 	{
-		for (State::iterator stateIt = currentState.begin(); stateIt != currentState.end(); stateIt++)
+		if (rulesIt->match(currentState))
 		{
-			if (rulesIt->match(stateIt->first, stateIt->second))
+			for (unsigned int i = 0; i < rulesIt->getActions().size(); i++)
 			{
-				for (unsigned int i = 0; i < rulesIt->getActions().size(); i++)
-				{
-					result.push_back(rulesIt->getActions()[i]);
-				}
+				result.push_back(rulesIt->getActions()[i]);
 			}
 		}
 	}

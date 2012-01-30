@@ -22,11 +22,21 @@ InferenceRule::~InferenceRule()
 {
 }
 
-bool InferenceRule::match(int metric, int value)
+bool InferenceRule::match(State state)
 {
 	for (std::vector<InferenceCondition>::iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if (!it->match(metric, value))
+		bool match = false;
+		for (State::iterator stateIt = state.begin(); stateIt != state.end(); stateIt++)
+		{
+			if (it->match(stateIt->first, stateIt->second))
+			{
+				match = true;
+				break;
+			}
+		}
+
+		if (!match)
 		{
 			return false;
 		}
