@@ -8,12 +8,18 @@
 #include "InferenceEngine.h"
 #include <stdlib.h>
 
+using namespace std;
+
 InferenceEngine::InferenceEngine(char* file)
 {
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(file);
 	pugi::xml_node xmlRules = doc.child("rules");
-	std::cout << "Load result: " << result.description() << std::endl;
+
+	if (!((bool) result))
+	{
+		std::cout << "Error while loading inference engine rules: " << result.description() << std::endl;
+	}
 
 	//Loop over the rules defined in the XML file.
 	for (pugi::xml_node_iterator rulesIt = xmlRules.begin(); rulesIt != xmlRules.end(); ++rulesIt)
@@ -50,13 +56,19 @@ InferenceActions InferenceEngine::run(int metric, int value)
 {
 	InferenceActions result;
 
-	for (std::vector<InferenceRule>::iterator rulesIt = rules.begin(); rulesIt != rules.end(); ++rulesIt)
+	//Updates the current state for the given metric.
+	currentState[metric] = value;
+
+	for (InferenceRules::iterator rulesIt = rules.begin(); rulesIt != rules.end(); ++rulesIt)
 	{
-		if (rulesIt->match(metric, value))
+		for (State::iterator stateIt = currentState.begin(); stateIt != currentState.end(); stateIt++)
 		{
-			for (InferenceActions::iterator actionsIt = rulesIt->getActions().begin(); actionsIt != rulesIt->getActions().end(); ++actionsIt)
+			if (rulesIt->match(stateIt->first, stateIt->second))
 			{
-				result.push_back(*actionsIt);
+				for (unsigned int i = 0; i < rulesIt->getActions().size(); i++)
+				{
+					result.push_back(rulesIt->getActions()[i]);
+				}
 			}
 		}
 	}

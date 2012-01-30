@@ -6,11 +6,18 @@
  */
 
 #include "InferenceAction.h"
+#include <iostream>
 
 InferenceAction::InferenceAction(int metric, int value)
 {
 	this->metric = metric;
 	this->value = value;
+}
+
+InferenceAction::InferenceAction(const InferenceAction& action)
+{
+	metric = action.metric;
+	value = action.value;
 }
 
 InferenceAction::~InferenceAction()

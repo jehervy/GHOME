@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "InferenceRule.h"
 #include "InferenceAction.h"
@@ -17,6 +18,7 @@
 
 typedef std::vector<InferenceAction> InferenceActions;
 typedef std::vector<InferenceRule> InferenceRules;
+typedef std::map<int, int> State;
 
 class InferenceEngine {
 public:
@@ -43,6 +45,7 @@ public:
 
 private:
 	InferenceRules rules;
+	State currentState;
 };
 
 #endif /* _INFERENCEENGINE_H */

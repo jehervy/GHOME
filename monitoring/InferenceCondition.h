@@ -19,6 +19,7 @@ public:
 	static const int COND_EQ = 5;
 
 	InferenceCondition(int metric, int comparator, int threshold);
+	InferenceCondition(const InferenceCondition& condition);
 	virtual ~InferenceCondition();
 	bool match(int metric, int value);
 private:

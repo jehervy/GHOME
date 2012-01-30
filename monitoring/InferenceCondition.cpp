@@ -14,6 +14,13 @@ InferenceCondition::InferenceCondition(int metric, int comparator, int threshold
 	this->threshold = threshold;
 }
 
+InferenceCondition::InferenceCondition(const InferenceCondition& condition)
+{
+	metric = condition.metric;
+	comparator = condition.comparator;
+	threshold = condition.threshold;
+}
+
 InferenceCondition::~InferenceCondition()
 {
 }

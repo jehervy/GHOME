@@ -12,6 +12,12 @@ InferenceRule::InferenceRule()
 {
 }
 
+InferenceRule::InferenceRule(const InferenceRule& rule)
+{
+	conditions = rule.conditions;
+	actions = rule.actions;
+}
+
 InferenceRule::~InferenceRule()
 {
 }

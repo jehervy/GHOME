@@ -20,6 +20,7 @@ typedef std::vector<InferenceAction> InferenceActions;
 class InferenceRule {
 public:
 	InferenceRule();
+	InferenceRule(const InferenceRule& rule);
 	virtual ~InferenceRule();
 	bool match(int metric, int value);
 	void addCondition(int metric, char* comparator, int threshold);

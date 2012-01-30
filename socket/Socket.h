@@ -12,6 +12,10 @@
 #include <string>
 #include <arpa/inet.h>
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 16384
+#endif
+
 
 const int MAXHOSTNAME = 200;
 const int MAXCONNECTIONS = 5;

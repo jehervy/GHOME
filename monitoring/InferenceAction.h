@@ -10,6 +10,7 @@
 
 class InferenceAction {
 public:
+	InferenceAction(const InferenceAction& action);
 	InferenceAction(int metric, int value);
 	virtual ~InferenceAction();
 	int getMetric();
