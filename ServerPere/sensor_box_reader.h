@@ -5,12 +5,16 @@
  *      Author: Pierre
  */
 
-#ifndef SENSORBOXREADER_H_
-#define SENSORBOXREADER_H_
+
 #include <pthread.h>
 #include <sys/msg.h>	//pour la boite aux lettres
-#define MSGTXTLEN 255
+#include <mysql.h> //acces BDD
 
+#include "ghome_database.h"
+
+#ifndef SENSORBOXREADER_H_
+#define SENSORBOXREADER_H_
+#define MSGTXTLEN 255
 
 struct msg_buf1 {
   long mtype;

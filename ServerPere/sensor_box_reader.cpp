@@ -32,8 +32,8 @@ sensor_box_reader::~sensor_box_reader() {
 sensor_box_reader::sensor_box_reader(int sensorServerBox, int actuatorServerBox):
 		p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)
 {
-		cout << "id boite " << sensorServerBox << endl;
-		cout << "Appel constructeur"<<endl;
+		//cout << "id boite " << sensorServerBox << endl;
+		//cout << "Appel constructeur"<<endl;
 
 		open_thread_sensor_box_reader();
 }
@@ -44,7 +44,8 @@ int sensor_box_reader::run()
 {
 	cout << "Debut du run" << endl;
 
-
+	ghome_database* log_ecriture = new ghome_database("localhost", "root", "mysql", "GHOME");
+	log_ecriture->open_database();
 
 	  // message to send (test) TODO : virer
 	ghome_box::send_actuator_box(p_sensorServerBox,2,23,45,12);
@@ -59,6 +60,7 @@ int sensor_box_reader::run()
 		  if(id==1) //C'est un message de type information
 		  {
 		  	// TODO : base de donnee
+			  log_ecriture->add_tuple("log", 1, 21, 42);
 
 		  } else if(id==2) { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
