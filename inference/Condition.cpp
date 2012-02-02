@@ -1,34 +1,32 @@
-/*
- * InferenceCondition.cpp
- *
- *  Created on: 16 janv. 2012
- *      Author: vincent
- */
-
+//Personal includes
 #include "Condition.h"
 
-namespace inference
-{
-
-Condition::Condition(int metric, int comparator, int threshold)
+/**
+ * Trivial.
+ */
+inference::Condition::Condition(int metric, int comparator, int threshold)
 {
 	this->metric = metric;
 	this->comparator = comparator;
 	this->threshold = threshold;
 }
 
-Condition::Condition(const Condition& condition)
+/**
+ * Trivial.
+ */
+inference::Condition::Condition(const inference::Condition& condition)
 {
 	metric = condition.metric;
 	comparator = condition.comparator;
 	threshold = condition.threshold;
 }
 
-Condition::~Condition()
-{
-}
-
-bool Condition::match(int metric, int value)
+/**
+ * A metric and value couple match if the metric is the same as the
+ * condition's metric and the value is consistent with the comparator
+ * and threshold of the condition.
+ */
+bool inference::Condition::match(int metric, int value)
 {
 	if (this->metric != metric)
 	{
@@ -46,11 +44,9 @@ bool Condition::match(int metric, int value)
 		case COND_INFEQ:
 			return value <= threshold;
 		case COND_EQ:
-			std::cout << "eq" << std::endl;
 			return value == threshold;
 	}
 
 	return false;
 }
 
-}

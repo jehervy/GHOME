@@ -9,7 +9,7 @@
 #define _INFERENCE_TESTS_H_
 
 #include "../../test/test.h"
-#include "../typedefs.h"
+#include "../types.h"
 #include "../Engine.h"
 
 void InferenceTests(Test *test);

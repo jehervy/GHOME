@@ -1,23 +1,22 @@
-/*
- * InferenceEngine.h
- *
- *  Created on: 16 janv. 2012
- *      Author: vincent
- */
-
 #ifndef _INFERENCE_ENGINE_H
 #define _INFERENCE_ENGINE_H
 
+//System includes
 #include <iostream>
 #include <vector>
 #include <map>
 #include <string>
+#include <cstdlib>
 
-#include "typedefs.h"
+//Personal includes
+#include "types.h"
+#include "Rule.h"
 #include "../xml/pugixml.hpp"
 
 namespace inference
 {
+
+typedef std::vector<Rule> Rules;
 
 class Engine
 {
@@ -31,7 +30,7 @@ public:
 	Engine(std::string file);
 
 	/**
-	 * Runs the engine against the given metric with the given value.
+	 * Runs the engine against the given metric and value couple.
 	 *
 	 * @param metric Identifier of the metric
 	 * @param value Value of the metric

@@ -1,17 +1,13 @@
-/*
- * InferenceRule.h
- *
- *  Created on: 16 janv. 2012
- *      Author: vincent
- */
-
 #ifndef _INFERENCE_RULE_H
 #define _INFERENCE_RULE_H
 
+//System includes
 #include <vector>
+#include <string>
 #include <iostream>
 
-#include "typedefs.h"
+//Personal includes
+#include "types.h"
 #include "Action.h"
 
 namespace inference
@@ -20,16 +16,52 @@ namespace inference
 class Rule
 {
 public:
-	Rule();
+	/**
+	 * Default constructor.
+	 */
+	Rule() { }
+
+	/**
+	 * Copy constructor.
+	 *
+	 * @param rule The rule instance to copy
+	 */
 	Rule(const Rule& rule);
 
-	bool match(std::map <int, int> state);
-	void addCondition(int metric, char* comparator, int threshold);
+	/**
+	 * Checks if a given state matches with this rule.
+	 *
+	 * @param state The state to test
+	 */
+	bool match(State state);
+
+	/**
+	 * Adds a new condition to match for the rule.
+	 *
+	 * @param metric The metric to consider
+	 * @param comparator The comparator to use
+	 * @param threshold The threshold to compare with
+	 */
+	void addCondition(int metric, std::string comparator, int threshold);
+
+	/**
+	 * Adds a new action to do when matched for the rule.
+	 *
+	 * @param metric The metric to manage
+	 * @param value The value to apply
+	 */
 	void addAction(int metric, int value);
-	std::vector<Action> getActions();
+
+	/**
+	 * Returns the actions set to do when the rule is matched.
+	 *
+	 * @return Action to do
+	 */
+	Actions getActions();
+
 protected:
-	std::vector<Condition> conditions;
-	std::vector<Action> actions;
+	Conditions conditions;
+	Actions actions;
 };
 
 }

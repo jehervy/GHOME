@@ -1,39 +1,37 @@
-/*
- * InferenceAction.cpp
- *
- *  Created on: 16 janv. 2012
- *      Author: vincent
- */
-
+//Personal includes
 #include "Action.h"
-#include <iostream>
 
-namespace inference
-{
-
-Action::Action(int metric, int value)
+/**
+ * Trivial.
+ */
+inference::Action::Action(int metric, int value)
 {
 	this->metric = metric;
 	this->value = value;
 }
 
-Action::Action(const Action& action)
+/**
+ * Trivial.
+ */
+inference::Action::Action(const inference::Action& action)
 {
 	metric = action.metric;
 	value = action.value;
 }
 
-Action::~Action()
-{
-}
-
-bool Action::equals(const Action& action)
+/**
+ * Two actions need to be merged if they manage the same metric.
+ */
+bool inference::Action::equals(const inference::Action& action)
 {
 
 	return metric == action.metric;
 }
 
-void Action::merge(const Action& action)
+/**
+ * TODO change the max strategy to a more appropriate one.
+ */
+void inference::Action::merge(const inference::Action& action)
 {
 	if (!equals(action))
 	{
@@ -43,14 +41,18 @@ void Action::merge(const Action& action)
 	value = std::max(value, action.value);
 }
 
-int Action::getMetric()
+/**
+ * Trivial.
+ */
+int inference::Action::getMetric()
 {
 	return metric;
 }
 
-int Action::getValue()
+/**
+ * Trivial.
+ */
+int inference::Action::getValue()
 {
 	return value;
-}
-
 }

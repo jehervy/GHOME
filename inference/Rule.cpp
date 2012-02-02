@@ -1,29 +1,25 @@
-/*
- * Rule.cpp
- *
- *  Created on: 16 janv. 2012
- *      Author: vincent
- */
-
+//Personal includes
 #include "Rule.h"
-#include <string.h>
 
-inference::Rule::Rule()
-{
-}
-
+/**
+ * Trivial.
+ */
 inference::Rule::Rule(const inference::Rule& rule)
 {
 	conditions = rule.conditions;
 	actions = rule.actions;
 }
 
-
+/**
+ * For each metric and value couple in the state given as parameter, at least
+ * one condition must match for the entire rule to match.
+ */
 bool inference::Rule::match(inference::State state)
 {
 	for (inference::Conditions::iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
 		bool match = false;
+
 		for (inference::State::iterator stateIt = state.begin(); stateIt != state.end(); stateIt++)
 		{
 			if (it->match(stateIt->first, stateIt->second))
@@ -42,27 +38,31 @@ bool inference::Rule::match(inference::State state)
 	return true;
 }
 
-void inference::Rule::addCondition(int metric, char* comparator, int threshold)
+/**
+ * Creates a new Condition instance with the given parameters, after having
+ * translated the string comparator to an integer constant.
+ */
+void inference::Rule::addCondition(int metric, std::string comparator, int threshold)
 {
 	int intComparator;
 
-	if (!strcmp(comparator, "sup"))
+	if (comparator == "sup")
 	{
 		intComparator = inference::Condition::COND_SUP;
 	}
-	else if (!strcmp(comparator, "supeq"))
+	else if (comparator == "supeq")
 	{
 		intComparator = inference::Condition::COND_SUPEQ;
 	}
-	else if (!strcmp(comparator, "inf"))
+	else if (comparator == "inf")
 	{
 		intComparator = inference::Condition::COND_INF;
 	}
-	else if (!strcmp(comparator, "infeq"))
+	else if (comparator == "infeq")
 	{
 		intComparator = inference::Condition::COND_INFEQ;
 	}
-	else if (!strcmp(comparator, "ep"))
+	else if (comparator == "eq")
 	{
 		intComparator = inference::Condition::COND_EQ;
 	}
@@ -75,12 +75,18 @@ void inference::Rule::addCondition(int metric, char* comparator, int threshold)
 	conditions.push_back(condition);
 }
 
+/**
+ * Creates a new Action instance with the given parameters.
+ */
 void inference::Rule::addAction(int metric, int value)
 {
 	inference::Action action(metric, value);
 	actions.push_back(action);
 }
 
+/**
+ * Trivial.
+ */
 inference::Actions inference::Rule::getActions()
 {
 	return actions;
