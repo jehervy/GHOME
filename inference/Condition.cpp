@@ -5,27 +5,30 @@
  *      Author: vincent
  */
 
-#include "InferenceCondition.h"
+#include "Condition.h"
 
-InferenceCondition::InferenceCondition(int metric, int comparator, int threshold)
+namespace inference
+{
+
+Condition::Condition(int metric, int comparator, int threshold)
 {
 	this->metric = metric;
 	this->comparator = comparator;
 	this->threshold = threshold;
 }
 
-InferenceCondition::InferenceCondition(const InferenceCondition& condition)
+Condition::Condition(const Condition& condition)
 {
 	metric = condition.metric;
 	comparator = condition.comparator;
 	threshold = condition.threshold;
 }
 
-InferenceCondition::~InferenceCondition()
+Condition::~Condition()
 {
 }
 
-bool InferenceCondition::match(int metric, int value)
+bool Condition::match(int metric, int value)
 {
 	if (this->metric != metric)
 	{
@@ -48,4 +51,6 @@ bool InferenceCondition::match(int metric, int value)
 	}
 
 	return false;
+}
+
 }

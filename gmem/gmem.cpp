@@ -60,6 +60,18 @@ static void splitBlock(Block *block, unsigned size);
  */
 static void mergeBlock(Block *block);
 
+#ifdef GMEM
+void *operator new(size_t size)
+{
+	return gmalloc(size);
+}
+
+void operator delete(void *mem)
+{
+	gfree(mem);
+}
+#endif
+
 /**
  * Marks a memory block as non free to reserve the managed space. If the block
  * is bigger than the size, split the block into two blocks.

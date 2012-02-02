@@ -1,5 +1,4 @@
-#include "gmem.h"
-#include "../test/test.h"
+#include "tests.h"
 
 static void testAlloc(Test *test);
 //static int countBlocks();

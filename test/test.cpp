@@ -21,6 +21,15 @@ void Test::assert(int condition, string message)
 	}
 }
 
+void Test::skip(int number)
+{
+	for (int i = 0; i < number; i++)
+	{
+		testsLaunched++;
+		cout << "#" << testsLaunched << " skipped" << endl;
+	}
+}
+
 void Test::add(TestFunction callback, string prefix)
 {
 	tests.push_back(callback);

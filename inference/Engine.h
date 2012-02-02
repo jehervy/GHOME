@@ -5,19 +5,22 @@
  *      Author: vincent
  */
 
-#ifndef _INFERENCEENGINE_H
-#define _INFERENCEENGINE_H
+#ifndef _INFERENCE_ENGINE_H
+#define _INFERENCE_ENGINE_H
 
 #include <iostream>
 #include <vector>
 #include <map>
+#include <string>
 
-#include "InferenceRule.h"
-#include "InferenceAction.h"
 #include "typedefs.h"
 #include "../xml/pugixml.hpp"
 
-class InferenceEngine {
+namespace inference
+{
+
+class Engine
+{
 public:
 	/**
 	 * Builds the inference engine in loading all rules defined in a XML
@@ -25,12 +28,7 @@ public:
 	 *
 	 * @param file Path to the XML configuration file
 	 */
-	InferenceEngine(char* file);
-
-	/**
-	 * Destructor.
-	 */
-	virtual ~InferenceEngine();
+	Engine(std::string file);
 
 	/**
 	 * Runs the engine against the given metric with the given value.
@@ -38,11 +36,13 @@ public:
 	 * @param metric Identifier of the metric
 	 * @param value Value of the metric
 	 */
-	InferenceActions run(int metric, int value);
+	Actions run(int metric, int value);
 
 private:
-	InferenceRules rules;
+	Rules rules;
 	State currentState;
 };
 
-#endif /* _INFERENCEENGINE_H */
+}
+#endif /* _INFERENCE_ENGINE_H */
+

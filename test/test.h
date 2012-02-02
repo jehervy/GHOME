@@ -18,6 +18,7 @@ class Test
 public:
 	Test();
 	void assert(int condition, string message);
+	void skip(int number);
 	void add(TestFunction callback, string prefix = "");
 	int run();
 private:

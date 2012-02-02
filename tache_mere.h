@@ -3,12 +3,8 @@
 
 *************************************************************************/
 
-//---------- Réalisation de la tâche <MERE> (fichier MERE.cpp) ---
-
-/////////////////////////////////////////////////////////////////  INCLUDE
-//-------------------------------------------------------- Include système
-
 #include <iostream>
+
 using namespace std;
 
 #include <pthread.h>
@@ -20,28 +16,7 @@ using namespace std;
 #include "ServerPere/ghome_database.h"
 
 
-
-
-//------------------------------------------------------ Include personnel
-
-
-///////////////////////////////////////////////////////////////////  PRIVE
-//------------------------------------------------------------- Constantes
 #define DROITS 0660 	// Droits d'accès
 #define REFERENCE "." 	//Fichier courant utilisé pour bâtir la clé publique
 #define NB 1 		// Nombre de sémaphores élémentaires
 
-//------------------------------------------------------------------ Types
-
-//---------------------------------------------------- Variables statiques
-
-//------------------------------------------------------ Fonctions privées
-
-
-//////////////////////////////////////////////////////////////////  PUBLIC
-//---------------------------------------------------- Fonctions publiques
-class tache_mere{
-public :
-
-
-};

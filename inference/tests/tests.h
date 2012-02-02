@@ -5,12 +5,13 @@
  *      Author: vincent
  */
 
-#ifndef _INFERENCETESTS_H_
-#define _INFERENCETESTS_H_
+#ifndef _INFERENCE_TESTS_H_
+#define _INFERENCE_TESTS_H_
 
 #include "../../test/test.h"
-#include "../InferenceEngine.h"
+#include "../typedefs.h"
+#include "../Engine.h"
 
 void InferenceTests(Test *test);
 
-#endif /* _INFERENCETESTS_H_ */
+#endif /* _INFERENCE_TESTS_H_ */

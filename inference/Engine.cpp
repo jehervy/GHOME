@@ -5,15 +5,15 @@
  *      Author: vincent
  */
 
-#include "InferenceEngine.h"
+#include "Engine.h"
 #include <stdlib.h>
 
 using namespace std;
 
-InferenceEngine::InferenceEngine(char* file)
+inference::Engine::Engine(string file)
 {
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(file);
+	pugi::xml_parse_result result = doc.load_file(file.c_str());
 	pugi::xml_node xmlRules = doc.child("rules");
 
 	if (!((bool) result))
@@ -26,7 +26,7 @@ InferenceEngine::InferenceEngine(char* file)
 	{
 		pugi::xml_node xmlConditions = rulesIt->child("if");
 		pugi::xml_node xmlActions = rulesIt->child("then");
-		InferenceRule rule;
+		inference::Rule rule;
 
 		//Adds all conditions defined in the XML file.
 		for (pugi::xml_node_iterator conditionsIt = xmlConditions.begin(); conditionsIt != xmlConditions.end(); ++conditionsIt)
@@ -45,30 +45,39 @@ InferenceEngine::InferenceEngine(char* file)
 	}
 }
 
-/**
- * Do nothing.
- */
-InferenceEngine::~InferenceEngine()
+inference::Actions inference::Engine::run(int metric, int value)
 {
-}
-
-InferenceActions InferenceEngine::run(int metric, int value)
-{
-	InferenceActions result;
+	inference::Actions result;
 
 	//Updates the current state for the given metric.
 	currentState[metric] = value;
 
-	for (InferenceRules::iterator rulesIt = rules.begin(); rulesIt != rules.end(); ++rulesIt)
+	for (Rules::iterator rulesIt = rules.begin(); rulesIt != rules.end(); ++rulesIt)
 	{
 		if (rulesIt->match(currentState))
 		{
 			for (unsigned int i = 0; i < rulesIt->getActions().size(); i++)
 			{
-				result.push_back(rulesIt->getActions()[i]);
+				inference::Action action = rulesIt->getActions()[i];
+				bool found = false;
+				for (Actions::iterator resultIt = result.begin(); resultIt != result.end(); ++resultIt)
+				{
+					if (resultIt->equals(action))
+					{
+						resultIt->merge(action);
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					result.push_back(action);
+				}
 			}
 		}
 	}
 
 	return result;
 }
+

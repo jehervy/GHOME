@@ -7,6 +7,12 @@
 //Metadata and data are stored both in the segment.
 #define GMEM_SIZE 500
 
+#ifdef GMEM
+void *operator new(size_t size);
+
+void operator delete(void* mem);
+#endif
+
 /**
  * Allocates memory of the specified size. It only reserves the memory, the
  * content of the returned space is random.

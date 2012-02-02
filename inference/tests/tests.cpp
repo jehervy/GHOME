@@ -7,10 +7,12 @@
 
 #include "tests.h"
 
+using namespace inference;
+
 void InferenceTestsSimple(Test *test)
 {
-	InferenceActions actions;
-	InferenceEngine eng("monitoring/tests/simple.xml");
+	Actions actions;
+	Engine eng("inference/tests/simple.xml");
 
 	actions = eng.run(2, 20);
 	test->assert(actions.size() == 0, "Metric to match is ok.");
@@ -25,12 +27,16 @@ void InferenceTestsSimple(Test *test)
 		test->assert(actions[0].getMetric() == 2, "Metric to apply is ok.");
 		test->assert(actions[0].getValue() == 1, "Value to apply is ok.");
 	}
+	else
+	{
+		test->skip(2);
+	}
 }
 
 void InferenceTestsMultipleActions(Test *test)
 {
-	InferenceActions actions;
-	InferenceEngine eng("monitoring/tests/multipleActions.xml");
+	Actions actions;
+	Engine eng("inference/tests/multipleActions.xml");
 
 	actions = eng.run(1, 20);
 	test->assert(actions.size() == 2, "All actions are returned.");
@@ -43,8 +49,8 @@ void InferenceTestsMultipleActions(Test *test)
 
 void InferenceTestsMultipleConditions(Test *test)
 {
-	InferenceActions actions;
-	InferenceEngine eng("monitoring/tests/multipleConditions.xml");
+	Actions actions;
+	Engine eng("inference/tests/multipleConditions.xml");
 
 	actions = eng.run(1, 20);
 	test->assert(actions.size() == 0, "With one matching metric, rule does not match.");
