@@ -1,14 +1,21 @@
 #ifndef _GMEM_H
 #define _GMEM_H
 
+//System includes
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+
+//Personal includes
 #include "../config.h"
+#include <cstdlib>
 
 //Size of the segment allocated for the use of the memory allocator module.
 //Metadata and data are stored both in the segment.
-#define GMEM_SIZE 500
+#define GMEM_SIZE 5000
 
 #ifdef GMEM
-void *operator new(size_t size);
+void *operator new(size_t size) throw (std::bad_alloc);
 
 void operator delete(void* mem);
 #endif

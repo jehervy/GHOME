@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "gmem.h"
 
 /**
@@ -61,9 +59,15 @@ static void splitBlock(Block *block, unsigned size);
 static void mergeBlock(Block *block);
 
 #ifdef GMEM
-void *operator new(size_t size)
+void *operator new(size_t size) throw (std::bad_alloc)
 {
-	return gmalloc(size);
+	void *p = gmalloc(size);
+	if (p == NULL)
+	{
+		throw new std::bad_alloc;
+	}
+
+	return p;
 }
 
 void operator delete(void *mem)
@@ -97,6 +101,11 @@ void *gmalloc (unsigned size)
 		block->free = 1;
 	}
 
+#ifdef DBG
+	printf("gmalloc(%d): begin\n", size);
+	gprintmem();
+#endif
+
 	//We use the first-fit algorithm to find a free block.
 	block = findBlockForSize(&previous, size);
 
@@ -109,13 +118,18 @@ void *gmalloc (unsigned size)
 	//If block size is greater than the size of a block struct, we can split
 	//it. We use the size of the struct because a minimal data segment is
 	//already included within it (char data).
-	if (block->size >= sizeof(Block))
+	if (block->size >= size + sizeof(Block))
 	{
 		splitBlock(block, size);
 	}
 
 	//We mark the block as no longer free.
 	block->free = 0;
+
+#ifdef DBG
+	gprintmem();
+	printf("gmalloc: end\n");
+#endif
 
 	//We can return the pointer to the data segment.
 	return (void *) block->data;
@@ -135,6 +149,11 @@ void gfree (void *ptr)
 #else
 	Block *block, *previous = NULL;
 
+#ifdef DBG
+	printf("gfree(%p): begin\n", ptr);
+	gprintmem();
+#endif
+
 	//Find the meta-data associated with the pointed space.
 	block = findBlockForAddress(&previous, ptr);
 
@@ -152,6 +171,11 @@ void gfree (void *ptr)
 	//block if needed to avoid fragmentation of the free space.
 	mergeBlock(block);
 	mergeBlock(previous);
+
+#ifdef DBG
+	gprintmem();
+	printf("gfree: end\n");
+#endif
 #endif
 }
 
@@ -173,7 +197,7 @@ void gprintmem()
 		}
 		else
 		{
-			printf("Occuped");
+			printf("Occupied");
 		}
 
 		printf(" block of size %d bytes (meta @%p, data @%p)\n", block->size, block, block->data);

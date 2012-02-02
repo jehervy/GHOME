@@ -8,5 +8,8 @@
 //Define TESTING to switch to test mode.
 //#define TESTING
 
+//Define DBG to enable some debug messages to display.
+//#define DBG
+
 #endif
 
