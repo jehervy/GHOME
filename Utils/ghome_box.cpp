@@ -15,6 +15,10 @@
 #include <sys/msg.h>
 
 bool ghome_box::receive_message(int box, int &typeMes, int &metric, int &room, int &value)
+/*
+ * Lis le premier message de la file de message box.
+ * Met a jour les donnees par passage par references.
+ */
 {
 	int rc;
 	int intMsg[4];
@@ -46,7 +50,12 @@ bool ghome_box::receive_message(int box, int &typeMes, int &metric, int &room, i
 	}
 }
 
-bool ghome_box::send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value ){
+bool ghome_box::send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value )
+/*
+ * Place un message dans la file de message
+ * passee en parametre
+ */
+{
 	struct msg_buf msg;
 	bzero(msg.mtext, MSGTXTLEN);
 	int rc;
