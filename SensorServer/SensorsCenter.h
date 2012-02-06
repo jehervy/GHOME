@@ -8,41 +8,41 @@
 #ifndef SENSORSCENTER_H_
 #define SENSORSCENTER_H_
 
-#include <vector>
+#include <map>
 #include <utility>
 #include <pthread.h>
-#include "../xml/pugixml.hpp"
 #include "EnOceanSensorModel.h"
 
-typedef std::vector<std::pair<int,int> > vectorSensors;
+typedef std::map<int, std::pair<int,int> > mapSensors;
 
 class SensorsCenter{
 	public:
-		SensorsCenter(int balServer, int balMonitoring, const char* xmlFile);
+		SensorsCenter(int a_iBalServer, int a_iBalMonitoring, const char* a_pXmlFile);
 		virtual ~SensorsCenter();
+
+		void Start();
+		void Stop();
 
 	private:
 		// METHODES
-		void parserXML(const char* xmlFile);
+		void ParserXML(const char* a_pXmlFile);
 
-		void run();
+		void Run();
 
-		static void *callback(void *cxt)
+		static void *sCallback(void *a_pCxt)
 		{
-			((SensorsCenter*)cxt)->run();
+			((SensorsCenter*)a_pCxt)->Run();
 			return 0;
 		}
 
 		// ATTRIBUTS
-		int balServer;
-		int balMonitoring;
-		int balModel;
+		int m_iBalServer;
+		int m_iBalMonitoring;
+		int m_iBalModel;
 
-		pthread_t thread;
-
-		vectorSensors sensors;
-
-		EnOceanSensorModel *model;
+		pthread_t m_thread;
+		mapSensors m_sensors;
+		EnOceanSensorModel *m_pModel;
 
 
 };

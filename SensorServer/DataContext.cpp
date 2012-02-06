@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <sys/msg.h>	//pour la boite aux lettres
 # include <sys/ipc.h>
-#include <iostream>
 #include <string>
 #include "../socket/ClientSocket.h"
 #include "../socket/SocketException.h"
@@ -19,12 +18,10 @@
 using namespace std;
 
 
-void* DataContext::rcvData(void* args)
+void* DataContext::sRcvData(void* a_pArgs)
 {
-	std::cout << "RUN rcvData" << std::endl;
-
 	// Récupération des informations de connection
-	networkInfo infos = *((networkInfo*) args);
+	networkInfo infos = *((networkInfo*) a_pArgs);
 
 	// Création de la structure de message pour la boîte aux lettres
 	balMessage msg;
@@ -33,26 +30,25 @@ void* DataContext::rcvData(void* args)
 	try
 	{
 		// Création du socket client
-		ClientSocket client_socket ( infos.address, infos.port );
-		string trame;
+		ClientSocket clientSocket ( infos.address, infos.port );
+		string sTrame;
 		try
 		{
 			// Récupération de la trame, formatage et envoie dans la file de messages
 			while(true){
-		  		client_socket >> trame;
-		  		strcpy(msg.mtext, trame.c_str());
+		  		clientSocket >> sTrame;
+				bzero(msg.mtext, MSGSIZE);
+		  		strcpy(msg.mtext, sTrame.c_str());
 		  		msgsnd(infos.bal, &msg, MSGSIZE, 0);
 			}
 		}
 	     catch ( SocketException& ) {
-	    	 std::cout << "Fail\n";
 	    	 pthread_exit(NULL);
 	     }
 
 	    }
 	  catch ( SocketException& e )
 	    {
-	      std::cout << "Exception was caught:" << e.description() << "\n";
 	      pthread_exit(NULL);
 	    }
 
@@ -60,10 +56,10 @@ void* DataContext::rcvData(void* args)
 }
 
 
-void* DataContext::sndData(void* args)
+void* DataContext::sSndData(void* a_pArgs)
 {
 	// Récupération des informations de connection
-	networkInfo infos = *((networkInfo*) args);
+	networkInfo infos = *((networkInfo*) a_pArgs);
 
 	// Création de la structure de message pour la boîte aux lettres
 	balMessage msg;
@@ -71,26 +67,25 @@ void* DataContext::sndData(void* args)
 	try
 	{
 		// Création du socket client
-		ClientSocket client_socket ( infos.address, infos.port );
+		ClientSocket clientSocket ( infos.address, infos.port );
 		try
 		{
 			// Récupération du message de la file de messages, envoi au serveur
 			while(true){
+				bzero(msg.mtext, MSGSIZE);
 				if(msgrcv(infos.bal,&msg,MSGSIZE, 1, 0 ) != -1)
 				{
-					client_socket << msg.mtext;
+					clientSocket << msg.mtext;
 				}
 			}
 		}
 		 catch ( SocketException& ) {
-			 std::cout << "Fail\n";
 			 pthread_exit(NULL);
 		 }
 
 		}
 	  catch ( SocketException& e )
 		{
-		  std::cout << "Exception was caught:" << e.description() << "\n";
 		  pthread_exit(NULL);
 		}
 
