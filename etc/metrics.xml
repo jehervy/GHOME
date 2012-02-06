@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<metrics>
+    <metric id="1">
+        <name>Température</name>
+        <sensor>
+            <formatter type="string" format="{{ value }} °C" />
+        </sensor>
+        <actuator>
+            <formatter type="boolean" yes="Chauffage actif" no="Chauffage inactif" />
+        </actuator>
+    </metric>
+    <metric id="2">
+        <name>Luminosité</name>
+        <sensor>
+            <formatter type="string" format="{{ value }} lx" />
+        </sensor>
+        <actuator>
+            <formatter type="boolean" yes="Lumière allumée" no="Lumière éteinte" />
+        </actuator>
+    </metric>
+    <metric id="3">
+        <name>Présence</name>
+        <sensor>
+            <formatter type="boolean" yes="Présence détectée" no="Aucune présence détectée" />
+        </sensor>
+    </metric>
+    <metric id="4">
+        <name>Ouverture</name>
+        <sensor>
+            <formatter type="boolean" yes="Ouvert" no="Fermé" />
+        </sensor>
+    </metric>
+    <metric id="5">
+        <name>Interrupteur</name>
+        <actuator>
+            <formatter type="boolean" yes="Courant délivré" no="Courant non délivré" />
+        </actuator>
+    </metric>
+</metrics>
