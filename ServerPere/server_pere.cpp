@@ -5,7 +5,7 @@
  *      Author: remi
  */
 
-#include "server_pere.h"
+#include "ServerPere.h"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -18,66 +18,65 @@ using namespace std;
 #include <pthread.h>
 
 
-vector<int> vect_fd;
+vector<int> m_vVectorFd;
 
 
-server_pere::~server_pere()
+ServerPere::~ServerPere()
 /*
  * Constructeur
  */
 {
 
-	cout<<"papa est mort"<<endl;
 }
 
 
 
-server_pere::server_pere(int sensorServerBox,int actuatorServerBox) :
-		p_sensorServerBox(sensorServerBox), p_actuatorServerBox(actuatorServerBox)
+ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
+		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
 /*
  * Constructeur surcharge ;
- * Appel la méthode de création d'un socket dans un nouveau thread
+ * Appel la m√©thode de cr√©ation d'un socket dans un nouveau thread
  */
 {
-		open_thread_comm_client();
+		ServerPere::OpenThreadCommClient();
 }
 
 
 
 
-void *server_pere::createCommClient_2(void * ptr)
+void *ServerPere::sCreateCommClientCallBack(void * a_pPtr)
 /*
  * Methode static ouverte dans un nouveau thread
  * et appelant la methode d'instanciation de client
  */
 {
-	server_pere* p = (server_pere*)ptr;
-	p->createCommClient();
+	ServerPere* p = (ServerPere*)a_pPtr;
+	p->CreateCommClient();
 	return (0);
 }
 
-void *server_pere::createCommClient()
+void *ServerPere::CreateCommClient()
 /*
  * Ouvre une instance de communication_client
  */
 {
-	cout << "Create comm client : Socket : " << p_fd << endl;
-	communication_client comm_client(p_sensorServerBox, p_actuatorServerBox, p_fd, sockfd, this);
+	cout << "Create comm client : Socket : " << m_iPFileDescriptor << endl;
+	CommunicationClient comm_client(m_iSensorServerBox, m_iActuatorServerBox, m_iPFileDescriptor, m_iSockfd, this);
 	return (0);
 }
 
-void *server_pere::callback(void * ptr)
+void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 /*
  * Methode static ouverte dans un nouveau thread
- * et appellant la méthode de gestion du socket
+ * et appellant la m√©thode de gestion du socket
  */
 {
-	server_pere* p = (server_pere*)ptr;
-	p->open_socket();
+	ServerPere* p = (ServerPere*)a_pPtr;
+	p->OpenSocket();
 	return (0);
 }
 
-void *server_pere::open_socket()
+void *ServerPere::OpenSocket()
 /*
  * Ouvre un nouveau socket et attend la connexion
  * de nouveaux clients, cree un nouveau thread pour
@@ -85,42 +84,47 @@ void *server_pere::open_socket()
  */
 {
 	cout << "Open Socket" << endl;
-	unsigned int size;
-	struct sockaddr_in local;
-	struct sockaddr_in remote;
+	unsigned int iSize;
+	struct sockaddr_in sLocal;
+	struct sockaddr_in sRemote;
 
-	bzero(&local, sizeof(local));
-	local.sin_family = AF_INET;
-	local.sin_port = htons(3023);
-	local.sin_addr.s_addr = INADDR_ANY;
-	bzero(&(local.sin_zero), 8);
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	bzero(&sLocal, sizeof(sLocal));
+	sLocal.sin_family = AF_INET;
+	sLocal.sin_port = htons(3023);
+	sLocal.sin_addr.s_addr = INADDR_ANY;
+	bzero(&(sLocal.sin_zero), 8);
+	m_iSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	int on = 1;
-	int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-	ret = bind(sockfd, (struct sockaddr *)&local, sizeof(sockaddr));
+	int iRet = setsockopt(m_iSockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-	server_pere::set_opened(true);
-
-	if(listen(sockfd, 5) == -1)
+	iRet = bind(m_iSockfd, (struct sockaddr *)&sLocal, sizeof(sockaddr));
+	if(iRet!=0)
 	{
-	perror("listen");
-	exit(1);
-	}
-	size = sizeof(struct sockaddr_in);
-
-
-	while(s_opened)
+		//TODO : errno
+		ServerPere::SetOpened(false);
+	} else
 	{
-
-		p_fd = accept(sockfd, (struct sockaddr *)&remote, &size);
-		if((p_fd>0)&(s_opened))
+		cout<<"Bind reussi"<<endl;
+		ServerPere::SetOpened(true);
+		if(listen(m_iSockfd, 5) == -1)
 		{
-			nb_connection=server_pere::insert_fd(p_fd);
-			int reussite;
-			pthread_t thread_sock;
-			reussite = pthread_create(&thread_sock, NULL, &server_pere::createCommClient_2, this);
+			perror("listen");
+			exit(1);
 		}
+		iSize = sizeof(struct sockaddr_in);
+		while(m_bSocketOpened)
+			{
 
+				m_iPFileDescriptor = accept(m_iSockfd, (struct sockaddr *)&sRemote, &iSize);
+				if((m_iPFileDescriptor>0)&(m_bSocketOpened))
+				{
+					m_iNbConnection=ServerPere::InsertFd(m_iPFileDescriptor);
+					int reussite;
+					pthread_t thread_sock;
+					reussite = pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
+				}
+
+			}
 	}
 
 	return(0);
@@ -128,68 +132,67 @@ void *server_pere::open_socket()
 
 
 
-int server_pere::open_thread_comm_client()
+int ServerPere::OpenThreadCommClient()
 /*
  * Cree un nouveau thread pour la gestion du socket
  */
 {
 
-	int check = pthread_create(&thread_comm_client, NULL, &server_pere::callback, this);
-	return check;
+	int iCheck = pthread_create(&m_ptThreadCommClient, NULL, &ServerPere::sOpenSocketCallBack, this);
+	return iCheck;
 }
 
-void server_pere::wait()
+void ServerPere::Wait()
 /*
- * Bloque l'execution de la tache mere jusqu'à ce que le
+ * Bloque l'execution de la tache mere jusqu'√† ce que le
  * thread de gestion de socket ne soit tue
  */
 {
-	pthread_join(thread_comm_client,NULL);
+	pthread_join(m_ptThreadCommClient,NULL);
 }
 
 
-void server_pere::kill_thread()
+void ServerPere::KillThread()
 /*
  * Ferme le socket et tue le thread de gestion
  * du socket
  */
 {
-	shutdown(sockfd, SHUT_RDWR);
-	pthread_cancel(thread_comm_client);
+	shutdown(m_iSockfd, SHUT_RDWR);
+	pthread_cancel(m_ptThreadCommClient);
 }
 
-int server_pere::insert_fd(int fd)
+int ServerPere::InsertFd(int a_iFd)
 /*
  * Ajoute un nouveau file descriptor (client)
  * dans le vector.
- * Retourne le nombre de clients connectes.
+ * iRetourne le nombre de clients connectes.
  */
 {
-	vect_fd.push_back(fd);
-	int size_vect=vect_fd.size();
-	return size_vect;
+	m_vVectorFd.push_back(a_iFd);
+	int iSizeVect=m_vVectorFd.size();
+	return iSizeVect;
 }
 
-int server_pere::delete_fd(int fd)
+int ServerPere::DeleteFd(int a_iFd)
 /*
  * Supprime un file descriptor (client)
  * du vector, et ferme la connexion avec ce
  * client.
- * Retourne le nombre de clients connectes.
+ * iRetourne le nombre de clients connectes.
  */
 {
-	int size_vect=vect_fd.size();
+	int iSize_vect=m_vVectorFd.size();
 	bool element_found = false;
 	int position = 0;
 	int elem_pos;
-	while((element_found==false) & (position<size_vect))
+	while((element_found==false) & (position<iSize_vect))
 	{
-		elem_pos=vect_fd.at(position);
-		if(elem_pos==fd)
+		elem_pos=m_vVectorFd.at(position);
+		if(elem_pos==a_iFd)
 		{
-			cout<<"Element trouve"<<endl;
 			element_found=true;
-			vect_fd.erase(vect_fd.begin()+position);
+			m_vVectorFd.erase(m_vVectorFd.begin()+position);
 			close(fd);
 		}else
 		{
@@ -197,14 +200,14 @@ int server_pere::delete_fd(int fd)
 		}
 
 	}
-	size_vect=vect_fd.size();
-	return size_vect;
+	iSize_vect=m_vVectorFd.size();
+	return iSize_vect;
 }
 
-void server_pere::set_opened(bool etat)
+void ServerPere::SetOpened(bool a_bEtat)
 /*
- * Met à jour l'etat du socket.
+ * Met √† jour l'etat du socket.
  */
 {
-	s_opened=etat;
+	m_bSocketOpened=a_bEtat;
 }
