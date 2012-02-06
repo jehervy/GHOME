@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "ServerPere/ghome_database.h"
+#include "ServerPere/GhomeDatabase.h"
 #include "config.h"
 #include "tache_mere.h"
 
@@ -30,7 +30,7 @@ int main()
 	//Creation des taches filles
 
 	//server_pere papa(sensorServerBox, actuatorServerBox);
-	sensor_box_reader sb(sensorServerBox, actuatorServerBox);
+	SensorBoxReader sb(sensorServerBox, actuatorServerBox);
 	//ghome_database::open_database();
 
 
@@ -38,7 +38,6 @@ int main()
 	//PHASE DE DESTRUCTION DE LA TACHE MERE
 	//=====================================
 
-	sb.wait(); //Attente de fermeture du serveur
 
 
 

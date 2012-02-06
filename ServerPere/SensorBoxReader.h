@@ -8,7 +8,7 @@
 
 #include <pthread.h>
 #include <sys/msg.h>	//pour la boite aux lettres
-#include <mysql.h> //acces BDD
+#include <mysql/mysql.h> //acces BDD
 
 #include "GhomeDatabase.h"
 
