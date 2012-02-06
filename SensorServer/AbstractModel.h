@@ -9,46 +9,43 @@
 #define ABSTRACTMODEL_H_
 
 #include <pthread.h>
-#include <iostream>
-#include <string>
-#include <cstdio>
 
 class AbstractModel{
 
 private:
 
-	static void *callback(void *ctx) {
+	static void *sCallback(void *a_pCtx) {
 		//AbstractModel *model = static_cast<AbstractModel*> (ctx);
 		//model->run();
-		((AbstractModel*)ctx)->run();
+		((AbstractModel*)a_pCtx)->Run();
 		return NULL;
 	}
 
-	virtual void run() = 0;
+	virtual void Run() = 0;
 
 public:
-	AbstractModel(int bal) : balCenter(bal){}
+	AbstractModel(int a_iBal) : m_iBalCenter(a_iBal){}
 
 	virtual ~AbstractModel(){}
 
-	virtual void start()
+	virtual void Start()
 	{
-		pthread_create(&thread, 0, AbstractModel::callback, (void *)this);
+		pthread_create(&m_thread, 0, AbstractModel::sCallback, (void *)this);
 	}
 
-	virtual void stop()
+	virtual void Stop()
 	{
-		pthread_cancel(thread);
+		pthread_cancel(m_thread);
 	}
 
-	virtual void wait()
+	virtual void Wait()
 	{
-		pthread_join(thread, NULL);
+		pthread_join(m_thread, NULL);
 	}
 
 protected:
-	int balCenter;
-	pthread_t thread;
+	int m_iBalCenter;
+	pthread_t m_thread;
 
 
 

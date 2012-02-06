@@ -9,33 +9,46 @@
 #define ENOCEANSENSORMODEL_H_
 
 #include "AbstractModel.h"
-#include <vector>
-#include <utility>
-#include "../xml/pugixml.hpp"
+#include <map>
+#include <cstring>
 
-typedef std::vector<std::pair<int,const char*> > vectorSensorsId;
+struct StrCompare : public std::binary_function<char*, char*, bool> {
+public:
+    bool operator() (char* str1, char* str2) const
+    { return std::strcmp(str1, str2) < 0; }
+};
+
+
+struct SensorInfo{
+	int virtualId;
+};
+
+typedef std::multimap<char*, SensorInfo, StrCompare> mapSensorInfo;
+
 
 class EnOceanSensorModel : public AbstractModel{
 
 public:
-	EnOceanSensorModel(int bal);
+	EnOceanSensorModel(int a_iBal);
 
-	virtual void start();
+	virtual ~EnOceanSensorModel();
 
-	virtual void stop();
+	virtual void Start();
+
+	virtual void Stop();
 
 private:
-	virtual void run();
+	virtual void Run();
 
-	void parserXml(const char *xmlFile);
+	void ParserXml(const char *a_XmlFile);
 
-	char* get_id(char data[29]);
+	char* GetId(char a_Data[29]);
 
-	char* get_data(char data[29]);
+	char* GetData(char a_Data[29]);
 
-	vectorSensorsId sensorsId;
-	pthread_t threadNetwork;
-	int balNetwork;
+	mapSensorInfo m_sensorInfo;
+	pthread_t m_threadNetwork;
+	int m_iBalNetwork;
 
 };
 

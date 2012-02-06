@@ -1,5 +1,5 @@
 /*
- * communicationclient.h
+ * CommunicationClient.h
  *
  *  Created on: 17 janv. 2012
  *      Author: remi
@@ -13,44 +13,44 @@ using namespace std;
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "server_pere.h"
-#include "../Utils/ghome_box.h"
+#include "ServerPere.h"
+#include "../Utils/GhomeBox.h"
 
 
-class communication_client {
+class CommunicationClient {
 public:
-	communication_client();
+	CommunicationClient();
 	/*
 	 * Constructeur
 	 */
-	communication_client(int sensorServerBox, int actuatorServerBox, int fd, int sock, void * ptr);
+	CommunicationClient(int a_iSensorServerBox, int a_iActuatorServerBox, int a_iFd, int a_iSock, void * a_pPtr);
 	/*
 	 * Constructeur
 	 */
-	virtual ~communication_client();
+	virtual ~CommunicationClient();
 	/*
 	 * Destructeur
 	 */
-	void transfer_message();
+	void TransferMessage();
 	/*
 	 * Lis les messages envoyés sur le socket
 	 */
-	void free_create_buffer(int longueur);
+	void FreeCreateBuffer(int a_iLongueur);
 	/*
 	 * Gere la creation et la liberation d'un buffer.
 	 * Prend en parametre la taille du buffer cree.
 	 */
 private :
-	int p_sensorServerBox;
-	int p_actuatorServerBox;
-	int p_fd;
-	bool p_opened;
-	int p_sock;
-	char * buffer;
-	int id;
-	int metric;
-	int room;
-	int value;
+	int m_iSensorServerBox;
+	int m_iActuatorServerBox;
+	int m_iPFileDescriptor;
+	bool m_bClientOpened;
+	int m_iSocket;
+	char * m_cBuffer;
+	int m_iId;
+	int m_iMetric;
+	int m_iRoom;
+	int m_iValue;
 
 };
 

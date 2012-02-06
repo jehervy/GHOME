@@ -9,7 +9,7 @@
 #define GHOME_DATABASE_H_
 #include <iostream>
 #include <string.h>
-#include <mysql.h>
+#include <mysql/mysql.h>
 using namespace std;
 
 //Classe gérant l'acces a une base de données

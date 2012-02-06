@@ -5,7 +5,7 @@
  *      Author: remi
  */
 
-#include "ghome_box.h"
+#include "GhomeBox.h"
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
@@ -14,7 +14,7 @@
 #include<sys/errno.h>
 #include <sys/msg.h>
 
-bool ghome_box::receive_message(int box, int &typeMes, int &metric, int &room, int &value)
+bool GhomeBox::receive_message(int box, int &typeMes, int &metric, int &room, int &value)
 /*
  * Lis le premier message de la file de message box.
  * Met a jour les donnees par passage par references.
@@ -50,7 +50,7 @@ bool ghome_box::receive_message(int box, int &typeMes, int &metric, int &room, i
 	}
 }
 
-bool ghome_box::send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value )
+bool GhomeBox::send_actuator_box(int box,const int typeMes, const int metric, const int room, const int value )
 /*
  * Place un message dans la file de message
  * passee en parametre
@@ -85,7 +85,7 @@ bool ghome_box::send_actuator_box(int box,const int typeMes, const int metric, c
 	return true;
 }
 
-bool ghome_box::send_message(int box, const int int1, const int int2)
+bool GhomeBox::send_message(int box, const int int1, const int int2)
 {
 	struct msg_buf msg;
 	bzero(msg.mtext, MSGTXTLEN);
@@ -113,7 +113,7 @@ bool ghome_box::send_message(int box, const int int1, const int int2)
 	return true;
 }
 
-bool ghome_box::receive_message(int box, int &int1, int &int2)
+bool GhomeBox::receive_message(int box, int &int1, int &int2)
 {
 	int rc;
 	int intMsg[2];

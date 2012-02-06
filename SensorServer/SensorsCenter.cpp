@@ -11,41 +11,65 @@
 #include <stdlib.h>
 # include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
+#include "../Utils/GhomeBox.h"
+#include "../xml/pugixml.hpp"
+#include "../inference/Engine.h"
+//#include "../monitoring/InferenceAction.h"
+
 
 #define DROITS 0660 	// Droits d'accès
 #define REFERENCE "." 	//Fichier courant utilisé pour bâtir la clé publique
 
-SensorsCenter::SensorsCenter(int balServer, int balMonitoring, const char* xmlFile) : balServer(balServer), balMonitoring(balMonitoring)
+SensorsCenter::SensorsCenter(int a_iBalServer, const char* a_pXmlFile) : m_iBalServer(a_iBalServer)
 {
-	//parserXML(xmlFile);
-	balModel = msgget (ftok (REFERENCE, '1'), IPC_CREAT | DROITS );
-	model = new EnOceanSensorModel(balModel);
-	model->start();
-
-	pthread_create(&thread, NULL, callback, this);
+	ParserXML("src/etc/sensors.xml");
+	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
+	m_pModel = new EnOceanSensorModel(m_iBalModel);
+	m_pModel->Start();
 }
 
 SensorsCenter::~SensorsCenter()
 {
-	model->stop();
-	pthread_cancel(thread);
-	msgctl(balModel,IPC_RMID,0);
+	m_pModel->Stop();
+	msgctl(m_iBalModel,IPC_RMID,0);
 }
 
-void SensorsCenter::run()
+void SensorsCenter::Start()
 {
-	std::cout << "RUN SensorsCenter" << std::endl;
-	balMessage msg;
+	pthread_create(&m_thread, NULL, sCallback, this);
+}
+
+void SensorsCenter::Stop()
+{
+	pthread_cancel(m_thread);
+}
+
+void SensorsCenter::Run()
+{
+	inference::Engine Engine("src/etc/rules.xml");
+
+	int iSensorId = 0;
+	int iSensorValue = 0;
 	while(true)
 	{
-		if(msgrcv(balModel,&msg,MSGSIZE, 1, 0 ) != -1)
+		if(GhomeBox::receive_message(m_iBalModel, iSensorId, iSensorValue))
 		{
-			msgsnd(balServer, &msg, MSGSIZE, 0);
+			mapSensors::iterator it = m_sensors.find(iSensorId);
+			if(it != m_sensors.end())
+			{
+				GhomeBox::send_actuator_box(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
+				inference::Actions Actions = Engine.run(it->second.first, iSensorValue);
+				for(unsigned int i=0; i<Actions.size(); i++)
+				{
+					//std::cout << "Nouvelle action " << i << std::endl;
+					GhomeBox::send_actuator_box(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
+				}
+			}
 		}
 	}
 }
 
-void SensorsCenter::parserXML(const char* xmlFile)
+void SensorsCenter::ParserXML(const char* xmlFile)
 {
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(xmlFile);
@@ -55,15 +79,19 @@ void SensorsCenter::parserXML(const char* xmlFile)
 	for (pugi::xml_node_iterator sensorsIt = xmlSensors.begin(); sensorsIt != xmlSensors.end(); ++sensorsIt)
 	{
 		std::pair<int, int> sensorNode;
+		std::pair<int, std::pair<int, int> > mapNode;
 
-//		int ruleId = sensorsIt->attribute("id").as_int();
-		int metricId = atoi(sensorsIt->child("metric").child_value());
-		int roomId = atoi(sensorsIt->child("room").child_value());
+		int iSensorId = sensorsIt->attribute("id").as_int();
+		int iMetricId = atoi(sensorsIt->child("metric").child_value());
+		int iRoomId = atoi(sensorsIt->child("room").child_value());
 
-		sensorNode.first = metricId;
-		sensorNode.second = roomId;
+		sensorNode.first = iMetricId;
+		sensorNode.second = iRoomId;
 
-		this->sensors.push_back(sensorNode);
+		mapNode.first = iSensorId;
+		mapNode.second = sensorNode;
+
+		this->m_sensors.insert(m_sensors.begin(), mapNode);
 
 	}
 }

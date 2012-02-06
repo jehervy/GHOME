@@ -16,13 +16,13 @@ struct msg_buf {
 }  ;
 
 
-class ghome_box {
+class GhomeBox {
 public:
-	ghome_box(){};
+	GhomeBox(){};
 		/*
 	 * Constructeur
 	 */
-	virtual ~ghome_box(){};
+	virtual ~GhomeBox(){};
 		/*
 	 * Destructeur
 	 */

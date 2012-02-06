@@ -8,11 +8,11 @@
 #ifndef DATACONTEXT_H_
 #define DATACONTEXT_H_
 
-#define MSGSIZE 256
+#define MSGSIZE 255
 
 // Structure networkInfo nécessaire pour paramétrer les "abonnements"
 struct networkInfo{
-	char address[256];	// Adresse du serveur
+	char address[MSGSIZE];	// Adresse du serveur
 	int port;			// Port du serveur
 	int bal;			// Référence de la boîte aux lettres
 };
@@ -30,13 +30,13 @@ public:
 	// Elle prend comme paramètre une structure networkInfo
 	// Elle attendra la réception d'un message par le socket et l'écrira dans une boîte aux lettre
 	// quand celui ci arrivera.
-	static void* rcvData(void* args);
+	static void* sRcvData(void* a_pArgs);
 
 	// Cette fonction permet d'envoyer des données en continu à un serveur.
 	// Elle prend en paramètre une structure networkInfo
 	// Elle attendra un message dans la file de messages et l'enverra au serveur
 	// quand celui ci arrivera.
-	static void* sndData(void* args);
+	static void* sSndData(void* a_pArgs);
 };
 
 
