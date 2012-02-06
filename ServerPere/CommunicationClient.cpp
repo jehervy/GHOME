@@ -55,75 +55,65 @@ void CommunicationClient::FreeCreateBuffer(int a_iLongueur)
 	bzero(m_cBuffer,a_iLongueur);
 }
 
+int CommunicationClient::ReadMessage(int a_iTailleALire)
+{
+	int iMessage;
+	CommunicationClient::FreeCreateBuffer(a_iTailleALire);
+	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, a_iTailleALire);
+	cout << "Octets : " << iNbOctets << endl;
+	if(iNbOctets>0)
+	{
+		iMessage = atoi(m_cBuffer);
+	}
+
+	return iMessage;
+}
+
+int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage)
+{
+	int iTailleMessage;
+	CommunicationClient::FreeCreateBuffer(a_iTailleALire);
+	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, a_iTailleALire);
+	if(iNbOctets>0)
+		{
+		iTailleMessage = atoi(m_cBuffer);
+		a_iMessage=CommunicationClient::ReadMessage(iTailleMessage);
+		}
+	return iNbOctets;
+}
 
 
 void CommunicationClient::TransferMessage()
-/*
- * Gere les messages recues sur le socket (envoyes par les clients).
- * Fonctionnement d'une lecture d'un ordre de pilotage
-	    * d'un client :
-	    * - lecture sur un octet : type du message (info, pilotage,...)
-	    * 		- id = 0 : deconnexion du client
-	    * 		- id = 4 : ordre de fermeture du server
-	    * 		- id = 1 : info
-	    * 		- id = 2 : pilotage
-	    * 		- id = 3 : ordre de maintenance
-	    * - lecture sur un octet : taille du message de metric
-	    * - lecture du metric
-	    * - lecture sur un octer : taille du message de room
-	    * - lecture du room
-	    * - lecture sur un octet : taille du message de value
- */
-{
 
-	   int iNbOctets;
+{
 	   m_bClientOpened=true;
-	   int iTailleALire = 1;
-	   int iTailleMessage;
+
 while(m_bClientOpened)
 {
-	CommunicationClient::FreeCreateBuffer(iTailleALire);
-	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-	if(iNbOctets>0)
-	{
-		m_iId=atoi(m_cBuffer);
-		CommunicationClient::FreeCreateBuffer(iTailleALire);
-		switch(m_iId){
-		case 4 :
-			m_bClientOpened=false;
-			papa->SetOpened(false);
-			papa->Stop();
-			break;
-		case 0 :
-			m_bClientOpened=false;
-			papa->DeleteFd(m_iPFileDescriptor);
-			break;
-		case 1 :
-			break;
-		case 2 :
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-			iTailleMessage = atoi(m_cBuffer);
-			CommunicationClient::FreeCreateBuffer(iTailleMessage);
-			//Lecture de metric
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-			m_iMetric = atoi(m_cBuffer);
-			CommunicationClient::FreeCreateBuffer(iTailleALire);
-			//Nombre d'octets pour room
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-			iTailleMessage = atoi(m_cBuffer);
-			CommunicationClient::FreeCreateBuffer(iTailleMessage);
-			//Lecture de room
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-			m_iRoom = atoi(m_cBuffer);
-			CommunicationClient::FreeCreateBuffer(iTailleALire);
-			//Nombre d'octets pour value
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-			iTailleMessage = atoi(m_cBuffer);
-			CommunicationClient::FreeCreateBuffer(iTailleMessage);
-			//Lecture de value
-			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-			m_iValue = atoi(m_cBuffer);
+	m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
 
+		switch(m_iId){
+			case 4 :
+				m_bClientOpened=false;
+				papa->SetOpened(false);
+				papa->Stop();
+				break;
+			case 0 :
+				m_bClientOpened=false;
+				papa->DeleteFd(m_iPFileDescriptor);
+				break;
+			case 1 :
+				break;
+			case 2 :
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iMetric);
+				cout<<"Nb octets : "<< iNbOctets << endl;
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iRoom);
+				cout << "Nb octets : " << iNbOctets << endl;
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue);
+				cout << "Nb octets : " << iNbOctets << endl;
+				cout << "Metric : " << m_iMetric << endl;
+				cout << "Room : " << m_iRoom << endl;
+				cout << "Value : " << m_iValue << endl;
 			//Ecriture du message dans la boite aux lettres actuator
 			GhomeBox::send_actuator_box(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 
@@ -132,13 +122,25 @@ while(m_bClientOpened)
 			break;
 
 		}
-	} else
-	{
-		//TODO : errno
 	}
 
-
+	/*
+	 * Gere les messages recues sur le socket (envoyes par les clients).
+	 * Fonctionnement d'une lecture d'un ordre de pilotage
+		    * d'un client :
+		    * - lecture sur un octet : type du message (info, pilotage,...)
+		    * 		- id = 0 : deconnexion du client
+		    * 		- id = 4 : ordre de fermeture du server
+		    * 		- id = 1 : info
+		    * 		- id = 2 : pilotage
+		    * 		- id = 3 : ordre de maintenance
+		    * - lecture sur un octet : taille du message de metric
+		    * - lecture du metric
+		    * - lecture sur un octer : taille du message de room
+		    * - lecture du room
+		    * - lecture sur un octet : taille du message de value
+	 */
 
 }
 
-}
+

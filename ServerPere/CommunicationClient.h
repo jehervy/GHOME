@@ -40,6 +40,8 @@ public:
 	 * Gere la creation et la liberation d'un buffer.
 	 * Prend en parametre la taille du buffer cree.
 	 */
+	int ReadMessage(int a_iTailleALire);
+	int ReadMessage(int a_TailleALire, int &a_iMessage);
 private :
 	int m_iSensorServerBox;
 	int m_iActuatorServerBox;
@@ -51,7 +53,9 @@ private :
 	int m_iMetric;
 	int m_iRoom;
 	int m_iValue;
-
+	int iNbOctets;
+	int iTailleALire;
+	int iTailleMessage;
 };
 
 #endif /* COMMUNICATIONCLIENT_H_ */
