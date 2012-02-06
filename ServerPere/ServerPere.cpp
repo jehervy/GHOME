@@ -38,8 +38,10 @@ ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
  * Appel la méthode de création d'un socket dans un nouveau thread
  */
 {
-		ServerPere::OpenThreadCommClient();
+
 }
+
+
 
 
 
@@ -116,12 +118,19 @@ void *ServerPere::OpenSocket()
 			{
 
 				m_iPFileDescriptor = accept(m_iSockfd, (struct sockaddr *)&sRemote, &iSize);
+
 				if((m_iPFileDescriptor>0)&(m_bSocketOpened))
 				{
 					m_iNbConnection=ServerPere::InsertFd(m_iPFileDescriptor);
-					//int reussite;
+					int iReussite;
 					pthread_t thread_sock;
-					/*reussite = */pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
+					iReussite = pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
+					if(iReussite==0)
+					{
+						cout << " Connexion client reussie" << endl;
+					} else {
+						//TODO : errno
+					}
 				}
 
 			}
@@ -132,7 +141,7 @@ void *ServerPere::OpenSocket()
 
 
 
-int ServerPere::OpenThreadCommClient()
+int ServerPere::Start()
 /*
  * Cree un nouveau thread pour la gestion du socket
  */
@@ -152,7 +161,7 @@ void ServerPere::Wait()
 }
 
 
-void ServerPere::KillThread()
+void ServerPere::Stop()
 /*
  * Ferme le socket et tue le thread de gestion
  * du socket

@@ -30,7 +30,9 @@ int main()
 
 	//Creation des taches filles
 
-	//server_pere papa(sensorServerBox, actuatorServerBox);
+	/*ServerPere * papa = new ServerPere(sensorServerBox, actuatorServerBox);
+	papa->Start();*/
+
 	SensorBoxReader sb(sensorServerBox, actuatorServerBox);
 
 	SensorsCenter *center = new SensorsCenter(sensorServerBox, " ");
@@ -45,6 +47,8 @@ int main()
 
 
 	sb.Wait();
+	//papa->Wait();
+	//delete papa;
 	center->Stop();
 	delete center;
 
