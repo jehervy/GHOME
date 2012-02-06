@@ -11,7 +11,7 @@
 # include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
 #include <cstdlib>
-#include "../Utils/ghome_box.h"
+#include "../Utils/GhomeBox.h"
 #include "../Utils/utils.h"
 #include "../xml/pugixml.hpp"
 
@@ -86,7 +86,7 @@ void EnOceanSensorModel::Run()
 						strncpy(substr, pData+4, 2);
 						substr[2] = '\0';
 
-						ghome_box::send_message(m_iBalCenter, it->second.virtualId, 40 - (xstrtoi(substr)*40/255));
+						GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 40 - (xstrtoi(substr)*40/255));
 
 						free(substr);
 					}
@@ -101,11 +101,11 @@ void EnOceanSensorModel::Run()
 
 						if (xstrtoi(substr)%2 == 0)
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
 						}
 						else
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
 						}
 
 						free(substr);
@@ -121,11 +121,11 @@ void EnOceanSensorModel::Run()
 
 						if (xstrtoi(substr)%2 == 0)
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
 						}
 						else
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
 						}
 
 						free(substr);
@@ -141,27 +141,27 @@ void EnOceanSensorModel::Run()
 					{
 						case 0:
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
 							break;
 						}
 						case 48:
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
 							break;
 						}
 						case 16:
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 2);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 2);
 							break;
 						}
 						case 112:
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 3);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 3);
 							break;
 						}
 						case 80:
 						{
-							ghome_box::send_message(m_iBalCenter, it->second.virtualId, 4);
+							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 4);
 							break;
 						}
 
@@ -189,7 +189,7 @@ void EnOceanSensorModel::Start()
 {
 	networkInfo *infos = (networkInfo *)malloc(sizeof(networkInfo));
 	strcpy(infos->address, "localhost");
-	infos->port = 3000;
+	infos->port = 5000;
 	infos->bal = m_iBalNetwork;
 
 	pthread_create(&m_thread, NULL, DataContext::sRcvData, (void *)infos);

@@ -6,7 +6,7 @@
  */
 
 #include "SensorBoxReader.h"
-#include "../Utils/ghome_box.h"
+#include "../Utils/GhomeBox.h"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -46,28 +46,36 @@ int SensorBoxReader::Run()
 	int iId, iMetric, iRoom, iValue;
 	cout << "Debut du run" << endl;
 
-	GhomeDatabase* logEcriture = new GhomeDatabase("localhost", "root", "mysql", "GHOME");
+	GhomeDatabase* logEcriture = new GhomeDatabase("localhost", "boby", "ghome", "GHOME");
 	logEcriture->OpenDatabase();
 
-	  // message to send (test) TODO : virer
-	ghome_box::send_actuator_box(m_iSensorServerBox,2,23,45,12);
+	// read the message from queue
+	for(;;)
+	{
+		cout << "Attente" << endl;
 
+		GhomeBox::receive_message(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
 
-		  // read the message from queue
-
-	  for(;;)
-	  {
-		  ghome_box::receive_message(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
+		cout << "Rcv data" << endl;
 
 		  if(iId==1) //C'est un message de type information
 		  {
 		  	// TODO : base de donnee
-			  logEcriture->AddTuple("log", 1, 21, 42);
-
-		  } else if(iId==2) { //C'est un message de type pilotage
+			  if(logEcriture->AddTuple("sensors_values", iRoom, iMetric, iValue) == 0)
+			  {
+				  cout << "Ecriture OK" << endl;
+			  }
+			  else
+			  {
+				  cout << "Big fail !!!" << endl;
+			  }
+		  }
+		  else if(iId==2)
+		  { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
-		  ghome_box::send_actuator_box(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
-		  					  }
+			  logEcriture->AddTuple("actuators_commands", iRoom, iMetric, iValue);
+			  GhomeBox::send_actuator_box(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
+		  	}
 				//msgctl(sensorServerBox,IPC_RMID,0);
 		  }
 

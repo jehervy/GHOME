@@ -82,53 +82,55 @@ while(m_bClientOpened)
 {
 	CommunicationClient::FreeCreateBuffer(iTailleALire);
 	n=read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-	m_iId=atoi(m_cBuffer);
-	CommunicationClient::FreeCreateBuffer(iTailleALire);
-	switch(m_iId){
-	case 4 :
-		m_bClientOpened=false;
-		papa->set_opened(false);
-		papa->kill_thread();
-		break;
-	case 0 :
-		m_bClientOpened=false;
-		papa->delete_fd(m_iPFileDescriptor);
-		break;
-	case 1 :
-		break;
-	case 2 :
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-		iTailleMessage = atoi(m_cBuffer);
-		CommunicationClient::FreeCreateBuffer(iTailleMessage);
-		//Lecture de metric
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-		m_iMetric = atoi(m_cBuffer);
+	if(n>0)
+	{
+		m_iId=atoi(m_cBuffer);
 		CommunicationClient::FreeCreateBuffer(iTailleALire);
-		//Nombre d'octets pour room
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-		iTailleMessage = atoi(m_cBuffer);
-		CommunicationClient::FreeCreateBuffer(iTailleMessage);
-		//Lecture de room
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-		m_iRoom = atoi(m_cBuffer);
-		CommunicationClient::FreeCreateBuffer(iTailleALire);
-		//Nombre d'octets pour value
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-		iTailleMessage = atoi(m_cBuffer);
-		CommunicationClient::FreeCreateBuffer(iTailleMessage);
-		//Lecture de value
-		n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
-		m_iValue = atoi(m_cBuffer);
+		switch(m_iId){
+		case 4 :
+			m_bClientOpened=false;
+			papa->SetOpened(false);
+			papa->KillThread();
+			break;
+		case 0 :
+			m_bClientOpened=false;
+			papa->DeleteFd(m_iPFileDescriptor);
+			break;
+		case 1 :
+			break;
+		case 2 :
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iTailleMessage = atoi(m_cBuffer);
+			CommunicationClient::FreeCreateBuffer(iTailleMessage);
+			//Lecture de metric
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			m_iMetric = atoi(m_cBuffer);
+			CommunicationClient::FreeCreateBuffer(iTailleALire);
+			//Nombre d'octets pour room
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iTailleMessage = atoi(m_cBuffer);
+			CommunicationClient::FreeCreateBuffer(iTailleMessage);
+			//Lecture de room
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			m_iRoom = atoi(m_cBuffer);
+			CommunicationClient::FreeCreateBuffer(iTailleALire);
+			//Nombre d'octets pour value
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iTailleMessage = atoi(m_cBuffer);
+			CommunicationClient::FreeCreateBuffer(iTailleMessage);
+			//Lecture de value
+			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			m_iValue = atoi(m_cBuffer);
 
-		//Ecriture du message dans la boite aux lettres actuator
-		GhomeBox::send_actuator_box(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+			//Ecriture du message dans la boite aux lettres actuator
+			GhomeBox::send_actuator_box(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 
-		break;
-	case 3 :
-		break;
+			break;
+		case 3 :
+			break;
 
+		}
 	}
-
 
 
 

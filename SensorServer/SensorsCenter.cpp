@@ -11,7 +11,7 @@
 #include <stdlib.h>
 # include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
-#include "../Utils/ghome_box.h"
+#include "../Utils/GhomeBox.h"
 #include "../xml/pugixml.hpp"
 #include "../inference/Engine.h"
 //#include "../monitoring/InferenceAction.h"
@@ -20,7 +20,7 @@
 #define DROITS 0660 	// Droits d'accès
 #define REFERENCE "." 	//Fichier courant utilisé pour bâtir la clé publique
 
-SensorsCenter::SensorsCenter(int a_iBalServer, int a_iBalMonitoring, const char* a_pXmlFile) : m_iBalServer(a_iBalServer), m_iBalMonitoring(a_iBalMonitoring)
+SensorsCenter::SensorsCenter(int a_iBalServer, const char* a_pXmlFile) : m_iBalServer(a_iBalServer)
 {
 	ParserXML("src/etc/sensors.xml");
 	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
@@ -52,17 +52,17 @@ void SensorsCenter::Run()
 	int iSensorValue = 0;
 	while(true)
 	{
-		if(ghome_box::receive_message(m_iBalModel, iSensorId, iSensorValue))
+		if(GhomeBox::receive_message(m_iBalModel, iSensorId, iSensorValue))
 		{
 			mapSensors::iterator it = m_sensors.find(iSensorId);
 			if(it != m_sensors.end())
 			{
-				ghome_box::send_actuator_box(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
+				GhomeBox::send_actuator_box(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
 				inference::Actions Actions = Engine.run(it->second.first, iSensorValue);
 				for(unsigned int i=0; i<Actions.size(); i++)
 				{
 					//std::cout << "Nouvelle action " << i << std::endl;
-					ghome_box::send_actuator_box(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
+					GhomeBox::send_actuator_box(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
 				}
 			}
 		}

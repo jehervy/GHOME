@@ -119,9 +119,9 @@ void *ServerPere::OpenSocket()
 				if((m_iPFileDescriptor>0)&(m_bSocketOpened))
 				{
 					m_iNbConnection=ServerPere::InsertFd(m_iPFileDescriptor);
-					int reussite;
+					//int reussite;
 					pthread_t thread_sock;
-					reussite = pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
+					/*reussite = */pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
 				}
 
 			}
@@ -193,7 +193,7 @@ int ServerPere::DeleteFd(int a_iFd)
 		{
 			element_found=true;
 			m_vVectorFd.erase(m_vVectorFd.begin()+position);
-			close(fd);
+			close(a_iFd);
 		}else
 		{
 			position++;

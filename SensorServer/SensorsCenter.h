@@ -17,7 +17,7 @@ typedef std::map<int, std::pair<int,int> > mapSensors;
 
 class SensorsCenter{
 	public:
-		SensorsCenter(int a_iBalServer, int a_iBalMonitoring, const char* a_pXmlFile);
+		SensorsCenter(int a_iBalServer, const char* a_pXmlFile);
 		virtual ~SensorsCenter();
 
 		void Start();
@@ -37,7 +37,6 @@ class SensorsCenter{
 
 		// ATTRIBUTS
 		int m_iBalServer;
-		int m_iBalMonitoring;
 		int m_iBalModel;
 
 		pthread_t m_thread;
