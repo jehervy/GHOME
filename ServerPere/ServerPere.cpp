@@ -35,7 +35,7 @@ ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
 		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
 /*
  * Constructeur surcharge ;
- * Appel la m√©thode de cr√©ation d'un socket dans un nouveau thread
+ * Appel la méthode de création d'un socket dans un nouveau thread
  */
 {
 		ServerPere::OpenThreadCommClient();
@@ -68,7 +68,7 @@ void *ServerPere::CreateCommClient()
 void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 /*
  * Methode static ouverte dans un nouveau thread
- * et appellant la m√©thode de gestion du socket
+ * et appellant la méthode de gestion du socket
  */
 {
 	ServerPere* p = (ServerPere*)a_pPtr;
@@ -144,7 +144,7 @@ int ServerPere::OpenThreadCommClient()
 
 void ServerPere::Wait()
 /*
- * Bloque l'execution de la tache mere jusqu'√† ce que le
+ * Bloque l'execution de la tache mere jusqu'à ce que le
  * thread de gestion de socket ne soit tue
  */
 {
@@ -206,7 +206,7 @@ int ServerPere::DeleteFd(int a_iFd)
 
 void ServerPere::SetOpened(bool a_bEtat)
 /*
- * Met √† jour l'etat du socket.
+ * Met à jour l'etat du socket.
  */
 {
 	m_bSocketOpened=a_bEtat;

@@ -30,7 +30,7 @@ public:
 	 */
 	int OpenThreadCommClient();
 	/*
-	 * Cr√©e un thread g√©rant le socket de communication
+	 * Crée un thread gérant le socket de communication
 	 * entre le serveur C++ et le client Web (Apache).
 	 * Appelle une methode static.
 	 */
@@ -38,7 +38,7 @@ public:
 	/*
 	 * Cree une instance de classe de communication_client
 	 * a chaque nouvelle connexion.
-	 * Est appel√©e dans un nouveau thread.
+	 * Est appelée dans un nouveau thread.
 	 */
 	static void  *sCreateCommClientCallBack(void* a_pPtr);
 	/*
@@ -48,9 +48,9 @@ public:
 	 */
 	void *OpenSocket();
 	/*
-	 * Cr√©e un socket serveur, et attend les
+	 * Crée un socket serveur, et attend les
 	 * connexions de clients.
-	 * G√®re la cr√©ation de file_descriptor.
+	 * Gère la création de file_descriptor.
 	 */
 	static void *sOpenSocketCallBack(void* a_pPtr);
 	/*
@@ -83,7 +83,7 @@ public:
 	 */
 	 void SetOpened(bool a_bEtat);
 	 /*
-	  * Met √† jour l'√©tat du socket
+	  * Met à jour l'état du socket
 	  */
 
 
