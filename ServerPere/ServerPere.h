@@ -28,7 +28,7 @@ public:
 	/*
 	 * Destructeur
 	 */
-	int OpenThreadCommClient();
+	int Start();
 	/*
 	 * Crée un thread gérant le socket de communication
 	 * entre le serveur C++ et le client Web (Apache).
@@ -75,7 +75,7 @@ public:
 	 * thread de gestion des connexions
 	 * clients.
 	 */
-	 void KillThread();
+	 void Stop();
 	/*
 	 * Ferme le socket.
 	 * Tue le thread de gestion des connexions

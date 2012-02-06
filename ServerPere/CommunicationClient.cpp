@@ -55,6 +55,8 @@ void CommunicationClient::FreeCreateBuffer(int a_iLongueur)
 	bzero(m_cBuffer,a_iLongueur);
 }
 
+
+
 void CommunicationClient::TransferMessage()
 /*
  * Gere les messages recues sur le socket (envoyes par les clients).
@@ -74,15 +76,15 @@ void CommunicationClient::TransferMessage()
  */
 {
 
-	   int n;
+	   int iNbOctets;
 	   m_bClientOpened=true;
 	   int iTailleALire = 1;
 	   int iTailleMessage;
 while(m_bClientOpened)
 {
 	CommunicationClient::FreeCreateBuffer(iTailleALire);
-	n=read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
-	if(n>0)
+	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+	if(iNbOctets>0)
 	{
 		m_iId=atoi(m_cBuffer);
 		CommunicationClient::FreeCreateBuffer(iTailleALire);
@@ -90,7 +92,7 @@ while(m_bClientOpened)
 		case 4 :
 			m_bClientOpened=false;
 			papa->SetOpened(false);
-			papa->KillThread();
+			papa->Stop();
 			break;
 		case 0 :
 			m_bClientOpened=false;
@@ -99,27 +101,27 @@ while(m_bClientOpened)
 		case 1 :
 			break;
 		case 2 :
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
 			iTailleMessage = atoi(m_cBuffer);
 			CommunicationClient::FreeCreateBuffer(iTailleMessage);
 			//Lecture de metric
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
 			m_iMetric = atoi(m_cBuffer);
 			CommunicationClient::FreeCreateBuffer(iTailleALire);
 			//Nombre d'octets pour room
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
 			iTailleMessage = atoi(m_cBuffer);
 			CommunicationClient::FreeCreateBuffer(iTailleMessage);
 			//Lecture de room
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
 			m_iRoom = atoi(m_cBuffer);
 			CommunicationClient::FreeCreateBuffer(iTailleALire);
 			//Nombre d'octets pour value
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleALire);
 			iTailleMessage = atoi(m_cBuffer);
 			CommunicationClient::FreeCreateBuffer(iTailleMessage);
 			//Lecture de value
-			n = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
+			iNbOctets = read(m_iPFileDescriptor, m_cBuffer, iTailleMessage);
 			m_iValue = atoi(m_cBuffer);
 
 			//Ecriture du message dans la boite aux lettres actuator
@@ -130,6 +132,9 @@ while(m_bClientOpened)
 			break;
 
 		}
+	} else
+	{
+		//TODO : errno
 	}
 
 
