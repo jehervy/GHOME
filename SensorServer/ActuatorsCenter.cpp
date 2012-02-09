@@ -7,7 +7,7 @@
 
 #include "ActuatorsCenter.h"
 #include "DataContext.h"
-#include "../Utils/ghome_box.h"
+#include "../Utils/GhomeBox.h"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
@@ -23,7 +23,7 @@ ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_
 {
 	parserXML(a_sXmlFile);
 	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
-	m_model = new EnOceanActuatorModel(m_iBalModel);
+	//m_model = new EnOceanActuatorModel(m_iBalModel);
 	m_model->start();
 
 	pthread_create(&m_thread, NULL, callback, this);
@@ -42,7 +42,7 @@ void ActuatorsCenter::run()
 	while(true)
 	{
 		int iTypeMes, iMetric, iRoom, iValue=0;
-		ghome_box::receive_message(m_iBalServer, iTypeMes, iMetric, iRoom, iValue);
+		GhomeBox::ReceiveMessage(m_iBalServer, iTypeMes, iMetric, iRoom, iValue);
 
 		cout<<"j'ai recu un message : " << iTypeMes << " " << iMetric << " " << iRoom << " " << iValue << endl;
 
@@ -53,7 +53,7 @@ void ActuatorsCenter::run()
 			if (iVirtualId != -1)
 			{
 				cout << "Id virtuel de l'actionneur : "<< iVirtualId << endl;
-				ghome_box::send_message(m_iBalModel,iVirtualId, iValue);
+				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
 				cout << "message envoyŽ ˆ la bal Model " << m_iBalModel<< endl;
 			}
 			else

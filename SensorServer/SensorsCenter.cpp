@@ -52,17 +52,17 @@ void SensorsCenter::Run()
 	int iSensorValue = 0;
 	while(true)
 	{
-		if(GhomeBox::receive_message(m_iBalModel, iSensorId, iSensorValue))
+		if(GhomeBox::ReceiveMessage(m_iBalModel, iSensorId, iSensorValue))
 		{
 			mapSensors::iterator it = m_sensors.find(iSensorId);
 			if(it != m_sensors.end())
 			{
-				GhomeBox::send_actuator_box(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
+				GhomeBox::SendActuatorBox(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
 				inference::Actions Actions = Engine.run(it->second.first, iSensorValue);
 				for(unsigned int i=0; i<Actions.size(); i++)
 				{
 					//std::cout << "Nouvelle action " << i << std::endl;
-					GhomeBox::send_actuator_box(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
+					GhomeBox::SendActuatorBox(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
 				}
 			}
 		}

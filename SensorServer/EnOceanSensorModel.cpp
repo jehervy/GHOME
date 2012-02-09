@@ -86,7 +86,7 @@ void EnOceanSensorModel::Run()
 						strncpy(substr, pData+4, 2);
 						substr[2] = '\0';
 
-						GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 40 - (xstrtoi(substr)*40/255));
+						GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 40 - (xstrtoi(substr)*40/255));
 
 						free(substr);
 					}
@@ -101,11 +101,11 @@ void EnOceanSensorModel::Run()
 
 						if (xstrtoi(substr)%2 == 0)
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
 						}
 						else
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
 						}
 
 						free(substr);
@@ -121,11 +121,11 @@ void EnOceanSensorModel::Run()
 
 						if (xstrtoi(substr)%2 == 0)
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
 						}
 						else
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
 						}
 
 						free(substr);
@@ -141,27 +141,27 @@ void EnOceanSensorModel::Run()
 					{
 						case 0:
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 0);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
 							break;
 						}
 						case 48:
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 1);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
 							break;
 						}
 						case 16:
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 2);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 2);
 							break;
 						}
 						case 112:
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 3);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 3);
 							break;
 						}
 						case 80:
 						{
-							GhomeBox::send_message(m_iBalCenter, it->second.virtualId, 4);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 4);
 							break;
 						}
 
