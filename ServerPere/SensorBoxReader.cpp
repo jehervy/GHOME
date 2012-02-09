@@ -54,7 +54,7 @@ int SensorBoxReader::Run()
 	{
 		cout << "Attente" << endl;
 
-		GhomeBox::receive_message(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
+		GhomeBox::ReceiveMessage(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
 
 		cout << "Rcv data" << endl;
 
@@ -74,7 +74,7 @@ int SensorBoxReader::Run()
 		  { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
 			  logEcriture->AddTuple("actuators_commands", iRoom, iMetric, iValue);
-			  GhomeBox::send_actuator_box(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
+			  GhomeBox::SendActuatorBox(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
 		  	}
 				//msgctl(sensorServerBox,IPC_RMID,0);
 		  }

@@ -115,7 +115,7 @@ while(m_bClientOpened)
 				cout << "Room : " << m_iRoom << endl;
 				cout << "Value : " << m_iValue << endl;
 			//Ecriture du message dans la boite aux lettres actuator
-			GhomeBox::send_actuator_box(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+			GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 
 			break;
 		case 3 :
