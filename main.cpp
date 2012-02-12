@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ServerPere/GhomeDatabase.h"
-#include "SensorServer/SensorsCenter.h"
+#include "Sensors/SensorsCenter.h"
 #include "config.h"
 #include "tache_mere.h"
 

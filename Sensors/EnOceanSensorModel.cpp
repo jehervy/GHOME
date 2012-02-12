@@ -6,7 +6,7 @@
  */
 
 #include "EnOceanSensorModel.h"
-#include "DataContext.h"
+#include "../Utils/DataContext.h"
 #include <iostream>
 # include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
