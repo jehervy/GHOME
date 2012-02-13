@@ -88,7 +88,7 @@ void *ServerPere::OpenSocket()
 
 	bzero(&sLocal, sizeof(sLocal));
 	sLocal.sin_family = AF_INET;
-	sLocal.sin_port = htons(3023);
+	sLocal.sin_port = htons(ServerPere::SERVER_PERE);
 	sLocal.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(sLocal.sin_zero), 8);
 	m_iSockfd = socket(AF_INET, SOCK_STREAM, 0);
