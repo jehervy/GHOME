@@ -5,8 +5,6 @@
  *      Author: Pierre
  */
 
-#include "SensorBoxReader.h"
-#include "../Utils/GhomeBox.h"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -16,8 +14,13 @@ using namespace std;
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/errno.h>
+#include <sstream>
 
-void perror(const char *a_pS);
+#include "SensorBoxReader.h"
+#include "../Utils/GhomeBox.h"
+#include "../Utils/SystemLog.h"
+
+//void perror(const char *a_pS);
 
 
 extern int errno ;
@@ -35,7 +38,19 @@ SensorBoxReader::SensorBoxReader(int a_iSensorServerBox, int a_iActuatorServerBo
 		//cout << "id boite " << sensorServerBox << endl;
 		//cout << "Appel constructeur"<<endl;
 
-		OpenThreadSensorBoxReader();
+
+		int retour = OpenThreadSensorBoxReader();
+
+		if (retour < 0)
+		{
+			std::ostringstream oss;
+			oss << "Création du thread de lecture des messages des capteurs, retour : " << retour ;
+			SystemLog::AddLog(SystemLog::ERROR, oss.str());
+		}
+		else
+		{
+			SystemLog::AddLog(SystemLog::SUCCESS, "Création du thread de lecture des messages des capteurs");
+		}
 }
 
 
@@ -43,44 +58,86 @@ SensorBoxReader::SensorBoxReader(int a_iSensorServerBox, int a_iActuatorServerBo
 int SensorBoxReader::Run()
 {
 
-	int iId, iMetric, iRoom, iValue;
+	int iId, iMetric, iRoom, iValue, iReturn, bReturn;
 	cout << "Debut du run" << endl;
 
 	GhomeDatabase* logEcriture = new GhomeDatabase("localhost", "boby", "ghome", "GHOME");
-	logEcriture->OpenDatabase();
-
+	iReturn = logEcriture->OpenDatabase();
+	if (iReturn == 0)
+	{
+		SystemLog::AddLog(SystemLog::SUCCESS, "Ouverture de la base de données");
+	}
+	else
+	{
+		std::ostringstream oss;
+		oss << "ouverture de la base de données, retour : " << iReturn ;
+		SystemLog::AddLog(SystemLog::ERROR, oss.str());
+	}
 	// read the message from queue
 	for(;;)
 	{
-		cout << "Attente" << endl;
+		bReturn = GhomeBox::ReceiveMessage(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
+		if (bReturn)
+		{
+			SystemLog::AddLog(SystemLog::SUCCESS, "Lecture d'un message capteur");
+		}
+		else
+		{
+			std::ostringstream oss;
+			oss << "Lecture d'un message capteur, retour : " << iReturn ;
+			SystemLog::AddLog(SystemLog::ERROR, oss.str());
 
-		GhomeBox::ReceiveMessage(m_iSensorServerBox, iId, iMetric, iRoom, iValue);
-
-		cout << "Rcv data" << endl;
+		}
 
 		  if(iId==1) //C'est un message de type information
 		  {
 		  	// TODO : base de donnee
-			  if(logEcriture->AddTuple("sensors_values", iRoom, iMetric, iValue) == 0)
+			  iReturn = logEcriture->AddTuple("sensors_values", iRoom, iMetric, iValue);
+			  if( iReturn == 0)
 			  {
-				  cout << "Ecriture OK" << endl;
+				  SystemLog::AddLog(SystemLog::SUCCESS, "Ecriture d'une valeur de capteur en BDD");
+
 			  }
 			  else
 			  {
-				  cout << "Big fail !!!" << endl;
+				  std::ostringstream oss;
+				  oss << "Ecriture d'une valeur de capteur en BDD, retour : " << iReturn ;
+				  SystemLog::AddLog(SystemLog::ERROR, oss.str());
+
 			  }
 		  }
 		  else if(iId==2)
 		  { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
-			  logEcriture->AddTuple("actuators_commands", iRoom, iMetric, iValue);
-			  GhomeBox::SendActuatorBox(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
-		  	}
-				//msgctl(sensorServerBox,IPC_RMID,0);
+			  iReturn = logEcriture->AddTuple("actuators_commands", iRoom, iMetric, iValue);
+			  if( iReturn == 0)
+			  {
+				  SystemLog::AddLog(SystemLog::SUCCESS, "Ecriture d'un ordre d'actionneur en BDD");
+
+			  }
+			  else
+			  {
+				  std::ostringstream oss;
+				  oss << "Ecriture d'un ordre d'actionneur en BDD, retour : " << iReturn ;
+				  SystemLog::AddLog(SystemLog::ERROR, oss.str());
+
+			  }
+			  bReturn =  GhomeBox::SendActuatorBox(m_iActuatorServerBox, iId,iMetric,iRoom,iValue);
+			  if (bReturn)
+				{
+					SystemLog::AddLog(SystemLog::SUCCESS, "Envoi d'un ordre à un actionneur");
+				}
+				else
+				{
+					std::ostringstream oss;
+					oss << "Envoi d'un ordre à un actionneur, retour : " << bReturn ;
+					SystemLog::AddLog(SystemLog::ERROR, oss.str());
+
+				}
 		  }
 
-	//}
-		return 0;
+	}
+	return 0;
 }
 
 
@@ -98,10 +155,21 @@ int SensorBoxReader::OpenThreadSensorBoxReader()
 {
 	cout << "On est dans open_thread_sensor_box_reader"<<endl;
 	int iCheck = pthread_create(&m_threadSensorBoxReader, NULL, &SensorBoxReader::sInit, this);
+	if (iCheck < 0)
+	{
+		std::ostringstream oss;
+		oss << "Création d'un thread de lecture des messages des capteurs, retour : " << iCheck ;
+		SystemLog::AddLog(SystemLog::ERROR, oss.str());
+	}
+	else
+	{
+		SystemLog::AddLog(SystemLog::SUCCESS, "Création d'un thread de lecture des messages des capteurs");
+	}
 	return iCheck;
 }
 
 void SensorBoxReader::Wait()
 {
 	pthread_join (m_threadSensorBoxReader, NULL);
+	SystemLog::AddLog(SystemLog::SUCCESS, "Attente sur le thread de lecture des messages des capteurs");
 }

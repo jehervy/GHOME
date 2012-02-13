@@ -11,7 +11,6 @@
 #include <pthread.h>
 #include <string>
 
-
 static pthread_mutex_t myMutex;
 
 class SystemLog {
@@ -20,7 +19,7 @@ public:
 	//Ajoute le message a_sMessage associé au type a_itype à la table system_logs
 	static int AddLog(int a_itype, std::string a_sMessage);
 	virtual ~SystemLog();
-	static const int  ERROR = 0;
+	static const int ERROR = 0;
 	static const int SUCCESS = 1;
 };
 

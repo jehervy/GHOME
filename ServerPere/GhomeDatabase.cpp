@@ -17,10 +17,13 @@ int GhomeDatabase::OpenDatabase()
 
 	 if (!mysql_real_connect(m_pConn, m_sHost.c_str(), m_sUser.c_str() , m_sPw.c_str(), m_sDb.c_str(), 0, NULL, 0))
 	 {
-	    return -1;
+		return -1;
+	 }
+	 else
+	 {
+		 return 0;
 	 }
 
-	return 0;
 }
 
 int GhomeDatabase::CloseDatabase() {
@@ -36,12 +39,16 @@ int GhomeDatabase::AddTuple(string a_sTable, int a_iRoom,int a_iMetric,int a_iVa
 	oss << "INSERT INTO " << a_sTable << " VALUES('', default, '" << a_iRoom << "' , '" << a_iMetric << "' , '" << a_iValue << "')" ;
 
 	std::string sReq = oss.str();
-			   /* Execution de la requete */
-			   if (mysql_query(m_pConn, sReq.c_str()))
-			   {
-			      return -1;
-			   }
-	return 0;
+   /* Execution de la requete */
+   if (mysql_query(m_pConn, sReq.c_str()))
+   {
+	  return -1;
+   }
+   else
+   {
+	   return 0;
+   }
+
 }
 
 int GhomeDatabase::AddTuple(string a_sTable, int a_iType, string a_sMessage)
@@ -50,12 +57,15 @@ int GhomeDatabase::AddTuple(string a_sTable, int a_iType, string a_sMessage)
 	oss << "INSERT INTO " << a_sTable << " VALUES('', default, '" << a_iType << "' , '" << a_sMessage << "')" ;
 
 	std::string sReq = oss.str();
-			   /* Execution de la requete */
-			   if (mysql_query(m_pConn, sReq.c_str()))
-			   {
-			      return -1;
-			   }
-	return 0;
+   /* Execution de la requete */
+   if (mysql_query(m_pConn, sReq.c_str()))
+   {
+	  return -1;
+   }
+   else
+   {
+	   return 0;
+   }
 }
 
 GhomeDatabase::GhomeDatabase(string a_sHost, string a_sUser, string a_sPw, string a_sDb)

@@ -11,9 +11,15 @@
 int SystemLog::AddLog(int a_itype, string a_sMessage)
 {
 	GhomeDatabase* pLogSys = new GhomeDatabase("localhost", "boby", "ghome", "GHOME");
-	pLogSys->OpenDatabase();
+	if (pLogSys->OpenDatabase() != 0)
+	{
+		return -1;
+	}
 	pthread_mutex_lock (&myMutex);
-	pLogSys->AddTuple("system_logs", a_itype, a_sMessage);
+	if (pLogSys->AddTuple("system_logs", a_itype, a_sMessage) != 0)
+	{
+		return -1;
+	}
 	pthread_mutex_unlock (&myMutex);
 	pLogSys->CloseDatabase();
 	return 0;
