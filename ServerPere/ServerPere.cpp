@@ -98,11 +98,11 @@ void *ServerPere::OpenSocket()
 	iRet = bind(m_iSockfd, (struct sockaddr *)&sLocal, sizeof(sockaddr));
 	if(iRet!=0)
 	{
-		SystemLog::AddLog(SystemLog::ERROR, "Le bind du socket a rencontre une erreur");
+		SystemLog::AddLog(SystemLog::ERROR, "Bind socket serveur, retour : "+errno);
 		ServerPere::SetOpened(false);
 	} else
 	{
-		SystemLog::AddLog(SystemLog::SUCCESS, "Le bind du socket a fonctionne");
+		SystemLog::AddLog(SystemLog::SUCCESS, "Bind socket serveur");
 		ServerPere::SetOpened(true);
 		if(listen(m_iSockfd, 5) == -1)
 		{
@@ -127,7 +127,7 @@ void *ServerPere::OpenSocket()
 					{
 						SystemLog::AddLog(SystemLog::SUCCESS, "Thread de client ouvert");
 					} else {
-						SystemLog::AddLog(SystemLog::ERROR, "Thread de client non ouvert");
+						SystemLog::AddLog(SystemLog::ERROR, "Thread de client non ouvert, retour : "+errno);
 					}
 				}
 

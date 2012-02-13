@@ -11,6 +11,7 @@
 #include "CommunicationClient.h"
 #include <vector>
 #include "../Utils/SystemLog.h"
+#include <errno.h>
 
 
 class ServerPere {
