@@ -17,6 +17,9 @@ class ActuatorsCenter{
 	public:
 		ActuatorsCenter(int a_iBalServer, const std::string a_sXmlFile);
 		virtual ~ActuatorsCenter();
+		void Start();
+		void Stop();
+
 
 	private:
 		// METHODES
@@ -28,6 +31,10 @@ class ActuatorsCenter{
 		void parserXML(const std::string a_sXmlFile);
 
 		void run();
+
+
+
+
 
 		static void *callback(void *cxt)
 		{
@@ -46,11 +53,11 @@ class ActuatorsCenter{
 		int m_iBalServer;
 		int m_iBalModel;
 
-		pthread_t m_thread;
+		pthread_t m_pThread;
 
-		mapActuators m_actuators;
+		mapActuators m_pActuators;
 
-		EnOceanActuatorModel *m_model;
+		EnOceanActuatorModel *m_pModel;
 
 
 };

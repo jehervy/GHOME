@@ -18,7 +18,7 @@ private:
 		//AbstractModel *model = static_cast<AbstractModel*> (ctx);
 		//model->run();
 		((AbstractModel*)a_pCtx)->Run();
-		return NULL;
+		return 0;
 	}
 
 	virtual void Run() = 0;
@@ -40,7 +40,7 @@ public:
 
 	virtual void Wait()
 	{
-		pthread_join(m_thread, NULL);
+		pthread_join(m_thread, 0);
 	}
 
 protected:

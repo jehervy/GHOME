@@ -27,7 +27,7 @@ public:
 
 private:
 	// -------------------------------- METHODES --------------------------------
-	virtual void run();
+	virtual void Run();
 
 	/*
 	 * M�thode permettant de lire le fichier xml qui contient toutes les
@@ -46,7 +46,14 @@ private:
 	 * Cette m�thode cr�e la trame � destination du capteur d'id physique id_physique
 	 * correspondant � l'information� transmettre : value.
 	 */
-	balMessage createOrder(std::string a_sPhysicalId, int a_iValue);
+	void createOrder(std::string a_sPhysicalId, int a_iValue, balMessage &mess);
+
+	std::string m_psEntete;
+	std::string m_psActivate;
+	std::string m_psDesactivate;
+	std::string m_psStatus;
+	std::string m_psChecksum;
+
 
 
 	// -------------------------------- ATTRIBUTS --------------------------------

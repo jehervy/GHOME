@@ -6,6 +6,8 @@
  */
 
 #include "ActuatorsCenter.h"
+#include "EnOceanActuatorModel.h"
+#include "../Utils/DataContext.h"
 #include "../Utils/GhomeBox.h"
 #include <iostream>
 #include <string>
@@ -22,44 +24,67 @@ ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_
 {
 	parserXML(a_sXmlFile);
 	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
-	//m_model = new EnOceanActuatorModel(m_iBalModel);
-	m_model->start();
+	if(m_iBalModel == -1)
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Reception message actuatorServerBox");
+	else SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Reception message actuatorServerBox");
 
-	pthread_create(&m_thread, NULL, callback, this);
+	m_pModel = new EnOceanActuatorModel(m_iBalModel);
+	SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Creation du modele");
+
+	m_pModel->start();
 }
 
 ActuatorsCenter::~ActuatorsCenter()
 {
-	m_model->stop();
-	pthread_cancel(m_thread);
+	m_pModel->stop();
 	msgctl(m_iBalModel,IPC_RMID,0);
 }
 
+void ActuatorsCenter::Start()
+{
+	if (pthread_create(&m_pThread, NULL, callback, this)==0)
+		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Lancement du thread");
+	else
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Lancement du thread");
+}
+
+void ActuatorsCenter::Stop()
+{
+	if (pthread_cancel(m_pThread)==0)
+		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Annulation du thread");
+	else
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Annulation du thread");
+}
+
+
 void ActuatorsCenter::run()
 {
-	cout << "RUN ActuatorsCenter" << endl;
 	while(true)
 	{
 		int iTypeMes, iMetric, iRoom, iValue=0;
-		GhomeBox::ReceiveMessage(m_iBalServer, iTypeMes, iMetric, iRoom, iValue);
 
-		cout<<"j'ai recu un message : " << iTypeMes << " " << iMetric << " " << iRoom << " " << iValue << endl;
+		if (GhomeBox::ReceiveMessage(m_iBalServer, iTypeMes, iMetric, iRoom, iValue))
+			SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : message receptionne de actuatorServerBox");
+		else SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : message receptionne de actuatorServerBox");
 
-		if (iTypeMes == 2) // Correspond � un ordre de pilotage
+		if (iTypeMes == 2) // Correspond a un ordre de pilotage
 		{
-			cout << "ordre de pilotage en traitement" << endl;
 			int iVirtualId = findVirtualId(iMetric, iRoom);
-			if (iVirtualId != -1)
+			if (iVirtualId == -1)
 			{
-				cout << "Id virtuel de l'actionneur : "<< iVirtualId << endl;
 				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
-				cout << "message envoy� � la bal Model " << m_iBalModel<< endl;
+				SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : message transmis a la bal du Model");
+
 			}
 			else
-				cout << "Aucun capteur ne correspond � ces informations :" << endl << "metric : " << iMetric << ", room : " << iRoom << "." << endl;
+			{
+				string log = "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : " + iMetric + ", room : " + iRoom;
+				SystemLog::AddLog(SystemLog::ERROR, log.c_str());
+			}
+
 		}
 		else
-			cout << "Warning : le message re�ue par ActuatorCenter n'est pas un ordre de pilotage. Ce dernier sera ignor�." << endl;
+			SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Le message recu n'est pas un ordre de pilotage. Ce dernier sera ignore.");
 	}
 }
 
@@ -69,28 +94,33 @@ void ActuatorsCenter::parserXML(const string a_sXmlFile)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(a_sXmlFile.c_str());
 	pugi::xml_node xmlActuators = doc.child("actuators");
-	cout << "Load result: " << result.description() << endl;
 
-	for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
+	if (strcmp(result.description(),"No error")==0)
 	{
-		std::pair<std::pair<int,int>,int>  actuatorNode;
+		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Parsing fichier xml actuators");
+		for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
+		{
+			std::pair<std::pair<int,int>,int>  actuatorNode;
 
-		int iVirtualId = actuatorsIt->attribute("id").as_int();
-		int iMetricId = atoi(actuatorsIt->child("metric").child_value());
-		int iRoomId = atoi(actuatorsIt->child("room").child_value());
+			int iVirtualId = actuatorsIt->attribute("id").as_int();
+			int iMetricId = atoi(actuatorsIt->child("metric").child_value());
+			int iRoomId = atoi(actuatorsIt->child("room").child_value());
 
-		(actuatorNode.first).first = iMetricId;
-		(actuatorNode.first).second = iRoomId;
-		actuatorNode.second = iVirtualId;
+			(actuatorNode.first).first = iMetricId;
+			(actuatorNode.first).second = iRoomId;
+			actuatorNode.second = iVirtualId;
 
-		this->m_actuators.insert(actuatorNode);
+			this->m_pActuators.insert(actuatorNode);
+		}
 	}
+	else
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Parsing fichier xml actuators");
 }
 
 int ActuatorsCenter::findVirtualId(int a_iMetric, int a_iRoom)
 {
 	mapActuators::iterator itMapActuators;
-	itMapActuators=this->m_actuators.find(std::pair<int,int> (a_iMetric, a_iRoom));
-	int iRes = (itMapActuators != this->m_actuators.end())? itMapActuators->second : -1;
+	itMapActuators=this->m_pActuators.find(std::pair<int,int> (a_iMetric, a_iRoom));
+	int iRes = (itMapActuators != this->m_pActuators.end())? itMapActuators->second : -1;
 	return iRes;
 }

@@ -24,7 +24,11 @@ using namespace std;
 EnOceanActuatorModel::EnOceanActuatorModel(int a_iBal) : AbstractModel(a_iBal)
 {
 	m_iBalNetwork = msgget (ftok (REFERENCE, '3'), IPC_CREAT | DROITS );
-	parserXml("src/etc/enOceanActuatorsId.xml");
+	if(m_iBalNetwork == -1)
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorModel : Reception message BalNetwork");
+	else SystemLog::AddLog(SystemLog::SUCCES, "ActuatorModel : Reception message BalNetwork");
+
+	parserXml("etc/enOceanActuatorsId.xml");
 }
 
 void EnOceanActuatorModel::parserXml(string a_sXmlFile)
@@ -32,36 +36,51 @@ void EnOceanActuatorModel::parserXml(string a_sXmlFile)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(a_sXmlFile.c_str());
 	pugi::xml_node xmlActuators = doc.child("actuators");
-	cout << "Load result: " << result.description() << endl;
 
-	for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
-	{
-		int iVirtualId = atoi(actuatorsIt->child("virtualId").child_value());
-		const string sPhysicalId = actuatorsIt->child("physicalId").child_value();
-		this->m_actuatorsId.insert(pair<int,const string> (iVirtualId,sPhysicalId));
-	}
+	if (strcmp(result.description(),"No error")==0)
+		{
+		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorModel : Parsing fichier xml actuatorsId");
+		for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
+		{
+			if (strcmp(actuatorsIt->name(), "entete") == 0)
+				m_psEntete = actuatorsIt->child_value();
+			if (strcmp(actuatorsIt->name(), "activate") == 0)
+				m_psActivate = actuatorsIt->child_value();
+			if (strcmp(actuatorsIt->name(), "desactivate") == 0)
+				m_psDesactivate = actuatorsIt->child_value();
+			if (strcmp(actuatorsIt->name(), "status") == 0)
+				m_psStatus = actuatorsIt->child_value();
+			if (strcmp(actuatorsIt->name(), "checksum") == 0)
+				m_psChecksum = actuatorsIt->child_value();
+			if (strcmp(actuatorsIt->name(), "actuator") == 0)
+			{
+				int iVirtualId = atoi(actuatorsIt->child("virtualId").child_value());
+				const string sPhysicalId = actuatorsIt->child("physicalId").child_value();
+				this->m_actuatorsId.insert(pair<int,const string> (iVirtualId,sPhysicalId));
+			}
+		}
+		}
+	else
+		SystemLog::AddLog(SystemLog::ERROR, "ActuatorModel : Parsing fichier xml actuatorsId");
+
 }
 
-void EnOceanActuatorModel::run()
+void EnOceanActuatorModel::Run()
 {
-	cout << "RUN EnOceanActuatorModel" << endl;
 	balMessage msg;
 	while(true)
 	{
 		int iVirtualId, iValue;
 		string sPhysicalId;
 
-		cout << "balcenter du modele : " << m_iBalCenter << endl;
 		GhomeBox::ReceiveMessage(m_iBalCenter, iVirtualId, iValue);
-
-		cout<<"j'ai recu un message : " << iVirtualId << " " << iValue << endl;
+		cout << "Message recu : " << iVirtualId << " " << iValue << endl;
 
 		sPhysicalId = findId(iVirtualId);
 
-		cout<<"id physique de l'actionneur : " << sPhysicalId << endl;
+		createOrder(sPhysicalId, iValue, msg);
 
-		msg = createOrder(sPhysicalId, iValue);
-
+		cout << "Sending order " << msg.mtext << " to " << sPhysicalId << endl;
 		msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
 	}
 }
@@ -96,9 +115,22 @@ string EnOceanActuatorModel::findId(int a_iVirtualId){
 	return sRes;
 }
 
-balMessage EnOceanActuatorModel::createOrder(string a_sPhysicalId, int iValue)
+void EnOceanActuatorModel::createOrder(string a_sPhysicalId, int iValue, balMessage &res)
 {
-	balMessage res;
+	res.mtype = 1;
+	string message;
+	// Construction de l'entte
+	strcat(res.mtext, m_psEntete.c_str());
+	// Remplissage des databytes selon l'ordre de pilotage
+	if (iValue == 0)
+		strcat(res.mtext, m_psDesactivate.c_str());
+	if (iValue == 1)
+		strcat(res.mtext, m_psActivate.c_str());
 
-	return res;
+	// Remplissage de l'id de destination
+	strcat(res.mtext, a_sPhysicalId.c_str());
+
+	// Status et checksum
+	strcat(res.mtext, m_psStatus.c_str());
+	strcat(res.mtext, m_psChecksum.c_str());
 }
