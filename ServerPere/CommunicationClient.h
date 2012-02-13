@@ -15,7 +15,7 @@ using namespace std;
 #include <netinet/in.h>
 #include "ServerPere.h"
 #include "../Utils/GhomeBox.h"
-
+#include <errno.h>
 
 class CommunicationClient {
 public:

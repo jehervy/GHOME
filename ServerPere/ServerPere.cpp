@@ -31,7 +31,7 @@ ServerPere::~ServerPere()
 
 /*
  * Constructeur surcharge ;
- * Appel la m√©thode de cr√©ation d'un socket dans un nouveau thread
+ * Appel la méthode de création d'un socket dans un nouveau thread
  */
 ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
 		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
@@ -70,6 +70,7 @@ void *ServerPere::CreateCommClient()
  */
 void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 {
+	cout<<"Callback"<<endl;
 	ServerPere* p = (ServerPere*)a_pPtr;
 	p->OpenSocket();
 	return (0);
@@ -82,13 +83,14 @@ void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
  */
 void *ServerPere::OpenSocket()
 {
+	cout<<"open"<<endl;
 	unsigned int iSize;
 	struct sockaddr_in sLocal;
 	struct sockaddr_in sRemote;
 
 	bzero(&sLocal, sizeof(sLocal));
 	sLocal.sin_family = AF_INET;
-	sLocal.sin_port = htons(ServerPere::SERVER_PERE);
+	sLocal.sin_port = htons(ServerPere::SERVER_PERE_PORT);
 	sLocal.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(sLocal.sin_zero), 8);
 	m_iSockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -144,14 +146,14 @@ int ServerPere::Start()
  * Cree un nouveau thread pour la gestion du socket
  */
 {
-
+	cout<<"start"<<endl;
 	int iCheck = pthread_create(&m_ptThreadCommClient, NULL, &ServerPere::sOpenSocketCallBack, this);
 	return iCheck;
 }
 
 void ServerPere::Wait()
 /*
- * Bloque l'execution de la tache mere jusqu'√† ce que le
+ * Bloque l'execution de la tache mere jusqu'à ce que le
  * thread de gestion de socket ne soit tue
  */
 {
@@ -213,7 +215,7 @@ int ServerPere::DeleteFd(int a_iFd)
 
 void ServerPere::SetOpened(bool a_bEtat)
 /*
- * Met √† jour l'etat du socket.
+ * Met à jour l'etat du socket.
  */
 {
 	m_bSocketOpened=a_bEtat;
