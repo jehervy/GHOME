@@ -15,6 +15,7 @@
 
 ServerPere* papa;
 
+
 CommunicationClient::CommunicationClient()
 /*
  * Constructeur
@@ -60,16 +61,18 @@ int CommunicationClient::ReadMessage(int a_iTailleALire)
 	int iMessage;
 	CommunicationClient::FreeCreateBuffer(a_iTailleALire);
 	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, a_iTailleALire);
-	cout << "Octets : " << iNbOctets << endl;
 	if(iNbOctets>0)
 	{
 		iMessage = atoi(m_cBuffer);
+	} else
+	{
+		iMessage=-1;
 	}
 
 	return iMessage;
 }
 
-int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage)
+int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string a_sMessage)
 {
 	int iTailleMessage;
 	CommunicationClient::FreeCreateBuffer(a_iTailleALire);
@@ -78,6 +81,15 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage)
 		{
 		iTailleMessage = atoi(m_cBuffer);
 		a_iMessage=CommunicationClient::ReadMessage(iTailleMessage);
+		if(a_iMessage!=-1)
+			{
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
+			} else {
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
+			}
+		} else
+		{
+			iNbOctets=-1;
 		}
 	return iNbOctets;
 }
@@ -87,10 +99,18 @@ void CommunicationClient::TransferMessage()
 
 {
 	   m_bClientOpened=true;
+	   stringstream ss;
+	   ss << m_iPFileDescriptor;
+	   SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
 
 while(m_bClientOpened)
 {
+	m_iId = -1;
 	m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
+	if(m_iId==-1)
+	{
+		SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
+	}
 
 		switch(m_iId){
 			case 4 :
@@ -105,18 +125,18 @@ while(m_bClientOpened)
 			case 1 :
 				break;
 			case 2 :
-				iNbOctets = CommunicationClient::ReadMessage(1, m_iMetric);
-				cout<<"Nb octets : "<< iNbOctets << endl;
-				iNbOctets = CommunicationClient::ReadMessage(1, m_iRoom);
-				cout << "Nb octets : " << iNbOctets << endl;
-				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue);
-				cout << "Nb octets : " << iNbOctets << endl;
-				cout << "Metric : " << m_iMetric << endl;
-				cout << "Room : " << m_iRoom << endl;
-				cout << "Value : " << m_iValue << endl;
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iMetric, "metric");
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iRoom, "room");
+				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue, "value");
 			//Ecriture du message dans la boite aux lettres actuator
-			GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
-
+			bool bSendMess;
+			bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+			if(bSendMess==true)
+			{
+				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
+			} else {
+				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
+			}
 			break;
 		case 3 :
 			break;

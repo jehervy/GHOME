@@ -10,6 +10,8 @@
 #include <pthread.h>
 #include "CommunicationClient.h"
 #include <vector>
+#include "../Utils/SystemLog.h"
+#include <errno.h>
 
 
 class ServerPere {
@@ -95,6 +97,7 @@ private :
 	int m_iActuatorServerBox;
 	int m_iPFileDescriptor;
 	int m_iNbConnection;
+	static const int SERVER_PERE = 3000;
 };
 
 #endif /* SERVERPERE_H_ */

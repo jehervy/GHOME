@@ -20,23 +20,21 @@ using namespace std;
 
 vector<int> m_vVectorFd;
 
-
-ServerPere::~ServerPere()
 /*
  * Constructeur
  */
+ServerPere::~ServerPere()
 {
 
 }
 
 
-
-ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
-		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
 /*
  * Constructeur surcharge ;
  * Appel la méthode de création d'un socket dans un nouveau thread
  */
+ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
+		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
 {
 
 }
@@ -45,54 +43,52 @@ ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
 
 
 
-
-void *ServerPere::sCreateCommClientCallBack(void * a_pPtr)
 /*
  * Methode static ouverte dans un nouveau thread
  * et appelant la methode d'instanciation de client
  */
+void *ServerPere::sCreateCommClientCallBack(void * a_pPtr)
 {
 	ServerPere* p = (ServerPere*)a_pPtr;
 	p->CreateCommClient();
 	return (0);
 }
 
-void *ServerPere::CreateCommClient()
 /*
  * Ouvre une instance de communication_client
  */
+void *ServerPere::CreateCommClient()
 {
 	cout << "Create comm client : Socket : " << m_iPFileDescriptor << endl;
 	CommunicationClient comm_client(m_iSensorServerBox, m_iActuatorServerBox, m_iPFileDescriptor, m_iSockfd, this);
 	return (0);
 }
 
-void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 /*
  * Methode static ouverte dans un nouveau thread
- * et appellant la méthode de gestion du socket
+ * et appellant la methode de gestion du socket
  */
+void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 {
 	ServerPere* p = (ServerPere*)a_pPtr;
 	p->OpenSocket();
 	return (0);
 }
 
-void *ServerPere::OpenSocket()
 /*
  * Ouvre un nouveau socket et attend la connexion
  * de nouveaux clients, cree un nouveau thread pour
  * chaque client
  */
+void *ServerPere::OpenSocket()
 {
-	cout << "Open Socket" << endl;
 	unsigned int iSize;
 	struct sockaddr_in sLocal;
 	struct sockaddr_in sRemote;
 
 	bzero(&sLocal, sizeof(sLocal));
 	sLocal.sin_family = AF_INET;
-	sLocal.sin_port = htons(3023);
+	sLocal.sin_port = htons(ServerPere::SERVER_PERE);
 	sLocal.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(sLocal.sin_zero), 8);
 	m_iSockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -102,11 +98,11 @@ void *ServerPere::OpenSocket()
 	iRet = bind(m_iSockfd, (struct sockaddr *)&sLocal, sizeof(sockaddr));
 	if(iRet!=0)
 	{
-		//TODO : errno
+		SystemLog::AddLog(SystemLog::ERROR, "Bind socket serveur, retour : "+errno);
 		ServerPere::SetOpened(false);
 	} else
 	{
-		cout<<"Bind reussi"<<endl;
+		SystemLog::AddLog(SystemLog::SUCCESS, "Bind socket serveur");
 		ServerPere::SetOpened(true);
 		if(listen(m_iSockfd, 5) == -1)
 		{
@@ -118,18 +114,20 @@ void *ServerPere::OpenSocket()
 			{
 
 				m_iPFileDescriptor = accept(m_iSockfd, (struct sockaddr *)&sRemote, &iSize);
+				SystemLog::AddLog(SystemLog::SUCCESS, "Serveur en attente de connexion client");
 
 				if((m_iPFileDescriptor>0)&(m_bSocketOpened))
 				{
+					SystemLog::AddLog(SystemLog::SUCCESS, "Connexion d'un client");
 					m_iNbConnection=ServerPere::InsertFd(m_iPFileDescriptor);
 					int iReussite;
 					pthread_t thread_sock;
 					iReussite = pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
 					if(iReussite==0)
 					{
-						cout << " Connexion client reussie" << endl;
+						SystemLog::AddLog(SystemLog::SUCCESS, "Thread de client ouvert");
 					} else {
-						//TODO : errno
+						SystemLog::AddLog(SystemLog::ERROR, "Thread de client non ouvert, retour : "+errno);
 					}
 				}
 
