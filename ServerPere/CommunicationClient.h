@@ -50,7 +50,7 @@ private :
 	bool m_bClientOpened;
 	int m_iSocket;
 	char * m_cBuffer;
-	int m_iId = -1;
+	int m_iId;
 	int m_iMetric;
 	int m_iRoom;
 	int m_iValue;

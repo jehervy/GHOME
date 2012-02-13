@@ -15,6 +15,7 @@
 
 ServerPere* papa;
 
+
 CommunicationClient::CommunicationClient()
 /*
  * Constructeur
@@ -82,9 +83,9 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 		a_iMessage=CommunicationClient::ReadMessage(iTailleMessage);
 		if(a_iMessage!=-1)
 			{
-				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("<<a_sMessage<<")");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
 			} else {
-				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("<<a_sMessage<<"), retour : ");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
 			}
 		} else
 		{
@@ -98,10 +99,13 @@ void CommunicationClient::TransferMessage()
 
 {
 	   m_bClientOpened=true;
-	   SystemLog::AddLog(SystemLog::SUCCESS, "Client "<<m_iPFileDescriptor<<" ouvert");
+	   stringstream ss;
+	   ss << m_iPFileDescriptor;
+	   SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
 
 while(m_bClientOpened)
 {
+	m_iId = -1;
 	m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
 	if(m_iId==-1)
 	{
@@ -125,12 +129,13 @@ while(m_bClientOpened)
 				iNbOctets = CommunicationClient::ReadMessage(1, m_iRoom, "room");
 				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue, "value");
 			//Ecriture du message dans la boite aux lettres actuator
-			bool bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+			bool bSendMess;
+			bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 			if(bSendMess==true)
 			{
-				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "<<m_iPFileDescriptor<<")");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
 			} else {
-				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "<<m_iPFileDescriptor<<"), retour : ");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
 			}
 			break;
 		case 3 :
