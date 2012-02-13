@@ -35,5 +35,8 @@
         <actuator>
             <formatter type="boolean" yes="Courant délivré" no="Courant non délivré" />
         </actuator>
+        <sensor>
+            <formatter type="nullOrString" format="Bouton {{ value }} actif" no="Boutons inactifs" />
+        </sensor>
     </metric>
 </metrics>
