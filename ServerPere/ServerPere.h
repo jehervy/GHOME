@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include "CommunicationClient.h"
 #include <vector>
-
+#include "../Utils/SystemLog.h"
 
 class ServerPere {
 public:

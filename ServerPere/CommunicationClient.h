@@ -41,7 +41,8 @@ public:
 	 * Prend en parametre la taille du buffer cree.
 	 */
 	int ReadMessage(int a_iTailleALire);
-	int ReadMessage(int a_TailleALire, int &a_iMessage);
+	int ReadMessage(int a_TailleALire, int &a_iMessage, string a_sMessage);
+	void EtatLecture();
 private :
 	int m_iSensorServerBox;
 	int m_iActuatorServerBox;
@@ -49,7 +50,7 @@ private :
 	bool m_bClientOpened;
 	int m_iSocket;
 	char * m_cBuffer;
-	int m_iId;
+	int m_iId = -1;
 	int m_iMetric;
 	int m_iRoom;
 	int m_iValue;
