@@ -11,7 +11,6 @@ struct Block
 	unsigned size; //Size of the block, in bytes
 	Block *next;   //Pointer to the next block, NULL if none
 	char free;     //Is the block free?
-	char data[1];  //Pointer to the first byte of data
 };
 
 /**
@@ -59,6 +58,14 @@ static void splitBlock(Block *block, unsigned size);
 static void mergeBlock(Block *block);
 
 #ifdef GMEM
+/**
+ * Overloads the new operator to use our gmalloc function. Overloading
+ * this operator only overload the memory allocation part, the constructor
+ * is still automatically called after the allocation.
+ *
+ * @throw std::bad_alloc If there was an error while allocating the memory
+ * @return void* Pointer to the allocated zone
+ */
 void *operator new(size_t size) throw (std::bad_alloc)
 {
 	void *p = gmalloc(size);
@@ -70,6 +77,11 @@ void *operator new(size_t size) throw (std::bad_alloc)
 	return p;
 }
 
+/**
+ * Overloads the delete operator to use our gfree function. Overloading
+ * this operator only overload the memory disallocation part, the destructor
+ * is still automatically called after the disallocation.
+ */
 void operator delete(void *mem)
 {
 	gfree(mem);
@@ -132,7 +144,7 @@ void *gmalloc (unsigned size)
 #endif
 
 	//We can return the pointer to the data segment.
-	return (void *) block->data;
+	return (void *) (block + 1);
 #endif
 }
 
@@ -200,7 +212,7 @@ void gprintmem()
 			printf("Occupied");
 		}
 
-		printf(" block of size %d bytes (meta @%p, data @%p)\n", block->size, block, block->data);
+		printf(" block of size %d bytes (meta @%p, data @%p)\n", block->size, block, (block + 1));
 		dataTotal += block->size;
 		metaTotal += sizeof(Block);
 		block = block->next;
@@ -246,7 +258,7 @@ static Block *findBlockForAddress(Block **previous, void *ptr)
 	//Loop over blocks to find the block where si pointed space is in.
 	do
 	{
-		if ((char *) ptr == block->data)
+		if (ptr == (block + 1))
 		{
 			return block;
 		}
@@ -271,7 +283,7 @@ static void splitBlock(Block *block, unsigned size)
 	//The new block begins after the block data segment reduced to the specified size.
 	//This is correct because the size of a char is a byte, and the size variable is
 	//also in bytes (cf. pointer arithmetic).
-	newBlock = (Block *) (block->data + size);
+	newBlock = (Block *) (((char *) (block + 1)) + size);
 
 	newBlock->next = block->next;
 	newBlock->size = block->size - size - sizeof(Block);
