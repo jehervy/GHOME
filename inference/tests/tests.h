@@ -1,10 +1,3 @@
-/*
- * InferenceTests.h
- *
- *  Created on: 30 janv. 2012
- *      Author: vincent
- */
-
 #ifndef _INFERENCE_TESTS_H_
 #define _INFERENCE_TESTS_H_
 

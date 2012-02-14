@@ -26,7 +26,7 @@ public:
 	 * @param condition The thing assert to be true
 	 * @param std::string The thing tested (human-readable)
 	 */
-	void assert(int condition, std::string message);
+	void assert(int condition, std::string message = "");
 
 	/**
 	 * Skips a defined amount of tests.
@@ -40,14 +40,14 @@ public:
 	 *
 	 * @param std::string The thing tested (and failed)
 	 */
-	void fail(std::string message);
+	void fail(std::string message = "");
 
 	/**
 	 * Manually marks a test as success.
 	 *
 	 * @param std::string The thing tested (and succeed)
 	 */
-	void success(std::string message);
+	void success(std::string message = "");
 
 	/**
 	 * Registers a test to execute.

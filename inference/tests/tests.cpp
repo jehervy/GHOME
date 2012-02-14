@@ -1,10 +1,3 @@
-/*
- * InferenceTests.cpp
- *
- *  Created on: 30 janv. 2012
- *      Author: vincent
- */
-
 #include "tests.h"
 
 using namespace inference;
