@@ -87,7 +87,7 @@ public:
 	 /*
 	  * Met ˆ jour l'Žtat du socket
 	  */
-
+	 int GetFd(int a_iPosition);
 		static const int SERVER_PERE_PORT = 3000;
 private :
 	pthread_t m_ptThreadCommClient;

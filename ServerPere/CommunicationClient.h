@@ -35,7 +35,7 @@ public:
 	/*
 	 * Lis les messages envoyés sur le socket
 	 */
-	void FreeCreateBuffer(int a_iLongueur);
+	char * FreeCreateBuffer(int a_iLongueur, char * a_cBuffer);
 	/*
 	 * Gere la creation et la liberation d'un buffer.
 	 * Prend en parametre la taille du buffer cree.
@@ -43,6 +43,7 @@ public:
 	int ReadMessage(int a_iTailleALire);
 	int ReadMessage(int a_TailleALire, int &a_iMessage, string a_sMessage);
 	void EtatLecture();
+	int ListenMessage(stringstream a_ssPf);
 private :
 	int m_iSensorServerBox;
 	int m_iActuatorServerBox;

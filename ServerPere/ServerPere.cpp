@@ -28,6 +28,10 @@ ServerPere::~ServerPere()
 
 }
 
+ServerPere::ServerPere()
+{
+
+}
 
 /*
  * Constructeur surcharge ;
@@ -120,8 +124,8 @@ void *ServerPere::OpenSocket()
 
 				if((m_iPFileDescriptor>0)&(m_bSocketOpened))
 				{
-					SystemLog::AddLog(SystemLog::SUCCESS, "Connexion d'un client");
 					m_iNbConnection=ServerPere::InsertFd(m_iPFileDescriptor);
+					SystemLog::AddLog(SystemLog::SUCCESS, "Connexion d'un client");
 					int iReussite;
 					pthread_t thread_sock;
 					iReussite = pthread_create(&thread_sock, NULL, &ServerPere::sCreateCommClientCallBack, this);
@@ -161,35 +165,47 @@ void ServerPere::Wait()
 }
 
 
-void ServerPere::Stop()
 /*
  * Ferme le socket et tue le thread de gestion
  * du socket
  */
+void ServerPere::Stop()
 {
 	shutdown(m_iSockfd, SHUT_RDWR);
 	pthread_cancel(m_ptThreadCommClient);
 }
 
-int ServerPere::InsertFd(int a_iFd)
 /*
  * Ajoute un nouveau file descriptor (client)
  * dans le vector.
  * iRetourne le nombre de clients connectes.
  */
+int ServerPere::InsertFd(int a_iFd)
 {
 	m_vVectorFd.push_back(a_iFd);
 	int iSizeVect=m_vVectorFd.size();
 	return iSizeVect;
 }
 
-int ServerPere::DeleteFd(int a_iFd)
+int ServerPere::GetFd(int a_iPosition)
+{
+	if((a_iPosition<m_vVectorFd.size()) & (a_iPosition>=0))
+	{
+		int iFd=m_vVectorFd.at(a_iPosition);
+		return iFd;
+	} else
+	{
+		return -1;
+	}
+}
+
 /*
  * Supprime un file descriptor (client)
  * du vector, et ferme la connexion avec ce
  * client.
  * iRetourne le nombre de clients connectes.
  */
+int ServerPere::DeleteFd(int a_iFd)
 {
 	int iSize_vect=m_vVectorFd.size();
 	bool element_found = false;
@@ -213,10 +229,13 @@ int ServerPere::DeleteFd(int a_iFd)
 	return iSize_vect;
 }
 
-void ServerPere::SetOpened(bool a_bEtat)
 /*
- * Met ˆ jour l'etat du socket.
+ * Supprime un file descriptor (client)
+ * du vector, et ferme la connexion avec ce
+ * client.
+ * iRetourne le nombre de clients connectes.
  */
+void ServerPere::SetOpened(bool a_bEtat)
 {
 	m_bSocketOpened=a_bEtat;
 }
