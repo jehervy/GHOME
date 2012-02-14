@@ -42,8 +42,11 @@ void InferenceTestsMultipleActions(Test *test)
 	test->assert(actions.size() == 2, "All actions are returned.");
 	if (actions.size() == 2)
 	{
-		test->assert(actions[0].getMetric() == 2 && actions[0].getValue() == 1, "Action 1 is ok.");
-		test->assert(actions[1].getMetric() == 3 && actions[1].getValue() == 42, "Action 2 is ok.");
+		test->assert(
+			actions[0].getMetric() == 2 && actions[0].getValue() == 1 &&
+			actions[1].getMetric() == 3 && actions[1].getValue() == 42,
+			"All actions are correct."
+		);
 	}
 }
 
@@ -59,10 +62,28 @@ void InferenceTestsMultipleConditions(Test *test)
 	test->assert(actions.size() == 1, "With the second matching metric, rule matches.");
 }
 
+void InferenceTestsMultipleRules(Test *test)
+{
+	Actions actions;
+	Engine eng("inference/tests/multipleRules.xml");
+
+	actions = eng.run(1, 23);
+	test->assert(
+		actions.size() == 1 && actions[0].getMetric() == 2 && actions[0].getValue() == 1,
+		"Only the correct rules match."
+	);
+
+	actions = eng.run(1, 19);
+	test->assert(
+		actions.size() == 1 && actions[0].getMetric() == 2 && actions[0].getValue() == 4,
+		"With multiple correct rules, result is merged (with max strategy)."
+	);
+}
 
 void InferenceTests(Test *test)
 {
 	test->add(&InferenceTestsSimple, "InferenceSimple");
-	test->add(&InferenceTestsMultipleActions, "InferenceMultipleActions");
-	test->add(&InferenceTestsMultipleConditions, "InferenceMultipleConditions");
+	test->add(&InferenceTestsMultipleActions, "InferenceComplex");
+	test->add(&InferenceTestsMultipleConditions, "InferenceComplex");
+	test->add(&InferenceTestsMultipleRules, "InferenceMultipleRules");
 }

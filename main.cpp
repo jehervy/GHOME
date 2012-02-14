@@ -15,6 +15,7 @@ int main()
 	Test* test = new Test();
 
 	InferenceTests(test);
+	//ServerPereTests(test);
 
 	return test->run();
 #else

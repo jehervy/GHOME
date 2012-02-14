@@ -9,6 +9,7 @@
 #include "EnOceanActuatorModel.h"
 #include "../Utils/DataContext.h"
 #include "../Utils/GhomeBox.h"
+#include "../Utils/SystemLog.h"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
@@ -26,10 +27,10 @@ ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_
 	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
 	if(m_iBalModel == -1)
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Reception message actuatorServerBox");
-	else SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Reception message actuatorServerBox");
+	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Reception message actuatorServerBox");
 
 	m_pModel = new EnOceanActuatorModel(m_iBalModel);
-	SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Creation du modele");
+	SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Creation du modele");
 
 	m_pModel->start();
 }
@@ -43,7 +44,7 @@ ActuatorsCenter::~ActuatorsCenter()
 void ActuatorsCenter::Start()
 {
 	if (pthread_create(&m_pThread, NULL, callback, this)==0)
-		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Lancement du thread");
+		SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Lancement du thread");
 	else
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Lancement du thread");
 }
@@ -51,7 +52,7 @@ void ActuatorsCenter::Start()
 void ActuatorsCenter::Stop()
 {
 	if (pthread_cancel(m_pThread)==0)
-		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Annulation du thread");
+		SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Annulation du thread");
 	else
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Annulation du thread");
 }
@@ -64,7 +65,7 @@ void ActuatorsCenter::run()
 		int iTypeMes, iMetric, iRoom, iValue=0;
 
 		if (GhomeBox::ReceiveMessage(m_iBalServer, iTypeMes, iMetric, iRoom, iValue))
-			SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : message receptionne de actuatorServerBox");
+			SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : message receptionne de actuatorServerBox");
 		else SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : message receptionne de actuatorServerBox");
 
 		if (iTypeMes == 2) // Correspond a un ordre de pilotage
@@ -73,12 +74,16 @@ void ActuatorsCenter::run()
 			if (iVirtualId == -1)
 			{
 				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
-				SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : message transmis a la bal du Model");
+				SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : message transmis a la bal du Model");
 
 			}
 			else
 			{
-				string log = "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : " + iMetric + ", room : " + iRoom;
+				string log;
+				log += "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : ";
+				log += iMetric;
+				log += ", room : ";
+				log += iRoom;
 				SystemLog::AddLog(SystemLog::ERROR, log.c_str());
 			}
 
@@ -97,7 +102,7 @@ void ActuatorsCenter::parserXML(const string a_sXmlFile)
 
 	if (strcmp(result.description(),"No error")==0)
 	{
-		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorCenter : Parsing fichier xml actuators");
+		SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Parsing fichier xml actuators");
 		for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
 		{
 			std::pair<std::pair<int,int>,int>  actuatorNode;

@@ -1,14 +1,15 @@
 /*
  * tests.h
  *
- *  Created on: 13 fŽvr. 2012
+ *  Created on: 13 fï¿½vr. 2012
  *      Author: remi
  */
 
 #ifndef _SERVERPERE_TESTS_H_
 #define _SERVERPERE_TESTS_H_
 
-#include "../../test/test.h"
+#include "../../test/Test.h"
+#include "../../tache_mere.h"
 #include "../ServerPere.h"
 #include "SocketClient.h"
 

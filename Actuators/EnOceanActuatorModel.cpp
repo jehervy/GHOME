@@ -8,6 +8,7 @@
 #include "../Utils/DataContext.h"
 #include "EnOceanActuatorModel.h"
 #include "../Utils/GhomeBox.h"
+#include "../Utils/SystemLog.h"
 #include <iostream>
 #include <algorithm>
 #include <sys/ipc.h>
@@ -26,7 +27,7 @@ EnOceanActuatorModel::EnOceanActuatorModel(int a_iBal) : AbstractModel(a_iBal)
 	m_iBalNetwork = msgget (ftok (REFERENCE, '3'), IPC_CREAT | DROITS );
 	if(m_iBalNetwork == -1)
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorModel : Reception message BalNetwork");
-	else SystemLog::AddLog(SystemLog::SUCCES, "ActuatorModel : Reception message BalNetwork");
+	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Reception message BalNetwork");
 
 	parserXml("etc/enOceanActuatorsId.xml");
 }
@@ -39,7 +40,7 @@ void EnOceanActuatorModel::parserXml(string a_sXmlFile)
 
 	if (strcmp(result.description(),"No error")==0)
 		{
-		SystemLog::AddLog(SystemLog::SUCCES, "ActuatorModel : Parsing fichier xml actuatorsId");
+		SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Parsing fichier xml actuatorsId");
 		for (pugi::xml_node_iterator actuatorsIt = xmlActuators.begin(); actuatorsIt != xmlActuators.end(); ++actuatorsIt)
 		{
 			if (strcmp(actuatorsIt->name(), "entete") == 0)
@@ -119,7 +120,7 @@ void EnOceanActuatorModel::createOrder(string a_sPhysicalId, int iValue, balMess
 {
 	res.mtype = 1;
 	string message;
-	// Construction de l'entête
+	// Construction de l'entÔøΩte
 	strcat(res.mtext, m_psEntete.c_str());
 	// Remplissage des databytes selon l'ordre de pilotage
 	if (iValue == 0)

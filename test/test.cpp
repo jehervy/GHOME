@@ -1,57 +1,89 @@
-#include "test.h"
+//Personal includes
+#include "Test.h"
 
-using namespace std;
-
+/**
+ * Trivial.
+ */
 Test::Test() : testsLaunched(0), testsFailed(0)
 {
 }
 
-void Test::assert(int condition, string message)
+/**
+ * Checks the condition and prints the result in the console.
+ */
+void Test::assert(int condition, std::string message)
 {
 	testsLaunched++;
 
 	if (!condition)
 	{
 		testsFailed++;
-		cout << "#" << testsLaunched << " failed: " << message << endl;
+		std::cout << "\033[31m" << "#" << testsLaunched << " failed: " << message << "\033[30m" << std::endl;
 	}
 	else
 	{
-		cout << "#" << testsLaunched << " passed: " << message << endl;
+		std::cout << "#" << testsLaunched << " passed: " << message << std::endl;
 	}
 }
 
+/**
+ * Trivial.
+ */
+void Test::fail(std::string message)
+{
+	assert(0, message);
+}
+
+/**
+ * Trivial.
+ */
+void Test::success(std::string message)
+{
+	assert(1, message);
+}
+
+/**
+ * Records the tests as launched (and not failed) and prints they have
+ * been skipped.
+ */
 void Test::skip(int number)
 {
 	for (int i = 0; i < number; i++)
 	{
 		testsLaunched++;
-		cout << "#" << testsLaunched << " skipped" << endl;
+		std::cout << "#" << testsLaunched << " skipped" << std::endl;
 	}
 }
 
-void Test::add(TestFunction callback, string prefix)
+/**
+ * Registers the callback and the prefix.
+ */
+void Test::add(TestFunction callback, std::string prefix)
 {
 	tests.push_back(callback);
 	prefixes.push_back(prefix);
 }
 
+/**
+ * Runs each test inside a section. Prints the global result.
+ */
 int Test::run()
 {
-	for (Tests::iterator it = tests.begin(); it != tests.end(); ++it)
+	for (unsigned int i = 0; i < tests.size(); i++)
 	{
-		(**it)(this);
+		std::cout << "\033[33m" << "[" << prefixes[i] << "]" << "\033[30m" << std::endl;
+		(*tests[i])(this);
+		std::cout << std::endl;
 	}
 
-	cout << endl;
 	if (testsFailed == 0)
 	{
-		cout << "All tests passed: " << testsLaunched << " tests OK." << endl;
+		std::cout << "\033[37;42m" << "All tests passed: " << testsLaunched << " tests OK" << std::endl;
 	}
 	else
 	{
-		cout << 100*(testsLaunched - testsFailed)/testsLaunched << " % sucessful: ";
-		cout << testsFailed << " tests failed (" << testsLaunched << " total)." << endl;
+		std::cout << "\033[37;41m" << 100*(testsLaunched - testsFailed)/testsLaunched << " % sucessful: ";
+		std::cout << testsFailed << " tests failed (" << testsLaunched << " total)" << std::endl;
 	}
 
 	int retval = testsFailed;

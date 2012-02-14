@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<rules>
+    <rule>
+        <if>
+            <metric id="1" cond="sup">18</metric>
+        </if>
+        <then>
+            <metric id="2">1</metric>
+        </then>
+    </rule>
+    <rule>
+        <if>
+            <metric id="1" cond="inf">22</metric>
+        </if>
+        <then>
+            <metric id="2">4</metric>
+        </then>
+    </rule>
+</rules>

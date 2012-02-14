@@ -8,7 +8,7 @@
 #ifndef _INFERENCE_TESTS_H_
 #define _INFERENCE_TESTS_H_
 
-#include "../../test/test.h"
+#include "../../test/Test.h"
 #include "../types.h"
 #include "../Engine.h"
 
