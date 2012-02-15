@@ -11,7 +11,6 @@
 #include "../../test/Test.h"
 #include "../../tache_mere.h"
 #include "../ServerPere.h"
-#include "SocketClient.h"
 
 
 	void ServerPereTests(Test * test);

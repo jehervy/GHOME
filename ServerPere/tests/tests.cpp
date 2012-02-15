@@ -14,16 +14,22 @@
 
 void ServerPereTestsSimples(Test * test)
 {
-	int sensorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
-	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
-	cout<<"Phase de test simple"<<endl;
-	cout<<"Creation de l'objet ServerPere"<<endl;
-	ServerPere * papa = new ServerPere(sensorServerBox,actuatorServerBox);
-	cout<<"Ouverture du socket du ServerPere"<<endl;
-	//papa->Start();
-	papa->OpenSocket();
-	//test->assert(papa->m_bSocketOpened=true,"Socket en ecoute sur un thread");
+
+	cout<<"Phase de test simple sur le serveur"<<endl;
+	ServerPere * papa = new ServerPere();
+	vector<int> m_vVectorFd;
+	int iTailleVect=papa->InsertFd(120);
+	test->assert(iTailleVect==1,"Ajout d'un élément au vector");
+	iTailleVect=papa->DeleteFd(112);
+	test->assert(iTailleVect==1,"Elément absent du vector");
+	iTailleVect=papa->InsertFd(130);
+	int iFd = papa->GetFd(1);
+	test->assert(iFd==130,"Elément ajouté à la fin du vector");
+	iFd = papa->GetFd(2);
+	test->assert(iFd==-1,"Indice supérieur à la taille du tableau");
+
+
 
 
 }
