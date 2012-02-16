@@ -71,14 +71,16 @@ void ActuatorsCenter::run()
 		if (iTypeMes == 2) // Correspond a un ordre de pilotage
 		{
 			int iVirtualId = findVirtualId(iMetric, iRoom);
-			if (iVirtualId == -1)
+			if (iVirtualId != -1)
 			{
+				std::cout << "id virtuel trouvŽ : " << iVirtualId << endl;
 				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
 				SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : message transmis a la bal du Model");
 
 			}
 			else
 			{
+				std::cout << "id virtuel non trouvŽ " << endl;
 				string log;
 				log += "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : ";
 				log += iMetric;
@@ -120,6 +122,7 @@ void ActuatorsCenter::parserXML(const string a_sXmlFile)
 	}
 	else
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Parsing fichier xml actuators");
+
 }
 
 int ActuatorsCenter::findVirtualId(int a_iMetric, int a_iRoom)
@@ -129,3 +132,17 @@ int ActuatorsCenter::findVirtualId(int a_iMetric, int a_iRoom)
 	int iRes = (itMapActuators != this->m_pActuators.end())? itMapActuators->second : -1;
 	return iRes;
 }
+
+#ifdef TESTING
+mapActuators ActuatorsCenter::GetActuators(){
+	return this->m_pActuators;
+}
+
+int ActuatorsCenter::GetBalModel(){
+	return m_iBalModel;
+}
+
+EnOceanActuatorModel* ActuatorsCenter::GetModel(){
+	return this->m_pModel;
+}
+#endif

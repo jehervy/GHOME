@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include "EnOceanActuatorModel.h"
 #include "../xml/pugixml.hpp"
+#include "../config.h"
 
 /*
  * Structure contenant l'ensemble des correspondances metric/room <-> id virtuelle
@@ -19,22 +20,22 @@ class ActuatorsCenter{
 		virtual ~ActuatorsCenter();
 		void Start();
 		void Stop();
-
+#ifdef TESTING
+		mapActuators GetActuators();
+		int GetBalModel();
+		EnOceanActuatorModel* GetModel();
+#endif
 
 	private:
 		// METHODES
 		/*
-		 * M�thode permettant de lire le fichier xml qui contient toutes les
+		 * Methode permettant de lire le fichier xml qui contient toutes les
 		 * correspondances metric/room <-> id virtuelle afin de remplir la
 		 * structure qui les contient
 		 */
 		void parserXML(const std::string a_sXmlFile);
 
 		void run();
-
-
-
-
 
 		static void *callback(void *cxt)
 		{
@@ -43,9 +44,9 @@ class ActuatorsCenter{
 		}
 
 		/*
-		 * M�thode permettant de retrouver dans la structure des correspondances
+		 * Methode permettant de retrouver dans la structure des correspondances
 		 * metric/room <-> id virtuelle l'id virtuelle du capteur qui correspond
-		 * � la metrique metric et la pi�ce room pass�s en param�tres
+		 * a la metrique "metric" et la piece "room" passes en parametres
 		 */
 		int findVirtualId(int a_iMetric, int a_iRoom);
 

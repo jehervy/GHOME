@@ -2,12 +2,13 @@
  * AbstractModel.h
  *
  *  Created on: 22 janv. 2012
- *      Author: miroof
+ *      Author: Xav
  */
 
 #ifndef ABSTRACTMODEL_H_
 #define ABSTRACTMODEL_H_
 
+#include <stddef.h>
 #include <pthread.h>
 
 class AbstractModel{
@@ -15,10 +16,8 @@ class AbstractModel{
 private:
 
 	static void *sCallback(void *a_pCtx) {
-		//AbstractModel *model = static_cast<AbstractModel*> (ctx);
-		//model->run();
 		((AbstractModel*)a_pCtx)->Run();
-		return 0;
+		return NULL;
 	}
 
 	virtual void Run() = 0;
@@ -40,7 +39,7 @@ public:
 
 	virtual void Wait()
 	{
-		pthread_join(m_thread, 0);
+		pthread_join(m_thread, NULL);
 	}
 
 protected:
