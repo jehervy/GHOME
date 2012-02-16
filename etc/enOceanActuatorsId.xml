@@ -1,0 +1,11 @@
+<actuators address="localhost" port="5000">
+	<entete>A55A6B05</entete>
+	<activate>50000000</activate>
+	<desactivate>70000000</desactivate>
+    <actuator> <!-- Température dans la chambre 1 -->
+        <virtualId>1</virtualId>
+        <physicalId>FF9F1E07</physicalId>
+    </actuator>
+    <status>10</status>
+    <checksum>00</checksum>
+</actuators>
