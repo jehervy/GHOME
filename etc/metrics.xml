@@ -2,40 +2,43 @@
 <metrics>
     <metric id="1">
         <name>Température</name>
-        <sensor type="integer">
+        <sensor>
             <formatter type="string" format="{{ value }} °C" />
         </sensor>
-        <actuator type="boolean">
-            <formatter type="boolean" yes="Chauffage actif" no="Chauffage inactif" />
+        <actuator>
+            <validator type="boolean" />
+            <formatter type="boolean" yes="Allumer le chauffage" no="Couper le chauffage" />
         </actuator>
     </metric>
     <metric id="2">
         <name>Luminosité</name>
-        <sensor type="integer">
+        <sensor>
             <formatter type="string" format="{{ value }} lx" />
         </sensor>
-        <actuator type="boolean">
-            <formatter type="boolean" yes="Lumière allumée" no="Lumière éteinte" />
+        <actuator>
+            <validator type="boolean" />
+            <formatter type="boolean" yes="Allumer la lumière" no="Éteindre la lumière" />
         </actuator>
     </metric>
     <metric id="3">
         <name>Présence</name>
-        <sensor type="boolean">
+        <sensor>
             <formatter type="boolean" yes="Présence détectée" no="Aucune présence détectée" />
         </sensor>
     </metric>
     <metric id="4">
         <name>Ouverture</name>
-        <senso type="boolean"r>
+        <sensor>
             <formatter type="boolean" yes="Ouvert" no="Fermé" />
         </sensor>
     </metric>
     <metric id="5">
         <name>Interrupteur</name>
-        <actuator type="integer">
-            <formatter type="boolean" yes="Courant délivré" no="Courant non délivré" />
+        <actuator>
+            <validator type="nullOrInteger" min="1" max="4" />
+            <formatter type="nullOrString" format="Activer bouton {{ value }}" no="Couper le courant" />
         </actuator>
-        <sensor type="integer">
+        <sensor>
             <formatter type="nullOrString" format="Bouton {{ value }} actif" no="Boutons inactifs" />
         </sensor>
     </metric>
