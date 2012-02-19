@@ -21,13 +21,16 @@ using namespace std;
 vector<int> m_vVectorFd;
 
 /*
- * Constructeur
+ * Destructeur
  */
 ServerPere::~ServerPere()
 {
 
 }
 
+/*
+ * Constructeur
+ */
 ServerPere::ServerPere()
 {
 
@@ -42,10 +45,6 @@ ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
 {
 
 }
-
-
-
-
 
 /*
  * Methode static ouverte dans un nouveau thread
@@ -144,22 +143,21 @@ void *ServerPere::OpenSocket()
 }
 
 
-
-int ServerPere::Start()
 /*
  * Cree un nouveau thread pour la gestion du socket
  */
+int ServerPere::Start()
 {
 	cout<<"start"<<endl;
 	int iCheck = pthread_create(&m_ptThreadCommClient, NULL, &ServerPere::sOpenSocketCallBack, this);
 	return iCheck;
 }
 
-void ServerPere::Wait()
 /*
  * Bloque l'execution de la tache mere jusqu'ˆ ce que le
  * thread de gestion de socket ne soit tue
  */
+void ServerPere::Wait()
 {
 	pthread_join(m_ptThreadCommClient,NULL);
 }
@@ -187,6 +185,10 @@ int ServerPere::InsertFd(int a_iFd)
 	return iSizeVect;
 }
 
+/*
+ * Retourne un entier File Descriptor, en
+ * parcourant le vector
+ */
 int ServerPere::GetFd(int a_iPosition)
 {
 	if((a_iPosition<m_vVectorFd.size()) & (a_iPosition>=0))

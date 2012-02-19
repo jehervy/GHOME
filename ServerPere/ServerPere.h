@@ -16,79 +16,102 @@
 
 class ServerPere {
 public:
-	ServerPere();
 	/*
 	 * Constructeur
 	 */
-	ServerPere(int a_iSensorServerBox, int a_iActuatorServerBox);
+	ServerPere();
+
 	/*
 	 * Constructeur
 	 * Appel la methode d'ouverture de socket dans un
 	 * nouveau thread
 	 */
-	virtual ~ServerPere();
+	ServerPere(int a_iSensorServerBox, int a_iActuatorServerBox);
+
 	/*
 	 * Destructeur
 	 */
-	int Start();
+	virtual ~ServerPere();
+
 	/*
 	 * Crée un thread gérant le socket de communication
 	 * entre le serveur C++ et le client Web (Apache).
 	 * Appelle une methode static.
 	 */
-	void *CreateCommClient();
+	int Start();
+
+
 	/*
 	 * Cree une instance de classe de communication_client
 	 * a chaque nouvelle connexion.
 	 * Est appelée dans un nouveau thread.
 	 */
-	static void  *sCreateCommClientCallBack(void* a_pPtr);
+	void *CreateCommClient();
+
+
 	/*
 	 * Methode static permettant l'appel de
 	 * createCommClient dans un nouveau
 	 * thread.
 	 */
-	void *OpenSocket();
+	static void  *sCreateCommClientCallBack(void* a_pPtr);
+
+
 	/*
 	 * Crée un socket serveur, et attend les
 	 * connexions de clients.
 	 * Gère la création de file_descriptor.
 	 */
-	static void *sOpenSocketCallBack(void* a_pPtr);
+	void *OpenSocket();
+
+
 	/*
 	 * Methode static permettant l'appel de
 	 * open_socket dans un nouveau thread.
 	 */
-     int InsertFd(int fd);
-    /*
-     * Ajoute un nouveau file_descriptor
-     * a la connexion d'un nouveau client
-     * dans le vector.
-     */
-     int DeleteFd(int fd);
-    /*
-     * Supprime le file_descriptor,
-     * lorsque qu'un client se deconnecte,
-     * de vector.
-     */
-	void Wait();
+	static void *sOpenSocketCallBack(void* a_pPtr);
+
 	/*
-	 * Methode bloquante sur la fin du
-	 * thread de gestion des connexions
-	 * clients.
+	 * Ajoute un nouveau file_descriptor
+	 * a la connexion d'un nouveau client
+	 * dans le vector.
 	 */
-	 void Stop();
+	int InsertFd(int fd);
+
 	/*
-	 * Ferme le socket.
-	 * Tue le thread de gestion des connexions
-	 * clients.
+	 * Supprime le file_descriptor,
+	 * lorsque qu'un client se deconnecte,
+	 * de vector.
 	 */
-	 void SetOpened(bool a_bEtat);
-	 /*
-	  * Met à jour l'état du socket
-	  */
-	 int GetFd(int a_iPosition);
-		static const int SERVER_PERE_PORT = 3000;
+    int DeleteFd(int fd);
+
+    /*
+     * Methode bloquante sur la fin du
+     * thread de gestion des connexions
+     * clients.
+     */
+    void Wait();
+
+    /*
+     * Ferme le socket.
+     * Tue le thread de gestion des connexions
+     * clients.
+     */
+	void Stop();
+
+	/*
+	 * Met à jour l'état du socket
+	 */
+	void SetOpened(bool a_bEtat);
+
+	/*
+	 * Cherche un File Descriptor dans
+	 * le vector
+	 */
+	int GetFd(int a_iPosition);
+
+	static const int SERVER_PERE_PORT = 3000;
+
 private :
 	pthread_t m_ptThreadCommClient;
     int m_iSockfd;

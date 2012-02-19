@@ -19,31 +19,44 @@ using namespace std;
 
 class CommunicationClient {
 public:
+	/*
+	 * Constructeur
+	 */
 	CommunicationClient();
+
 	/*
 	 * Constructeur
 	 */
 	CommunicationClient(int a_iSensorServerBox, int a_iActuatorServerBox, int a_iFd, int a_iSock, void * a_pPtr);
-	/*
-	 * Constructeur
-	 */
-	virtual ~CommunicationClient();
+
 	/*
 	 * Destructeur
 	 */
-	void TransferMessage();
+	virtual ~CommunicationClient();
+
 	/*
 	 * Lis les messages envoy√©s sur le socket
 	 */
-	char * FreeCreateBuffer(int a_iLongueur, char * a_cBuffer);
+	void TransferMessage();
+
 	/*
 	 * Gere la creation et la liberation d'un buffer.
 	 * Prend en parametre la taille du buffer cree.
 	 */
+	char * FreeCreateBuffer(int a_iLongueur, char * a_cBuffer);
+
+	/*
+	 * Lis un message sur le socket pour un nombre d'octets
+	 * passé en paramètre
+	 */
 	int ReadMessage(int a_iTailleALire);
+
+	/*
+	 * Lis un message sur le socket sur un nombre d'octets
+	 * passé en paramètre, et définit la valeur d'une référence
+	 */
 	int ReadMessage(int a_TailleALire, int &a_iMessage, string a_sMessage);
-	void EtatLecture();
-	int ListenMessage(stringstream a_ssPf);
+
 private :
 	int m_iSensorServerBox;
 	int m_iActuatorServerBox;

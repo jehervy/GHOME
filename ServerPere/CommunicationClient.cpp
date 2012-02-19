@@ -96,12 +96,6 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 }
 
 
-int CommunicationClient::ListenMessage(stringstream a_ssPf)
-{
-
-	return 0;
-}
-
 void CommunicationClient::TransferMessage()
 
 {
