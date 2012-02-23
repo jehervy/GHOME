@@ -2,11 +2,11 @@
  * tests.cpp
  *
  *  Created on: 13 fï¿½vr. 2012
- *      Author: remi
+ *      Author: remi et Pierre
  */
 
 #include "tests.h"
-
+#include "SensorBoxReader.h"
 
 
 
@@ -20,16 +20,26 @@ void ServerPereTestsSimples(Test * test)
 	ServerPere * papa = new ServerPere();
 	vector<int> m_vVectorFd;
 	int iTailleVect=papa->InsertFd(120);
-	test->assert(iTailleVect==1,"Ajout d'un ŽlŽment au vector");
+	test->assert(iTailleVect==1,"Ajout d'un ï¿½lï¿½ment au vector");
 	iTailleVect=papa->DeleteFd(112);
-	test->assert(iTailleVect==1,"ElŽment absent du vector");
+	test->assert(iTailleVect==1,"Elï¿½ment absent du vector");
 	iTailleVect=papa->InsertFd(130);
 	int iFd = papa->GetFd(1);
-	test->assert(iFd==130,"ElŽment ajoutŽ ˆ la fin du vector");
+	test->assert(iFd==130,"Elï¿½ment ajoutï¿½ ï¿½ la fin du vector");
 	iFd = papa->GetFd(2);
-	test->assert(iFd==-1,"Indice supŽrieur ˆ la taille du tableau");
+	test->assert(iFd==-1,"Indice supï¿½rieur ï¿½ la taille du tableau");
 
 
+
+
+}
+
+void SensorBoxReader(Test *test)
+{
+	int sensorServerBoxTest = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
+	int actuatorServerBoxTest = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
+	SensorBoxReader * box = new SensorBoxReader(sensorServerBoxTest, actuatorServerBoxTest);
+	test->assert( box->OpenThreadSensorBoxReader() >= 0, "CrÃ©ation d'un thread de lecture des messages des capteurs");
 
 
 }
@@ -37,4 +47,5 @@ void ServerPereTestsSimples(Test * test)
 void ServerPereTests(Test * test)
 {
 	test->add(&ServerPereTestsSimples, "ServerPereSimple");
+	test->add(&SensorBoxReader, "SensorBoxReader");
 }
