@@ -1,63 +1,14 @@
 #include "gmem.h"
 
 /**
- * Metadata of a memory block.
- *
- * @var struct
- */
-typedef struct Block Block;
-struct Block
-{
-	unsigned size; //Size of the block, in bytes
-	Block *next;   //Pointer to the next block, NULL if none
-	char free;     //Is the block free?
-};
-
-/**
  * Pointer to the head of allocated space for the gmem module.
  *
  * @var void*
  */
-static void *head = NULL;
-
-/**
- * Finds the metadata of a block as big enough to contain data of the
- * specified size.
- *
- * @param previous Last visited block
- * @param size Size of the space, in bytes
- * @return The metadata block
- */
-static Block *findBlockForSize(Block **previous, unsigned size);
-
-/**
- * Finds the metadata of the block associated with the given pointer. The
- * pointer must point at the begining of the space.
- *
- * @param previous Last visited block
- * @param ptr Pointer to the space
- * @return The metadata block
- */
-static Block *findBlockForAddress(Block **previous, void *ptr);
-
-/**
- * Splits a block to match the exact size given as second parameter. The
- * block's size is reduced and a new block is created in the free space.
- *
- * @param *block The block to merge, if possible
- * @param size The wished size of the block
- */
-static void splitBlock(Block *block, unsigned size);
-
-/**
- * Merges a block with the next block if both are free. The block given as
- * parameter is extended to its new size and the next is removed from the list.
- *
- * @param *block The block to merge, if possible
- */
-static void mergeBlock(Block *block);
+PRIVATE void *head = NULL;
 
 #ifdef GMEM
+#ifndef TESTING
 /**
  * Overloads the new operator to use our gmalloc function. Overloading
  * this operator only overload the memory allocation part, the constructor
@@ -86,6 +37,7 @@ void operator delete(void *mem)
 {
 	gfree(mem);
 }
+#endif
 #endif
 
 /**
@@ -224,7 +176,7 @@ void gprintmem()
  * This function uses the first-fit algorithm and returns the first block with
  * enough space.
  */
-static Block *findBlockForSize(Block **previous, unsigned size)
+Block *findBlockForSize(Block **previous, unsigned size)
 {
 	Block* block = (Block *) head;
 
@@ -245,7 +197,7 @@ static Block *findBlockForSize(Block **previous, unsigned size)
 /**
  * This function uses a loop in order to return the previous block too.
  */
-static Block *findBlockForAddress(Block **previous, void *ptr)
+Block *findBlockForAddress(Block **previous, void *ptr)
 {
 	Block *block = (Block *) head;
 
@@ -276,7 +228,7 @@ static Block *findBlockForAddress(Block **previous, void *ptr)
  * Inserts a new block after the one given in parameter and rebuilds the
  * linked list.
  */
-static void splitBlock(Block *block, unsigned size)
+void splitBlock(Block *block, unsigned size)
 {
 	Block *newBlock;
 
@@ -296,7 +248,7 @@ static void splitBlock(Block *block, unsigned size)
 /**
  * Merges two blocks if they are both free.
  */
-static void mergeBlock(Block *block)
+void mergeBlock(Block *block)
 {
 	unsigned size;
 

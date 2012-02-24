@@ -2,9 +2,11 @@
 #define _GMEM_TESTS_H
 
 #include "../gmem.h"
-#include "../../test/test.h"
+#include "../../test/Test.h"
 
-void GmemTests();
+extern void *head;
+
+void GmemTests(Test *test);
 
 #endif /* _GMEM_TESTS_H */
 

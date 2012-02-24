@@ -75,8 +75,8 @@ void InferenceTestsMultipleRules(Test *test)
 
 void InferenceTests(Test *test)
 {
-	test->add(&InferenceTestsSimple, "InferenceSimple");
-	test->add(&InferenceTestsMultipleActions, "InferenceComplex");
-	test->add(&InferenceTestsMultipleConditions, "InferenceComplex");
-	test->add(&InferenceTestsMultipleRules, "InferenceMultipleRules");
+	test->add(&InferenceTestsSimple, "Inference");
+	test->add(&InferenceTestsMultipleActions, "Inference");
+	test->add(&InferenceTestsMultipleConditions, "Inference");
+	test->add(&InferenceTestsMultipleRules, "Inference");
 }

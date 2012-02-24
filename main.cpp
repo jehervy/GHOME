@@ -15,6 +15,7 @@ int main()
 	Test* test = new Test();
 
 	InferenceTests(test);
+	GmemTests(test);
 	//ServerPereTests(test);
 
 	return test->run();
@@ -23,11 +24,8 @@ int main()
 	// PHASE D'INITIALISATION DE LA TACHE MERE
 	//========================================
 
-	cout << "Test" << endl;
-
 	int sensorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
-
 
 	//Creation des taches filles
 
@@ -36,11 +34,10 @@ int main()
 
 	SensorBoxReader sb(sensorServerBox, actuatorServerBox);
 
-	SensorsCenter *center = new SensorsCenter(sensorServerBox, " ");
+	SensorsCenter *center = new SensorsCenter(sensorServerBox, "src/etc/sensors.xml");
 	center->Start();
 
 	//ghome_database::open_database();
-
 
 	//=====================================
 	//PHASE DE DESTRUCTION DE LA TACHE MERE
@@ -53,12 +50,9 @@ int main()
 	center->Stop();
 	delete center;
 
-
 	//Destruction des ressources
-
 	msgctl(sensorServerBox,IPC_RMID,0);
 	msgctl(actuatorServerBox,IPC_RMID,0);
-
 
 	//Terminaison de la tâche mère avec une autodestruction
 	pthread_exit(0);

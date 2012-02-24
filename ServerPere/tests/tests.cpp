@@ -5,7 +5,7 @@
  *      Author: remi et Pierre
  */
 
-#include "tests.h"
+/*#include "tests.h"
 #include "SensorBoxReader.h"
 
 
@@ -49,3 +49,4 @@ void ServerPereTests(Test * test)
 	test->add(&ServerPereTestsSimples, "ServerPereSimple");
 	test->add(&SensorBoxReader, "SensorBoxReader");
 }
+*/
