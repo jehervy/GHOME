@@ -50,7 +50,6 @@ int CommunicationClient::ReadMessage(int a_iTailleALire)
 {
 	int iMessage;
 	char * cBuffer = (char*)malloc(a_iTailleALire);
-	//cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
 	iNbOctets=read(m_iPFileDescriptor, cBuffer, a_iTailleALire);
 	if(iNbOctets>0)
 	{
@@ -67,7 +66,6 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 {
 	int iTailleMessage;
 	char * cBuffer = (char*)malloc(a_iTailleALire);
-	//m_cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
 	iNbOctets=read(m_iPFileDescriptor, cBuffer, a_iTailleALire);
 	if(iNbOctets>0)
 		{
@@ -75,9 +73,9 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 		a_iMessage=CommunicationClient::ReadMessage(iTailleMessage);
 		if(a_iMessage!=-1)
 			{
-				//SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
 			} else {
-				//SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
 			}
 		} else
 		{
@@ -94,7 +92,7 @@ void CommunicationClient::TransferMessage()
 	   m_bClientOpened=true;
 	   stringstream ss;
 	   ss << m_iPFileDescriptor;
-	   //SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
+	   SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
 
 while(m_bClientOpened)
 {
@@ -102,13 +100,14 @@ while(m_bClientOpened)
 		m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
 		if(m_iId==-1)
 		{
-			//SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
+			SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
 		}
 	switch(m_iId){
 			case 4 :
 				m_bClientOpened=false;
 				papa->SetOpened(false);
 				papa->Stop();
+				//TODO : redemarrer
 				break;
 			case 0 :
 				m_bClientOpened=false;
@@ -122,12 +121,12 @@ while(m_bClientOpened)
 				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue, "value");
 			    //Ecriture du message dans la boite aux lettres actuator
 				bool bSendMess;
-				//bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+				bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 				if(bSendMess==true)
 				{
-					//SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
+					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
 				} else {
-					//SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
+					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
 				}
 				break;
 			case 3 :
