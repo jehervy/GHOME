@@ -71,10 +71,17 @@ int Test::run()
 {
 	for (unsigned int i = 0; i < tests.size(); i++)
 	{
-		std::cout << "\033[33m" << "[" << prefixes[i] << "]" << "\033[30m" << std::endl;
+		if (i == 0 || prefixes[i] != prefixes[i - 1])
+		{
+			if (i > 0)
+			{
+				std::cout << std::endl;
+			}
+			std::cout << "\033[33m" << "[" << prefixes[i] << "]" << "\033[30m" << std::endl;
+		}
 		(*tests[i])(this);
-		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 
 	if (testsFailed == 0)
 	{

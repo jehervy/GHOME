@@ -5,10 +5,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 
 //Personal includes
 #include "../config.h"
-#include <cstdlib>
+#include "private.h"
 
 //Size of the segment allocated for the use of the memory allocator module.
 //Metadata and data are stored both in the segment.

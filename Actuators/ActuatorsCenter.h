@@ -35,11 +35,11 @@ class ActuatorsCenter{
 		 */
 		void parserXML(const std::string a_sXmlFile);
 
-		void run();
+		void Run();
 
 		static void *callback(void *cxt)
 		{
-			((ActuatorsCenter*)cxt)->run();
+			((ActuatorsCenter*)cxt)->Run();
 			return 0;
 		}
 

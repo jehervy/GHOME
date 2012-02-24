@@ -2,7 +2,7 @@
  * EnOceanSensorModel.cpp
  *
  *  Created on: 22 janv. 2012
- *      Author: miroof
+ *      Author: Xav
  */
 
 #include "../Utils/DataContext.h"
@@ -16,6 +16,7 @@
 #include <cstring>
 #include <string>
 #include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
@@ -31,6 +32,11 @@ EnOceanActuatorModel::EnOceanActuatorModel(int a_iBal) : AbstractModel(a_iBal)
 	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Reception message BalNetwork");
 
 	parserXml("etc/enOceanActuatorsId.xml");
+}
+
+EnOceanActuatorModel::~EnOceanActuatorModel()
+{
+
 }
 
 void EnOceanActuatorModel::parserXml(string a_sXmlFile)
@@ -75,13 +81,9 @@ void EnOceanActuatorModel::Run()
 		int iVirtualId, iValue;
 		string sPhysicalId;
 
-		GhomeBox::ReceiveMessage(m_iBalCenter, iVirtualId, iValue);
-#ifdef TESTING
-		cout << "valeur recue par model : " << iVirtualId << iValue << endl;
+		strcpy(msg.mtext, "");
 
-		this->p_ordre.first = iVirtualId;
-		this->p_ordre.second = iValue;
-#endif
+		GhomeBox::ReceiveMessage(m_iBalCenter, iVirtualId, iValue);
 
 		sPhysicalId = findId(iVirtualId);
 
@@ -92,22 +94,23 @@ void EnOceanActuatorModel::Run()
 		msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
 
 		std::cout << "message envoyŽ" <<endl;
+		orderSent = msg.mtext;
 	}
 }
 
-void EnOceanActuatorModel::start()
+void EnOceanActuatorModel::Start()
 {
-	AbstractModel::Start();
-
 	networkInfo *infos = (networkInfo *)malloc(sizeof(networkInfo));
 	strcpy(infos->address, "localhost");
 	infos->port = 5000;
 	infos->bal = m_iBalNetwork;
 
 	pthread_create(&m_thread, NULL, DataContext::sSndData, (void *)infos);
+	AbstractModel::Start();
+
 }
 
-void EnOceanActuatorModel::stop()
+void EnOceanActuatorModel::Stop()
 {
 	pthread_cancel(m_threadNetwork);
 	AbstractModel::Stop();
@@ -146,6 +149,7 @@ void EnOceanActuatorModel::createOrder(string a_sPhysicalId, int iValue, balMess
 }
 
 #ifdef TESTING
+
 mapActuatorsId EnOceanActuatorModel::GetActuatorsId(){
 	return m_actuatorsId;
 }
@@ -154,14 +158,8 @@ infoTrame EnOceanActuatorModel::GetInfoTrame(){
 	return this->p_myInfoTrame;
 }
 
-std::pair<int,int> EnOceanActuatorModel::GetOrdre(){
-	return this->p_ordre;
-}
-
 void EnOceanActuatorModel::SetBalNetwork(int *balId)
 {
-	std::cout << *balId << endl;
 	this->m_iBalNetwork = *balId;
-	std::cout << m_iBalNetwork << endl;
 }
 #endif
