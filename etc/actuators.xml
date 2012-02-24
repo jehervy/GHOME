@@ -1,22 +1,6 @@
 <actuators>
-    <actuator id="1"> <!-- Température dans la chambre 1 -->
+    <actuator id="1"> <!-- Chauffage dans la chambre 1 -->
         <metric>1</metric>
         <room>3</room>
-    </actuator>
-    <actuator id="2"> <!-- Ouverture fenêtre dans le salon -->
-        <metric>4</metric>
-        <room>1</room>
-    </actuator>
-    <actuator id="3"> <!-- Ouverture fenêtre dans la chambre 1 -->
-        <metric>4</metric>
-        <room>3</room>
-    </actuator>
-    <actuator id="4"> <!-- Interrupteur salon -->
-        <metric>5</metric>
-        <room>1</room>
-    </actuator>
-    <actuator id="5"> <!-- Luminosité salon -->
-        <metric>2</metric>
-        <room>1</room>
     </actuator>
 </actuators>

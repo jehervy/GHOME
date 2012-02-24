@@ -8,4 +8,12 @@
             <metric id="2">1</metric>
         </then>
     </rule>
+	<rule>
+		<if>
+			<metric id="4" cond="eq">1</metric>
+		</if>
+		<then>
+			<metric id="1">1</metric>
+		</then>
+	</rule>
 </rules>

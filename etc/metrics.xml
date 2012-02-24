@@ -34,10 +34,6 @@
     </metric>
     <metric id="5">
         <name>Interrupteur</name>
-        <actuator>
-            <validator type="nullOrInteger" min="1" max="4" />
-            <formatter type="nullOrString" format="Activer bouton {{ value }}" no="Couper le courant" />
-        </actuator>
         <sensor>
             <formatter type="nullOrString" format="Bouton {{ value }} actif" no="Boutons inactifs" />
         </sensor>
