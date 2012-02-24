@@ -7,6 +7,43 @@
  */
 PRIVATE void *head = NULL;
 
+/**
+ * Finds the metadata of a block as big enough to contain data of the
+ * specified size.
+ *
+ * @param previous Last visited block
+ * @param size Size of the space, in bytes
+ * @return The metadata block
+ */
+static Block *findBlockForSize(Block **previous, unsigned size);
+
+/**
+ * Finds the metadata of the block associated with the given pointer. The
+ * pointer must point at the begining of the space.
+ *
+ * @param previous Last visited block
+ * @param ptr Pointer to the space
+ * @return The metadata block
+ */
+static Block *findBlockForAddress(Block **previous, void *ptr);
+
+/**
+ * Splits a block to match the exact size given as second parameter. The
+ * block's size is reduced and a new block is created in the free space.
+ *
+ * @param *block The block to merge, if possible
+ * @param size The wished size of the block
+ */
+static void splitBlock(Block *block, unsigned size);
+
+/**
+ * Merges a block with the next block if both are free. The block given as
+ * parameter is extended to its new size and the next is removed from the list.
+ *
+ * @param *block The block to merge, if possible
+ */
+static void mergeBlock(Block *block);
+
 #ifdef GMEM
 #ifndef TESTING
 /**
