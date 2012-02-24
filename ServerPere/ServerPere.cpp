@@ -172,6 +172,7 @@ void ServerPere::Stop()
 	shutdown(m_iSockfd, SHUT_RDWR);
 	pthread_cancel(m_ptThreadCommClient);
 	pthread_exit(0);
+	SystemLog::AddLog(SystemLog::SUCCESS, "Fermeture du serveur pour redémarrage");
 }
 
 /*

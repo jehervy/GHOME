@@ -126,7 +126,7 @@ while(m_bClientOpened)
 				{
 					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
 				} else {
-					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
+					SystemLog::AddLog(SystemLog::ERROR, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
 				}
 				break;
 			case 3 :
