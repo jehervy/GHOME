@@ -45,53 +45,45 @@ CommunicationClient::~CommunicationClient()
 
 }
 
-char * CommunicationClient::FreeCreateBuffer(int a_iLongueur, char * a_cBuffer)
-/*
- * Prends en parametre la longueur du m_cBuffer à initialisé,
- * après sa liberation memoire.
- */
-{
-	free(a_cBuffer);
-	a_cBuffer = (char*) malloc(a_iLongueur);
-	bzero(a_cBuffer,a_iLongueur);
-	return a_cBuffer;
-}
 
 int CommunicationClient::ReadMessage(int a_iTailleALire)
 {
 	int iMessage;
-	m_cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
-	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, a_iTailleALire);
+	char * cBuffer = (char*)malloc(a_iTailleALire);
+	//cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
+	iNbOctets=read(m_iPFileDescriptor, cBuffer, a_iTailleALire);
 	if(iNbOctets>0)
 	{
-		iMessage = atoi(m_cBuffer);
+		iMessage = atoi(cBuffer);
 	} else
 	{
 		iMessage=-1;
 	}
-
+	free(cBuffer);
 	return iMessage;
 }
 
 int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string a_sMessage)
 {
 	int iTailleMessage;
-	m_cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
-	iNbOctets=read(m_iPFileDescriptor, m_cBuffer, a_iTailleALire);
+	char * cBuffer = (char*)malloc(a_iTailleALire);
+	//m_cBuffer=CommunicationClient::FreeCreateBuffer(a_iTailleALire, m_cBuffer);
+	iNbOctets=read(m_iPFileDescriptor, cBuffer, a_iTailleALire);
 	if(iNbOctets>0)
 		{
-		iTailleMessage = atoi(m_cBuffer);
+		iTailleMessage = atoi(cBuffer);
 		a_iMessage=CommunicationClient::ReadMessage(iTailleMessage);
 		if(a_iMessage!=-1)
 			{
-				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
+				//SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
 			} else {
-				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
+				//SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
 			}
 		} else
 		{
 			iNbOctets=-1;
 		}
+	free(cBuffer);
 	return iNbOctets;
 }
 
@@ -102,7 +94,7 @@ void CommunicationClient::TransferMessage()
 	   m_bClientOpened=true;
 	   stringstream ss;
 	   ss << m_iPFileDescriptor;
-	   SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
+	   //SystemLog::AddLog(SystemLog::SUCCESS, "Client "+ss.str()+" ouvert");
 
 while(m_bClientOpened)
 {
@@ -110,7 +102,7 @@ while(m_bClientOpened)
 		m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
 		if(m_iId==-1)
 		{
-			SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
+			//SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
 		}
 	switch(m_iId){
 			case 4 :
@@ -130,18 +122,22 @@ while(m_bClientOpened)
 				iNbOctets = CommunicationClient::ReadMessage(1, m_iValue, "value");
 			    //Ecriture du message dans la boite aux lettres actuator
 				bool bSendMess;
-				bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
+				//bSendMess=GhomeBox::SendActuatorBox(m_iActuatorServerBox, m_iId, m_iMetric, m_iRoom, m_iValue);
 				if(bSendMess==true)
 				{
-					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
+					//SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message (client "+ss.str()+")");
 				} else {
-					SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
+					//SystemLog::AddLog(SystemLog::SUCCESS, "Ordre de pilotage dans file message, (client "+ss.str()+"), retour : ");
 				}
 				break;
 			case 3 :
 				break;
 
 			}
+	cout<<"-----"<<endl;
+	cout<<"Metric : "<<m_iMetric<<endl;
+	cout<<"Room : "<<m_iRoom<<endl;
+	cout<<"Value : "<<m_iValue<<endl;
 }
 
 }

@@ -40,12 +40,6 @@ public:
 	void TransferMessage();
 
 	/*
-	 * Gere la creation et la liberation d'un buffer.
-	 * Prend en parametre la taille du buffer cree.
-	 */
-	char * FreeCreateBuffer(int a_iLongueur, char * a_cBuffer);
-
-	/*
 	 * Lis un message sur le socket pour un nombre d'octets
 	 * passé en paramètre
 	 */
@@ -63,7 +57,6 @@ private :
 	int m_iPFileDescriptor;
 	bool m_bClientOpened;
 	int m_iSocket;
-	char * m_cBuffer;
 	int m_iId;
 	int m_iMetric;
 	int m_iRoom;
