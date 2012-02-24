@@ -22,10 +22,6 @@ typedef struct {
 	std::string m_psChecksum;
 } infoTrame;
 
-#ifdef TESTING
-	static pthread_mutex_t mutex;
-#endif
-
 class EnOceanActuatorModel : public AbstractModel
 {
 
@@ -34,22 +30,23 @@ public:
 
 	EnOceanActuatorModel(int a_iBal);
 
-	virtual void start();
+	virtual ~EnOceanActuatorModel();
 
-	virtual void stop();
+	virtual void Start();
+
+	virtual void Stop();
 #ifdef TESTING
 	mapActuatorsId GetActuatorsId();
 	infoTrame GetInfoTrame();
 	std::pair<int,int> GetOrdre();
 	void SetBalNetwork(int *);
-	virtual void Run();
+	char* orderSent;
 #endif
 
 private:
 	// -------------------------------- METHODES --------------------------------
-#ifndef TESTING
+
 	virtual void Run();
-#endif
 	/*
 	 * Methode permettant de lire le fichier xml qui contient toutes les
 	 * correspondances id virtuelle <-> id physique afin de remplir la
@@ -77,10 +74,6 @@ private:
 	mapActuatorsId m_actuatorsId;
 	pthread_t m_threadNetwork;
 	int m_iBalNetwork;
-
-#ifdef TESTING
-	std::pair<int,int> p_ordre;
-#endif
 	};
 
 #endif

@@ -32,12 +32,12 @@ ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_
 	m_pModel = new EnOceanActuatorModel(m_iBalModel);
 	SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Creation du modele");
 
-	m_pModel->start();
+	m_pModel->Start();
 }
 
 ActuatorsCenter::~ActuatorsCenter()
 {
-	m_pModel->stop();
+	m_pModel->Stop();
 	msgctl(m_iBalModel,IPC_RMID,0);
 }
 
@@ -58,7 +58,7 @@ void ActuatorsCenter::Stop()
 }
 
 
-void ActuatorsCenter::run()
+void ActuatorsCenter::Run()
 {
 	while(true)
 	{

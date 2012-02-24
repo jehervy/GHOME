@@ -15,8 +15,9 @@ int main()
 	Test* test = new Test();
 
 	InferenceTests(test);
-	GmemTests(test);
+	//GmemTests(test);
 	//ServerPereTests(test);
+	ActuatorsTests(test);
 
 	return test->run();
 #else
