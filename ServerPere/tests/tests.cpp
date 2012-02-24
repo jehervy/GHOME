@@ -24,12 +24,9 @@ void ServerPereTestsSimples(Test * test)
 	iTailleVect=papa->DeleteFd(112);
 	test->assert(iTailleVect==1,"El�ment absent du vector");
 	iTailleVect=papa->InsertFd(130);
-	int iFd = papa->GetFd(1);
-	test->assert(iFd==130,"El�ment ajout� � la fin du vector");
-	iFd = papa->GetFd(2);
-	test->assert(iFd==-1,"Indice sup�rieur � la taille du tableau");
-
-
+	test->assert(iTailleVect==2,"Ajoute element a la fin du vector")
+	iTailleVect = papa->DeleteFd(130);
+	test->assert(iTailleVect==1,"El�ment supprime du tableau");
 
 
 }
