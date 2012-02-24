@@ -6,7 +6,6 @@
             <formatter type="string" format="{{ value }} °C" />
         </sensor>
         <actuator>
-            <validator type="boolean" />
             <formatter type="boolean" yes="Allumer le chauffage" no="Couper le chauffage" />
         </actuator>
     </metric>
@@ -16,7 +15,6 @@
             <formatter type="string" format="{{ value }} lx" />
         </sensor>
         <actuator>
-            <validator type="boolean" />
             <formatter type="boolean" yes="Allumer la lumière" no="Éteindre la lumière" />
         </actuator>
     </metric>
@@ -34,10 +32,6 @@
     </metric>
     <metric id="5">
         <name>Interrupteur</name>
-        <actuator>
-            <validator type="nullOrInteger" min="1" max="4" />
-            <formatter type="nullOrString" format="Activer bouton {{ value }}" no="Couper le courant" />
-        </actuator>
         <sensor>
             <formatter type="nullOrString" format="Bouton {{ value }} actif" no="Boutons inactifs" />
         </sensor>
