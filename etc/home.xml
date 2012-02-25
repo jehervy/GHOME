@@ -8,20 +8,10 @@
             <name>Cuisine</name>
         </room>
         <room id="3">
-            <name>Chambre 1</name>
+            <name>Chambre </name>
         </room>
         <room id="4">
-            <name>Chambre 2</name>
-        </room>
-        <room id="5">
             <name>Salle de bains</name>
         </room>
-        <room id="6">
-            <name>Porte d'entrée</name>
-        </room>
     </rooms>
-    
-    <users>
-        <user username="admin" password="admin" />
-    </users>
 </home>

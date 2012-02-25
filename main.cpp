@@ -17,6 +17,7 @@ int main()
 	InferenceTests(test);
 	GmemTests(test);
 	//ServerPereTests(test);
+	ActuatorsTests(test);
 
 	return test->run();
 #else

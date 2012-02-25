@@ -53,7 +53,11 @@ void ActuatorsTestParsingXmlCenter(Test *test)
 		if (parsingResults.find(it->first) != parsingResults.end())
 			parsingResults.erase(it->first);
 	}
+
 	test->assert(parsingResults.size()==0,"The parsing of the xml file has been correctly done in ActuatorsCenter.");
+
+	actuatorsCenter->Stop();
+	delete actuatorsCenter;
 }
 
 /*
@@ -112,6 +116,7 @@ void ActuatorsTestParsingXmlModel(Test *test)
 	}
 	test->assert(res,"The parsing of the xml file has been correctly done in ActuatorsModel.");
 	actuatorsCenter->Stop();
+	delete actuatorsCenter;
 }
 
 /*
@@ -123,12 +128,12 @@ void ActuatorsTestParsingXmlModel(Test *test)
  */
 void ActuatorsTestServerToActuatorTransfer(Test *test)
 {
+	char* correctOrder = (char*) malloc(28*sizeof(char));
 	int balNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
-	std::cout << "value of balNetwork" << balNetwork << endl;
+	//std::cout << "value of balNetwork" << balNetwork << endl;
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
-	int idNetworkInfo=0;
-	int idNetworkValue=0;
+	balMessage msg;
 
 	/*
 	 * Since we only use one actuator, we are forced to put the metric id and the room id at respectively 1 and 3.
@@ -145,23 +150,24 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 	// The parsing method is called inside the constructor of the ActuatorCenter
 	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");
 	actuatorsCenter->Start();
-	actuatorsCenter->GetModel()->Stop();
 
 	actuatorsCenter->GetModel()->SetBalNetwork(&balNetwork);
 
-	GhomeBox::SendActuatorBox(actuatorServerBox, 2, 1,3,randValue);
-
-	//actuatorsCenter->GetModel()->Run();
-
-	std::cout << "trying to receive message from bal..." << endl;
+	GhomeBox::SendActuatorBox(actuatorServerBox,2,1,3,randValue);
 
 	//GhomeBox::ReceiveMessage(balNetwork,idNetworkInfo,idNetworkValue);
+	msgrcv(balNetwork,&msg,MSGSIZE,1,0);
 
-//	std::cout << endl << "value by model : " << idNetworkInfo << " " << idNetworkValue << endl;
-//
-//	test->assert((idNetworkInfo == 1) && (idNetworkValue == randValue),"The correct info has been transferred from actuatorBalServer to model bal") ;
-//
-//	actuatorsCenter->Stop();
+	if(randValue == 0)
+		correctOrder = "A55A6B0570000000FF9F1E071000";
+	else
+		correctOrder = "A55A6B0550000000FF9F1E071000";
+
+	test->assert(strcmp(actuatorsCenter->GetModel()->orderSent,correctOrder)==0,"The correct info has been transferred from actuatorBalServer to model bal") ;
+
+	free(correctOrder);
+	actuatorsCenter->Stop();
+	delete actuatorsCenter;
 }
 
 /*
@@ -189,6 +195,7 @@ void ActuatorsTestIgnoreNonOrders(Test *test)
 	test->assert(msgrcv(actuatorsCenter->GetBalModel(), &msg,sizeof(msg.mtext), 0, IPC_NOWAIT) == -1, "The non order message has correctly been ignored by the actuators center.");
 
 	actuatorsCenter->Stop();
+	delete actuatorsCenter;
 }
 
 void ActuatorsTests(Test *test)
