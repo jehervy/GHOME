@@ -47,7 +47,7 @@ public:
 	 *
 	 * @param std::string The thing tested (and succeed)
 	 */
-	void success(std::string message = "");
+	void pass(std::string message = "");
 
 	/**
 	 * Registers a test to execute.

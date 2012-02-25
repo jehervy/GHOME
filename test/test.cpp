@@ -37,7 +37,7 @@ void Test::fail(std::string message)
 /**
  * Trivial.
  */
-void Test::success(std::string message)
+void Test::pass(std::string message)
 {
 	assert(1, message);
 }

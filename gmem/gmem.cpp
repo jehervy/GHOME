@@ -190,22 +190,29 @@ void gprintmem()
 	unsigned dataTotal = 0;
 
 	printf("--- Memory map ---\n");
-	do
+	if (!head)
 	{
-		if (block->free)
+		printf("Empty\n");
+	}
+	else
+	{
+		do
 		{
-			printf("Free");
-		}
-		else
-		{
-			printf("Occupied");
-		}
+			if (block->free)
+			{
+				printf("Free");
+			}
+			else
+			{
+				printf("Occupied");
+			}
 
-		printf(" block of size %d bytes (meta @%p, data @%p)\n", block->size, block, (block + 1));
-		dataTotal += block->size;
-		metaTotal += sizeof(Block);
-		block = block->next;
-	} while (block);
+			printf(" block of size %d bytes (meta @%p, data @%p)\n", block->size, block, (block + 1));
+			dataTotal += block->size;
+			metaTotal += sizeof(Block);
+			block = block->next;
+		} while (block);
+	}
 	printf("--- End of memory map (meta: %d bytes, data %d bytes, total %d bytes) ---\n", metaTotal, dataTotal, dataTotal + metaTotal);
 }
 
