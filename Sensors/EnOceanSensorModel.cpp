@@ -14,10 +14,13 @@
 #include "../Utils/GhomeBox.h"
 #include "../Utils/utils.h"
 #include "../xml/pugixml.hpp"
-
+#include "../Utils/SystemLog.h"
+#include "../gmem/gmem.h"
 #include <cstdio>
-#include<sys/errno.h>
+#include <sys/errno.h>
+#include <string.h>
 
+using namespace std;
 
 #define DROITS 0660 	// Droits d'accès
 #define REFERENCE "." 	//Fichier courant utilisé pour bâtir la clé publique
@@ -26,16 +29,17 @@
 
 EnOceanSensorModel::EnOceanSensorModel(int a_iBal) : AbstractModel(a_iBal)
 {
-	m_iBalNetwork = msgget (ftok (REFERENCE, '3'), IPC_CREAT | DROITS );
+	m_iBalNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
+	if(m_iBalNetwork == -1)
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Création BalNetwork");
+	else
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Création BalNetwork");
 	ParserXml("src/etc/enOceanSensorsId.xml");
 }
 
 EnOceanSensorModel::~EnOceanSensorModel()
 {
-	for(mapSensorInfo::iterator it = m_sensorInfo.begin(); it != m_sensorInfo.end(); it++)
-	{
-		free(it->first);
-	}
+
 }
 
 void EnOceanSensorModel::ParserXml(const char *a_pXmlFile)
@@ -43,20 +47,50 @@ void EnOceanSensorModel::ParserXml(const char *a_pXmlFile)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(a_pXmlFile);
 	pugi::xml_node xmlSensors = doc.child("sensors");
+	if(result.status != pugi::status_ok)
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Parsing fichier xml");
+	else
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Parsing fichier xml");
 	std::cout << "Load result: " << result.description() << std::endl;
 
 	for (pugi::xml_node_iterator sensorsIt = xmlSensors.begin(); sensorsIt != xmlSensors.end(); ++sensorsIt)
 	{
 		SensorInfo sensorInfoNode;
-		std::pair<char*, SensorInfo> mapNode;
+		std::pair<string, SensorInfo> mapNode;
 
 		int virtualId = atoi(sensorsIt->child("virtualId").child_value());
-		char *physicalId = (char*)malloc(sizeof(sensorsIt->child("physicalId").child_value()));
-		std::strcpy(physicalId,sensorsIt->child("physicalId").child_value());
+		string sPhysicalId = string(sensorsIt->child("physicalId").child_value());
 
-		sensorInfoNode.virtualId = virtualId;
+		sensorInfoNode.iVirtualId = virtualId;
+		sensorInfoNode.iValid = atoi(sensorsIt->child("valid").child_value());
+		pugi::xml_node dataNode = sensorsIt->child("data");
+		string sType = dataNode.attribute("type").value();
+		sensorInfoNode.iPosData = dataNode.attribute("pos").as_int();
+		sensorInfoNode.iLengthData = dataNode.attribute("length").as_int();
+		if(sType == "numeric")
+		{
+			sensorInfoNode.iType = SensorInfo::NUMERIC;
+			sensorInfoNode.iMin = atoi(string(dataNode.child("min").child_value()).c_str());
+			sensorInfoNode.iMax = atoi(string(dataNode.child("max").child_value()).c_str());
+		}
+		else if(sType == "binary")
+		{
+			sensorInfoNode.iType = SensorInfo::BINARY;
 
-		mapNode.first = physicalId;
+			for (pugi::xml_node_iterator valueIt = dataNode.begin(); valueIt != dataNode.end(); ++valueIt)
+			{
+				std::pair<int, int> mapValueNode;
+
+				mapValueNode.first = valueIt->attribute("data").as_int();
+				mapValueNode.second = atoi(valueIt->child_value());
+
+				sensorInfoNode.mapValue.insert(sensorInfoNode.mapValue.begin(), mapValueNode);
+
+			}
+
+		}
+
+		mapNode.first = sPhysicalId;
 		mapNode.second = sensorInfoNode;
 
 		this->m_sensorInfo.insert(this->m_sensorInfo.begin(), mapNode);
@@ -71,111 +105,39 @@ void EnOceanSensorModel::Run()
 		bzero(msg.mtext, MSGSIZE);
 		if(msgrcv(m_iBalNetwork,&msg,MSGSIZE, 1, 0) != -1)
 		{
-			char *pId = GetId(msg.mtext);
-			char *pData = GetData(msg.mtext);
 
-			mapSensorInfo::iterator it = m_sensorInfo.find(pId);
+			string sId = string(msg.mtext).substr(16,8);
+			string sData = string(msg.mtext).substr(8,8);
+
+			mapSensorInfo::iterator it = m_sensorInfo.find(sId);
 
 			if(it != m_sensorInfo.end())
 			{
-				if(std::strcmp(pId, "00893386") == 0)
+				std::cout << "capteur connu " << std::endl;
+				if((xstrtoi(sData.c_str()) & it->second.iValid) == it->second.iValid)
 				{
-					if((xstrtoi(pData) & 8) == 8)
+					std::cout << "capteur valide " << std::endl;
+					switch(it->second.iType)
 					{
-						char *substr = (char*)malloc(3*sizeof(char));
-						strncpy(substr, pData+4, 2);
-						substr[2] = '\0';
-
-						GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 40 - (xstrtoi(substr)*40/255));
-
-						free(substr);
+						case SensorInfo::NUMERIC:
+						{
+							string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
+							GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, it->second.iMax - (xstrtoi(sSubData.c_str())*it->second.iMax/255));
+							break;
+						}
+						case SensorInfo::BINARY:
+						{
+							string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
+							map<int, int>::iterator valueIt = it->second.mapValue.find(xstrtoi(sSubData.c_str()));
+							if(valueIt != it->second.mapValue.end())
+							{
+								GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, valueIt->second);
+							}
+							break;
+						}
 					}
-				}
-				else if(std::strcmp(pId, "0001B596") == 0)
-				{
-					if((xstrtoi(pData) & 8) == 8)
-					{
-						char *substr = (char*)malloc(3*sizeof(char));
-						strncpy(substr, pData+6, 2);
-						substr[2] = '\0';
-
-						if (xstrtoi(substr)%2 == 0)
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
-						}
-						else
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
-						}
-
-						free(substr);
-					}
-				}
-				else if(std::strcmp(pId, "0001B595") == 0)
-				{
-					if((xstrtoi(pData) & 8) == 8)
-					{
-						char *substr = (char*)malloc(3*sizeof(char));
-						strncpy(substr, pData+6, 2);
-						substr[2] = '\0';
-
-						if (xstrtoi(substr)%2 == 0)
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
-						}
-						else
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
-						}
-
-						free(substr);
-					}
-				}
-				else if(std::strcmp(pId, "0021CC07") == 0)
-				{
-					char *substr = (char*)malloc(3*sizeof(char));
-					strncpy(substr, pData, 2);
-					substr[2] = '\0';
-
-					switch(xstrtoi(substr))
-					{
-						case 0:
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 0);
-							break;
-						}
-						case 48:
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 1);
-							break;
-						}
-						case 16:
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 2);
-							break;
-						}
-						case 112:
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 3);
-							break;
-						}
-						case 80:
-						{
-							GhomeBox::SendMessage(m_iBalCenter, it->second.virtualId, 4);
-							break;
-						}
-
-						free(substr);
-					}
-				}
-				else if(std::strcmp(pId, "00053E7b") == 0)
-				{
-
 				}
 			}
-
-			free(pId);
-			free(pData);
 		}
 		else
 		{
@@ -202,18 +164,4 @@ void EnOceanSensorModel::Stop()
 	pthread_cancel(m_threadNetwork);
 	AbstractModel::Stop();
 	msgctl(m_iBalNetwork,IPC_RMID,0);
-}
-
-char* EnOceanSensorModel::GetId(char *a_pData){
-	char* res = (char*)malloc(9*sizeof(char));
-	res[8] = '\0';
-	strncpy(res,a_pData+16,8);
-	return res;
-}
-
-char* EnOceanSensorModel::GetData(char *a_pData){
-	char* res = (char*)malloc(9*sizeof(char));
-	res[8] = '\0';
-	strncpy(res,a_pData+8,8);
-	return res;
 }

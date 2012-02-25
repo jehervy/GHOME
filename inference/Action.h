@@ -56,6 +56,9 @@ public:
 	 */
 	int getValue();
 
+	//TODO : Opérateur ==
+	bool operator==(const Action &);
+
 private:
 	int metric;
 	int value;

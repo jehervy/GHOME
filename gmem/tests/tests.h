@@ -2,7 +2,7 @@
 #define _GMEM_TESTS_H
 
 #include "../gmem.h"
-#include "../../test/Test.h"
+#include "../../test/test.h"
 
 extern void *head;
 

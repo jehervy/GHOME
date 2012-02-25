@@ -10,18 +10,26 @@
 
 int SystemLog::AddLog(int a_itype, string a_sMessage)
 {
+	pthread_mutex_lock (&myMutex);
 	GhomeDatabase* pLogSys = new GhomeDatabase("localhost", "boby", "ghome", "GHOME");
 	if (pLogSys->OpenDatabase() != 0)
 	{
+		pLogSys->CloseDatabase();
+		delete pLogSys;
+		pthread_mutex_unlock (&myMutex);
 		return -1;
 	}
-	pthread_mutex_lock (&myMutex);
+
 	if (pLogSys->AddTuple("system_logs", a_itype, a_sMessage) != 0)
 	{
+		pLogSys->CloseDatabase();
+		delete pLogSys;
+		pthread_mutex_unlock (&myMutex);
 		return -1;
 	}
-	pthread_mutex_unlock (&myMutex);
 	pLogSys->CloseDatabase();
+	delete pLogSys;
+	pthread_mutex_unlock (&myMutex);
 	return 0;
 }
 

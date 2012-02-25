@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
+#include <cstring>
 
 using namespace std;
 
@@ -73,14 +74,14 @@ void ActuatorsCenter::Run()
 			int iVirtualId = findVirtualId(iMetric, iRoom);
 			if (iVirtualId != -1)
 			{
-				std::cout << "id virtuel trouvŽ : " << iVirtualId << endl;
+				std::cout << "id virtuel trouvï¿½ : " << iVirtualId << endl;
 				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
 				SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : message transmis a la bal du Model");
 
 			}
 			else
 			{
-				std::cout << "id virtuel non trouvŽ " << endl;
+				std::cout << "id virtuel non trouvï¿½ " << endl;
 				string log;
 				log += "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : ";
 				log += iMetric;

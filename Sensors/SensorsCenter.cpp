@@ -8,6 +8,7 @@
 #include "SensorsCenter.h"
 #include "../Utils/DataContext.h"
 #include <iostream>
+#include <algorithm>
 #include <stdlib.h>
 # include <sys/ipc.h>
 #include <sys/msg.h>	//pour la boite aux lettres
@@ -23,7 +24,7 @@
 SensorsCenter::SensorsCenter(int a_iBalServer, const char* a_pXmlFile) : m_iBalServer(a_iBalServer)
 {
 	ParserXML("src/etc/sensors.xml");
-	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
+	m_iBalModel = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	m_pModel = new EnOceanSensorModel(m_iBalModel);
 	m_pModel->Start();
 }
@@ -50,6 +51,9 @@ void SensorsCenter::Run()
 
 	int iSensorId = 0;
 	int iSensorValue = 0;
+
+	inference::Actions ActionsTmp;
+
 	while(true)
 	{
 		if(GhomeBox::ReceiveMessage(m_iBalModel, iSensorId, iSensorValue))
@@ -57,13 +61,20 @@ void SensorsCenter::Run()
 			mapSensors::iterator it = m_sensors.find(iSensorId);
 			if(it != m_sensors.end())
 			{
+				//std::cout << "send actuator" << std::endl;
 				GhomeBox::SendActuatorBox(m_iBalServer, 1, it->second.first, it->second.second, iSensorValue);
 				inference::Actions Actions = Engine.run(it->second.first, iSensorValue);
 				for(unsigned int i=0; i<Actions.size(); i++)
 				{
-					//std::cout << "Nouvelle action " << i << std::endl;
-					GhomeBox::SendActuatorBox(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
+					if(ActionsTmp.size() > 0)
+					{
+						if(std::find(ActionsTmp.begin(), ActionsTmp.end(), Actions[i]) == ActionsTmp.end())
+						{
+							GhomeBox::SendActuatorBox(m_iBalServer, 2, Actions[i].getMetric(), it->second.second, Actions[i].getValue() );
+						}
+					}
 				}
+				ActionsTmp = Actions;
 			}
 		}
 	}

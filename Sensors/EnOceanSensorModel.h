@@ -10,20 +10,22 @@
 
 #include "AbstractModel.h"
 #include <map>
-#include <cstring>
-
-struct StrCompare : public std::binary_function<char*, char*, bool> {
-public:
-    bool operator() (char* str1, char* str2) const
-    { return std::strcmp(str1, str2) < 0; }
-};
-
+#include <string>
 
 struct SensorInfo{
-	int virtualId;
+	enum Type { NUMERIC, BINARY };
+
+	int iVirtualId;
+	Type iType;
+	int iValid;
+	int iPosData;
+	int iLengthData;
+	int iMin;
+	int iMax;
+	std::map<int, int> mapValue;
 };
 
-typedef std::multimap<char*, SensorInfo, StrCompare> mapSensorInfo;
+typedef std::multimap<std::string, SensorInfo> mapSensorInfo;
 
 
 class EnOceanSensorModel : public AbstractModel{
@@ -41,10 +43,6 @@ private:
 	virtual void Run();
 
 	void ParserXml(const char *a_XmlFile);
-
-	char* GetId(char a_Data[29]);
-
-	char* GetData(char a_Data[29]);
 
 	mapSensorInfo m_sensorInfo;
 	pthread_t m_threadNetwork;

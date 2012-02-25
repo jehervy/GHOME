@@ -23,6 +23,7 @@ public:
 	int CloseDatabase();
 	//Permet l'insertion d'un tuple dans les bases de données sensors_values et actuators_commands
 	int AddTuple(string a_sTable, int a_iRoom,int a_iMetric,int a_iValue);
+	int AddTuple(string a_sTable, string a_sAuthor, int a_iRoom,int a_iMetric,int a_iValue);
 	//Permet l'insertion d'un tuple dans la base de données system_logs
 	int AddTuple(string a_sTable, int a_iType, string a_sMessage);
 

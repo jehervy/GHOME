@@ -56,3 +56,10 @@ int inference::Action::getValue()
 {
 	return value;
 }
+
+
+bool inference::Action::operator ==(const inference::Action &action)
+{
+	return(	(this->metric == action.metric) &&
+			(this->value == action.value));
+}

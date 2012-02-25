@@ -93,7 +93,7 @@ void EnOceanActuatorModel::Run()
 
 		msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
 
-		std::cout << "message envoyŽ" <<endl;
+		std::cout << "message envoyï¿½" <<endl;
 		orderSent = msg.mtext;
 	}
 }

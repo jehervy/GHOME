@@ -1,5 +1,5 @@
 //Personal includes
-#include "Test.h"
+#include "test.h"
 
 /**
  * Trivial.
