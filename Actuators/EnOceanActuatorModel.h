@@ -29,12 +29,10 @@ public:
 	// -------------------------------- METHODES --------------------------------
 
 	EnOceanActuatorModel(int a_iBal);
-
 	virtual ~EnOceanActuatorModel();
-
 	virtual void Start();
-
 	virtual void Stop();
+
 #ifdef TESTING
 	mapActuatorsId GetActuatorsId();
 	infoTrame GetInfoTrame();

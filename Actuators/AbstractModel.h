@@ -24,19 +24,15 @@ private:
 
 public:
 	AbstractModel(int a_iBal) : m_iBalCenter(a_iBal){}
-
 	virtual ~AbstractModel(){}
-
 	virtual void Start()
 	{
 		pthread_create(&m_thread, 0, AbstractModel::sCallback, (void *)this);
 	}
-
 	virtual void Stop()
 	{
 		pthread_cancel(m_thread);
 	}
-
 	virtual void Wait()
 	{
 		pthread_join(m_thread, NULL);

@@ -87,14 +87,18 @@ void EnOceanActuatorModel::Run()
 
 		sPhysicalId = findId(iVirtualId);
 
-		createOrder(sPhysicalId, iValue, msg);
+		if (sPhysicalId != "")
+		{
+			createOrder(sPhysicalId, iValue, msg);
+			msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
+			SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Transmission de l'ordre de pilotage ˆ l'actionneur");
+		}
+		else
+			SystemLog::AddLog(SystemLog::ERROR, "Transmission de l'ordre de pilotage ˆ l'actionneur");
 
-		cout << "Sending order " << msg.mtext << " to " << sPhysicalId << " on bal : " << this->m_iBalNetwork << endl;
-
-		msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
-
-		std::cout << "message envoyï¿½" <<endl;
+#ifdef TESTING
 		orderSent = msg.mtext;
+#endif
 	}
 }
 
@@ -124,8 +128,8 @@ string EnOceanActuatorModel::findId(int a_iVirtualId){
 	itActuatorsId = this->m_actuatorsId.find(a_iVirtualId);
 	sRes = (itActuatorsId!=this->m_actuatorsId.end())? itActuatorsId->second : "";
 	if (sRes.length() == 0)
-		cout << "cet id virtuel :" << a_iVirtualId << "ne correspond ï¿½ aucun id physique enregistrï¿½." << endl;
-	return sRes;
+		return sRes;
+	else return "";
 }
 
 void EnOceanActuatorModel::createOrder(string a_sPhysicalId, int iValue, balMessage &res)

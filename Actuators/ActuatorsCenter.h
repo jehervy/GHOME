@@ -14,12 +14,19 @@
  */
 typedef std::map<std::pair<int,int>,int>  mapActuators;
 
+
+/*
+ * La classe ActuatorCenter centralise les ActuatorModels, les implémentations des capteurs.
+ * Elle assure la liaison entre le serveur central et les models.
+ * Elle est également responsable de la correspondance (métrique,pièce) <-> id Virtuel
+ */
 class ActuatorsCenter{
 	public:
 		ActuatorsCenter(int a_iBalServer, const std::string a_sXmlFile);
 		virtual ~ActuatorsCenter();
 		void Start();
 		void Stop();
+
 #ifdef TESTING
 		mapActuators GetActuators();
 		int GetBalModel();
@@ -28,15 +35,13 @@ class ActuatorsCenter{
 
 	private:
 		// METHODES
+		void Run();
 		/*
 		 * Methode permettant de lire le fichier xml qui contient toutes les
 		 * correspondances metric/room <-> id virtuelle afin de remplir la
 		 * structure qui les contient
 		 */
 		void parserXML(const std::string a_sXmlFile);
-
-		void Run();
-
 		static void *callback(void *cxt)
 		{
 			((ActuatorsCenter*)cxt)->Run();
@@ -53,14 +58,9 @@ class ActuatorsCenter{
 		// ATTRIBUTS
 		int m_iBalServer;
 		int m_iBalModel;
-
 		pthread_t m_pThread;
-
 		mapActuators m_pActuators;
-
 		EnOceanActuatorModel *m_pModel;
-
-
 };
 
 #endif

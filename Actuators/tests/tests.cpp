@@ -130,7 +130,6 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 {
 	char* correctOrder = (char*) malloc(28*sizeof(char));
 	int balNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
-	//std::cout << "value of balNetwork" << balNetwork << endl;
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
 	balMessage msg;
@@ -143,9 +142,6 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 
 	/* generate random value between 0 and 1: */
 	int randValue = (rand() * 100)%2;
-
-	std::cout << "value random : " << randValue << endl;
-
 
 	// The parsing method is called inside the constructor of the ActuatorCenter
 	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");

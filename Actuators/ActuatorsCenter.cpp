@@ -74,14 +74,12 @@ void ActuatorsCenter::Run()
 			int iVirtualId = findVirtualId(iMetric, iRoom);
 			if (iVirtualId != -1)
 			{
-				std::cout << "id virtuel trouv� : " << iVirtualId << endl;
 				GhomeBox::SendMessage(m_iBalModel,iVirtualId, iValue);
 				SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : message transmis a la bal du Model");
 
 			}
 			else
 			{
-				std::cout << "id virtuel non trouv� " << endl;
 				string log;
 				log += "ActuatorCenter : Aucun capteur ne correspond a ces informations : metric : ";
 				log += iMetric;
