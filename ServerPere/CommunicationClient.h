@@ -35,19 +35,20 @@ public:
 	virtual ~CommunicationClient();
 
 	/*
-	 * Lis les messages envoyÃ©s sur le socket
+	 * Lecture des messages envoyes sur le socket
 	 */
 	void TransferMessage();
 
 	/*
-	 * Lis un message sur le socket pour un nombre d'octets
+	 * Lecture d'un message sur le socket pour un nombre d'octets
 	 * pass en paramtre
 	 */
 	int ReadMessage(int a_iTailleALire);
 
 	/*
-	 * Lis un message sur le socket sur un nombre d'octets
-	 * pass en paramtre, et dfinit la valeur d'une rfrence
+	 * Lecture d'un message sur le socket sur un nombre d'octets
+	 * passe en paramtre, et definition de la valeur de la rfrence
+	 * passee en parametre
 	 */
 	int ReadMessage(int a_TailleALire, int &a_iMessage, string a_sMessage);
 

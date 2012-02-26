@@ -15,37 +15,42 @@
 
 ServerPere* papa;
 
-
-CommunicationClient::CommunicationClient()
 /*
  * Constructeur
  */
+CommunicationClient::CommunicationClient()
 {
 
 
 }
 
-CommunicationClient::CommunicationClient(int a_iSensorServerBox, int a_iActuatorServerBox, int a_iFd, int a_iSock, void * a_pPtr) :
-m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox), m_iPFileDescriptor(a_iFd), m_iSocket(a_iSock)
 /*
  * Constructeur surcharge.
- * Appel la methode de gestion des messages lues sur le socket
+ * Appelle la methode de gestion des messages lus sur le socket
  */
+CommunicationClient::CommunicationClient(int a_iSensorServerBox, int a_iActuatorServerBox, int a_iFd, int a_iSock, void * a_pPtr) :
+m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox), m_iPFileDescriptor(a_iFd), m_iSocket(a_iSock)
 {
 	papa = (ServerPere*)a_pPtr;
 	CommunicationClient::TransferMessage();
 
 }
 
-CommunicationClient::~CommunicationClient()
 /*
  * Destructeur
  */
+CommunicationClient::~CommunicationClient()
 {
 
 }
 
 
+/*
+ * Declare un buffer ;
+ * Lit le nombre d'octets passe en parametre sur le socket,
+ * correspondant au nombre d'octets a lire pour le message suivant ;
+ * Libere le buffer ;
+ */
 int CommunicationClient::ReadMessage(int a_iTailleALire)
 {
 	int iMessage;
@@ -62,6 +67,12 @@ int CommunicationClient::ReadMessage(int a_iTailleALire)
 	return iMessage;
 }
 
+/*
+ * Declare un buffer ;
+ * Lit un nombre d'octets passe en parametre sur le socket ;
+ * Appelle la methode ReadMessage avec la valeur lue ;
+ * Definit la valeur de la reference passee en parametre ;
+ */
 int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string a_sMessage)
 {
 	int iTailleMessage;
@@ -75,7 +86,7 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 			{
 				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+")");
 			} else {
-				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage+"), retour : ");
+				SystemLog::AddLog(SystemLog::SUCCESS, "Lecture message client ("+a_sMessage);
 			}
 		} else
 		{
@@ -86,6 +97,15 @@ int CommunicationClient::ReadMessage(int a_iTailleALire, int &a_iMessage, string
 }
 
 
+/*
+ * Tant que le file descriptor est ouvert :
+ * Lit un octet sur le socket et traite le message
+ * en fonction de la valeur de cet octet ;
+ * case 1 : ordre de lecture ; (non specifie)
+ * case 2 : ordre de pilotage ;
+ * case 3 : ordre de maintenance ; (non specifie)
+ * case 4 : ordre de redémarrage du serveur ;
+ */
 void CommunicationClient::TransferMessage()
 
 {
@@ -97,7 +117,7 @@ void CommunicationClient::TransferMessage()
 while(m_bClientOpened)
 {
 	m_iId = -1;
-		m_iId=CommunicationClient::ReadMessage(1);//On lit le type de message
+		m_iId=CommunicationClient::ReadMessage(1);
 		if(m_iId==-1)
 		{
 			SystemLog::AddLog(SystemLog::ERROR, "Message client incorrect");
@@ -133,10 +153,6 @@ while(m_bClientOpened)
 				break;
 
 			}
-	cout<<"-----"<<endl;
-	cout<<"Metric : "<<m_iMetric<<endl;
-	cout<<"Room : "<<m_iRoom<<endl;
-	cout<<"Value : "<<m_iValue<<endl;
 }
 
 }

@@ -37,8 +37,7 @@ ServerPere::ServerPere()
 }
 
 /*
- * Constructeur surcharge ;
- * Appel la méthode de création d'un socket dans un nouveau thread
+ * Constructeur de surcharge
  */
 ServerPere::ServerPere(int a_iSensorServerBox,int a_iActuatorServerBox) :
 		m_iSensorServerBox(a_iSensorServerBox), m_iActuatorServerBox(a_iActuatorServerBox)
@@ -62,7 +61,6 @@ void *ServerPere::sCreateCommClientCallBack(void * a_pPtr)
  */
 void *ServerPere::CreateCommClient()
 {
-	cout << "Create comm client : Socket : " << m_iPFileDescriptor << endl;
 	CommunicationClient comm_client(m_iSensorServerBox, m_iActuatorServerBox, m_iPFileDescriptor, m_iSockfd, this);
 	return (0);
 }
@@ -73,7 +71,6 @@ void *ServerPere::CreateCommClient()
  */
 void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
 {
-	cout<<"Callback"<<endl;
 	ServerPere* p = (ServerPere*)a_pPtr;
 	p->OpenSocket();
 	return (0);
@@ -86,7 +83,6 @@ void *ServerPere::sOpenSocketCallBack(void * a_pPtr)
  */
 void *ServerPere::OpenSocket()
 {
-	cout<<"open"<<endl;
 	unsigned int iSize;
 	struct sockaddr_in sLocal;
 	struct sockaddr_in sRemote;
@@ -148,7 +144,6 @@ void *ServerPere::OpenSocket()
  */
 int ServerPere::Start()
 {
-	cout<<"start"<<endl;
 	int iCheck = pthread_create(&m_ptThreadCommClient, NULL, &ServerPere::sOpenSocketCallBack, this);
 	return iCheck;
 }

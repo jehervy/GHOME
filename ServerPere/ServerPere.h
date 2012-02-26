@@ -23,8 +23,6 @@ public:
 
 	/*
 	 * Constructeur
-	 * Appel la methode d'ouverture de socket dans un
-	 * nouveau thread
 	 */
 	ServerPere(int a_iSensorServerBox, int a_iActuatorServerBox);
 
@@ -34,7 +32,7 @@ public:
 	virtual ~ServerPere();
 
 	/*
-	 * Crée un thread gérant le socket de communication
+	 * Cree un thread gérant le socket de communication
 	 * entre le serveur C++ et le client Web (Apache).
 	 * Appelle une methode static.
 	 */
@@ -110,6 +108,9 @@ public:
 	 */
 	int GetFd(int a_iPosition);
 
+	/*
+	 * Port d'ecoute du socket
+	 */
 	static const int SERVER_PERE_PORT = 3000;
 
 private :
