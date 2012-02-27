@@ -45,6 +45,9 @@ void ActuatorsTestParsingXmlCenter(Test *test)
 		it++;
 	}
 
+	if(parsingResults.size()!=0)
+		passed = false;
+
 	test->assert(passed,"The parsing of the xml file has been correctly done in ActuatorsCenter.");
 
 	actuatorsCenter->Stop();
@@ -140,9 +143,9 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 	GhomeBox::SendActuatorBox(actuatorServerBox,2,1,3,randValue);
 
 	if(randValue == 0)
-		correctOrder = "A55A6B0570000000FF9F1E071000";
+		correctOrder = (char*) "A55A6B0570000000FF9F1E071000";
 	else
-		correctOrder = "A55A6B0550000000FF9F1E071000";
+		correctOrder = (char*) "A55A6B0550000000FF9F1E071000";
 
 	sleep(1);
 
