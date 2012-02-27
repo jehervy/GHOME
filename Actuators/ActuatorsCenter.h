@@ -28,6 +28,7 @@ class ActuatorsCenter{
 		void Stop();
 
 #ifdef TESTING
+		ActuatorsCenter(int a_iBalServer, const std::string a_sXmlFile, int* balNetwork);
 		mapActuators GetActuators();
 		int GetBalModel();
 		EnOceanActuatorModel* GetModel();

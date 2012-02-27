@@ -25,7 +25,7 @@ using namespace std;
 ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_iBalServer(a_iBalServer)
 {
 	parserXML(a_sXmlFile);
-	m_iBalModel = msgget (ftok (REFERENCE, '2'), IPC_CREAT | DROITS );
+	m_iBalModel = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	if(m_iBalModel == -1)
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorCenter : Reception message actuatorServerBox");
 	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorCenter : Reception message actuatorServerBox");
@@ -35,6 +35,15 @@ ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile) : m_
 
 	m_pModel->Start();
 }
+#ifdef TESTING
+ActuatorsCenter::ActuatorsCenter(int a_iBalServer, const string a_sXmlFile,int* balNetwork) : m_iBalServer(a_iBalServer)
+{
+	parserXML(a_sXmlFile);
+	m_iBalModel = *balNetwork;
+	m_pModel = new EnOceanActuatorModel(m_iBalModel);
+	m_pModel->Start();
+}
+#endif
 
 ActuatorsCenter::~ActuatorsCenter()
 {

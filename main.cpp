@@ -14,8 +14,8 @@ int main()
 #ifdef TESTING
 	Test* test = new Test();
 
-	InferenceTests(test);
-	GmemTests(test);
+	//InferenceTests(test);
+	//GmemTests(test);
 	//ServerPereTests(test);
 	ActuatorsTests(test);
 

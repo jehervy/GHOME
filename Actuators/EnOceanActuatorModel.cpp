@@ -26,7 +26,7 @@ using namespace std;
 EnOceanActuatorModel::EnOceanActuatorModel(int a_iBal) : AbstractModel(a_iBal)
 {
 
-	m_iBalNetwork = msgget (ftok (REFERENCE, '3'), IPC_CREAT | DROITS );
+	m_iBalNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	if(m_iBalNetwork == -1)
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorModel : Reception message BalNetwork");
 	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Reception message BalNetwork");
@@ -94,7 +94,9 @@ void EnOceanActuatorModel::Run()
 			SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Transmission de l'ordre de pilotage ˆ l'actionneur");
 		}
 		else
+		{
 			SystemLog::AddLog(SystemLog::ERROR, "Transmission de l'ordre de pilotage ˆ l'actionneur");
+		}
 
 #ifdef TESTING
 		orderSent = msg.mtext;
@@ -127,7 +129,7 @@ string EnOceanActuatorModel::findId(int a_iVirtualId){
 
 	itActuatorsId = this->m_actuatorsId.find(a_iVirtualId);
 	sRes = (itActuatorsId!=this->m_actuatorsId.end())? itActuatorsId->second : "";
-	if (sRes.length() == 0)
+	if (sRes.length() != 0)
 		return sRes;
 	else return "";
 }

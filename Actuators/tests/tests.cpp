@@ -11,6 +11,7 @@
  */
 void ActuatorsTestParsingXmlCenter(Test *test)
 {
+	bool passed = true;
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
 	GhomeBox::SendActuatorBox(actuatorServerBox, 2, 1,3,1);
@@ -27,34 +28,24 @@ void ActuatorsTestParsingXmlCenter(Test *test)
 	(node.first).second = 3;
 	node.second = 1;
 	referenceMap.insert(node);
-	(node.first).first = 4;
-	(node.first).second = 1;
-	node.second = 2;
-	referenceMap.insert(node);
-	(node.first).first = 4;
-	(node.first).second = 3;
-	node.second = 3;
-	referenceMap.insert(node);
-	(node.first).first = 5;
-	(node.first).second = 1;
-	node.second = 4;
-	referenceMap.insert(node);
-	(node.first).first = 2;
-	(node.first).second = 1;
-	node.second = 5;
-	referenceMap.insert(node);
 
 	/*
 	 * Comparison node by node between the two collection :
 	 * 1. if something in the parsing result is not in the reference : error
 	 * 2. if something in the reference does not appear in the parsing result : error
 	 */
-	for(mapActuators::iterator it = referenceMap.begin(); it != referenceMap.end(); ++it){
-		if (parsingResults.find(it->first) != parsingResults.end())
+	mapActuators::iterator it = referenceMap.begin();
+	while(passed && it != referenceMap.end())
+	{
+		if (parsingResults.find(it->first) != parsingResults.end()
+				&& parsingResults.find(it->first)->second == it->second)
 			parsingResults.erase(it->first);
+		else
+			passed = false;
+		it++;
 	}
 
-	test->assert(parsingResults.size()==0,"The parsing of the xml file has been correctly done in ActuatorsCenter.");
+	test->assert(passed,"The parsing of the xml file has been correctly done in ActuatorsCenter.");
 
 	actuatorsCenter->Stop();
 	delete actuatorsCenter;
@@ -114,7 +105,7 @@ void ActuatorsTestParsingXmlModel(Test *test)
 		if (parsingResults.size()!=0)
 			res = false;
 	}
-	test->assert(res,"The parsing of the xml file has been correctly done in ActuatorsModel.");
+	test->assert(res,"The parsing of the xml file has been correctly done in ActuatorModel.");
 	actuatorsCenter->Stop();
 	delete actuatorsCenter;
 }
@@ -128,11 +119,9 @@ void ActuatorsTestParsingXmlModel(Test *test)
  */
 void ActuatorsTestServerToActuatorTransfer(Test *test)
 {
-	char* correctOrder = (char*) malloc(28*sizeof(char));
+	char* correctOrder=(char*) malloc(28*sizeof(char));
 	int balNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
-
-	balMessage msg;
 
 	/*
 	 * Since we only use one actuator, we are forced to put the metric id and the room id at respectively 1 and 3.
@@ -143,25 +132,22 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 	/* generate random value between 0 and 1: */
 	int randValue = (rand() * 100)%2;
 
+
 	// The parsing method is called inside the constructor of the ActuatorCenter
-	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");
+	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml",&balNetwork);
 	actuatorsCenter->Start();
 
-	actuatorsCenter->GetModel()->SetBalNetwork(&balNetwork);
-
 	GhomeBox::SendActuatorBox(actuatorServerBox,2,1,3,randValue);
-
-	//GhomeBox::ReceiveMessage(balNetwork,idNetworkInfo,idNetworkValue);
-	msgrcv(balNetwork,&msg,MSGSIZE,1,0);
 
 	if(randValue == 0)
 		correctOrder = "A55A6B0570000000FF9F1E071000";
 	else
 		correctOrder = "A55A6B0550000000FF9F1E071000";
 
-	test->assert(strcmp(actuatorsCenter->GetModel()->orderSent,correctOrder)==0,"The correct info has been transferred from actuatorBalServer to model bal") ;
+	sleep(1);
 
-	free(correctOrder);
+	test->assert(strcmp(actuatorsCenter->GetModel()->orderSent.c_str(), correctOrder)==0,"The correct info has been transferred from actuatorBalServer to model bal") ;
+
 	actuatorsCenter->Stop();
 	delete actuatorsCenter;
 }

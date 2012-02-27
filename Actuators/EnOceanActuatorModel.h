@@ -38,7 +38,7 @@ public:
 	infoTrame GetInfoTrame();
 	std::pair<int,int> GetOrdre();
 	void SetBalNetwork(int *);
-	char* orderSent;
+	std::string orderSent;
 #endif
 
 private:

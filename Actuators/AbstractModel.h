@@ -41,9 +41,6 @@ public:
 protected:
 	int m_iBalCenter;
 	pthread_t m_thread;
-
-
-
 };
 
 #endif /* ABSTRACTMODEL_H_ */
