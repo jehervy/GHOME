@@ -4,8 +4,8 @@
         <physicalId>00893386</physicalId>
         <valid>8</valid>
 	<data type="numeric" pos="4" length="2">
-		<min>0</min>
-		<max>40</max>	
+		<min>40</min>
+		<max>0</max>	
 	</data>
     </sensor>
     <sensor> <!-- Ouverture fenêtre dans le salon -->

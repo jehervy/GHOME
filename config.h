@@ -3,10 +3,10 @@
 
 //Define GMEM to use the custom memory allocator module. If not defined, the
 //standard functions will be used instead.
-#define GMEM
+//#define GMEM
 
 //Define TESTING to switch to test mode.
-#define TESTING
+//#define TESTING
 
 //Define DBG to enable some debug messages.
 //#define DBG

@@ -1,8 +1,8 @@
 #ifndef _ACTUATORS_TESTS_H_
 #define _ACTUATORS_TESTS_H_
 
-#include "../../test/Test.h"
-#include "../../utils/GhomeBox.h"
+#include "../../test/test.h"
+#include "../../Utils/GhomeBox.h"
 #include "../ActuatorsCenter.h"
 #include "../EnOceanActuatorModel.h"
 

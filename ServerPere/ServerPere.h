@@ -32,7 +32,7 @@ public:
 	virtual ~ServerPere();
 
 	/*
-	 * Cree un thread grant le socket de communication
+	 * Cree un thread gï¿½rant le socket de communication
 	 * entre le serveur C++ et le client Web (Apache).
 	 * Appelle une methode static.
 	 */
@@ -42,7 +42,7 @@ public:
 	/*
 	 * Cree une instance de classe de communication_client
 	 * a chaque nouvelle connexion.
-	 * Est appele dans un nouveau thread.
+	 * Est appelï¿½e dans un nouveau thread.
 	 */
 	void *CreateCommClient();
 
@@ -56,9 +56,9 @@ public:
 
 
 	/*
-	 * Cre un socket serveur, et attend les
+	 * Crï¿½e un socket serveur, et attend les
 	 * connexions de clients.
-	 * Gre la cration de file_descriptor.
+	 * Gï¿½re la crï¿½ation de file_descriptor.
 	 */
 	void *OpenSocket();
 
@@ -98,7 +98,7 @@ public:
 	void Stop();
 
 	/*
-	 * Met ˆ jour l'tat du socket
+	 * Met ï¿½ jour l'ï¿½tat du socket
 	 */
 	void SetOpened(bool a_bEtat);
 
@@ -111,7 +111,7 @@ public:
 	/*
 	 * Port d'ecoute du socket
 	 */
-	static const int SERVER_PERE_PORT = 3000;
+	static const int SERVER_PERE_PORT = 3023;
 
 private :
 	pthread_t m_ptThreadCommClient;

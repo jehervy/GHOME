@@ -8,7 +8,7 @@
 #ifndef _SERVERPERE_TESTS_H_
 #define _SERVERPERE_TESTS_H_
 
-#include "../../test/Test.h"
+#include "../../test/test.h"
 #include "../../tache_mere.h"
 #include "../ServerPere.h"
 

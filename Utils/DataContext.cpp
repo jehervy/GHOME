@@ -13,7 +13,9 @@
 #include <string>
 #include "../socket/ClientSocket.h"
 #include "../socket/SocketException.h"
+#include "SystemLog.h"
 #include <pthread.h>
+#include <iostream>
 
 using namespace std;
 
@@ -37,18 +39,22 @@ void* DataContext::sRcvData(void* a_pArgs)
 			// Récupération de la trame, formatage et envoie dans la file de messages
 			while(true){
 		  		clientSocket >> sTrame;
+		  		SystemLog::AddLog(SystemLog::SUCCESS, "DataContext : Reception nouvelle trame");
+		  		std::cout << "rcv : " << sTrame << std::endl;
 				bzero(msg.mtext, MSGSIZE);
 		  		strcpy(msg.mtext, sTrame.c_str());
 		  		msgsnd(infos.bal, &msg, MSGSIZE, 0);
 			}
 		}
 	     catch ( SocketException& ) {
+	    	 SystemLog::AddLog(SystemLog::ERROR, "DataContext : Reception nouvelle trame");
 	    	 pthread_exit(NULL);
 	     }
 
 	    }
 	  catch ( SocketException& e )
 	    {
+		  SystemLog::AddLog(SystemLog::ERROR, "DataContext : Reception nouvelle trame");
 	      pthread_exit(NULL);
 	    }
 
@@ -75,17 +81,21 @@ void* DataContext::sSndData(void* a_pArgs)
 				bzero(msg.mtext, MSGSIZE);
 				if(msgrcv(infos.bal,&msg,MSGSIZE, 1, 0 ) != -1)
 				{
+					SystemLog::AddLog(SystemLog::SUCCESS, "DataContext : Envoie nouvelle trame");
+					std::cout << "snd : " << msg.mtext << std::endl;
 					clientSocket << msg.mtext;
 				}
 			}
 		}
 		 catch ( SocketException& ) {
+			 SystemLog::AddLog(SystemLog::ERROR, "DataContext : Envoie nouvelle trame");
 			 pthread_exit(NULL);
 		 }
 
 		}
 	  catch ( SocketException& e )
 		{
+		  SystemLog::AddLog(SystemLog::ERROR, "DataContext : Envoie nouvelle trame");
 		  pthread_exit(NULL);
 		}
 

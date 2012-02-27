@@ -31,7 +31,7 @@ EnOceanActuatorModel::EnOceanActuatorModel(int a_iBal) : AbstractModel(a_iBal)
 		SystemLog::AddLog(SystemLog::ERROR, "ActuatorModel : Reception message BalNetwork");
 	else SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Reception message BalNetwork");
 
-	parserXml("etc/enOceanActuatorsId.xml");
+	parserXml("src/etc/enOceanActuatorsId.xml");
 }
 
 EnOceanActuatorModel::~EnOceanActuatorModel()
@@ -91,11 +91,11 @@ void EnOceanActuatorModel::Run()
 		{
 			createOrder(sPhysicalId, iValue, msg);
 			msgsnd(m_iBalNetwork, &msg, MSGSIZE, 0);
-			SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Transmission de l'ordre de pilotage ˆ l'actionneur");
+			SystemLog::AddLog(SystemLog::SUCCESS, "ActuatorModel : Transmission de l'ordre de pilotage ï¿½ l'actionneur");
 		}
 		else
 		{
-			SystemLog::AddLog(SystemLog::ERROR, "Transmission de l'ordre de pilotage ˆ l'actionneur");
+			SystemLog::AddLog(SystemLog::ERROR, "Transmission de l'ordre de pilotage ï¿½ l'actionneur");
 		}
 
 #ifdef TESTING
@@ -111,7 +111,7 @@ void EnOceanActuatorModel::Start()
 	infos->port = 5000;
 	infos->bal = m_iBalNetwork;
 
-	pthread_create(&m_thread, NULL, DataContext::sSndData, (void *)infos);
+	pthread_create(&m_threadNetwork, NULL, DataContext::sSndData, (void *)infos);
 	AbstractModel::Start();
 
 }

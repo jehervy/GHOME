@@ -80,6 +80,7 @@ void ActuatorsCenter::Run()
 
 		if (iTypeMes == 2) // Correspond a un ordre de pilotage
 		{
+
 			int iVirtualId = findVirtualId(iMetric, iRoom);
 			if (iVirtualId != -1)
 			{

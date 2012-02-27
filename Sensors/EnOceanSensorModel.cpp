@@ -23,7 +23,12 @@
 using namespace std;
 
 #define DROITS 0660 	// Droits d'accès
-#define REFERENCE "." 	//Fichier courant utilisé pour bâtir la clé publique
+
+#ifdef TESTING
+	#define XMLFILE "src/Sensors/tests/fileTest2.xml"
+#else
+	#define XMLFILE "src/etc/enOceanSensorsId.xml"
+#endif
 
 
 
@@ -31,10 +36,10 @@ EnOceanSensorModel::EnOceanSensorModel(int a_iBal) : AbstractModel(a_iBal)
 {
 	m_iBalNetwork = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 	if(m_iBalNetwork == -1)
-		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Création BalNetwork");
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Creation BalNetwork");
 	else
-		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Création BalNetwork");
-	ParserXml("src/etc/enOceanSensorsId.xml");
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Creation BalNetwork");
+	ParserXml(XMLFILE);
 }
 
 EnOceanSensorModel::~EnOceanSensorModel()
@@ -51,7 +56,6 @@ void EnOceanSensorModel::ParserXml(const char *a_pXmlFile)
 		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Parsing fichier xml");
 	else
 		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Parsing fichier xml");
-	std::cout << "Load result: " << result.description() << std::endl;
 
 	for (pugi::xml_node_iterator sensorsIt = xmlSensors.begin(); sensorsIt != xmlSensors.end(); ++sensorsIt)
 	{
@@ -76,6 +80,8 @@ void EnOceanSensorModel::ParserXml(const char *a_pXmlFile)
 		else if(sType == "binary")
 		{
 			sensorInfoNode.iType = SensorInfo::BINARY;
+			sensorInfoNode.iMin = 0;
+			sensorInfoNode.iMax = 0;
 
 			for (pugi::xml_node_iterator valueIt = dataNode.begin(); valueIt != dataNode.end(); ++valueIt)
 			{
@@ -99,41 +105,45 @@ void EnOceanSensorModel::ParserXml(const char *a_pXmlFile)
 
 void EnOceanSensorModel::Run()
 {
+
 	balMessage msg;
 	while(true)
 	{
 		bzero(msg.mtext, MSGSIZE);
 		if(msgrcv(m_iBalNetwork,&msg,MSGSIZE, 1, 0) != -1)
 		{
-
-			string sId = string(msg.mtext).substr(16,8);
-			string sData = string(msg.mtext).substr(8,8);
-
-			mapSensorInfo::iterator it = m_sensorInfo.find(sId);
-
-			if(it != m_sensorInfo.end())
+			if(string(msg.mtext).length() >= 24)
 			{
-				std::cout << "capteur connu " << std::endl;
-				if((xstrtoi(sData.c_str()) & it->second.iValid) == it->second.iValid)
+
+				string sId = string(msg.mtext).substr(16,8);
+				string sData = string(msg.mtext).substr(8,8);
+
+
+				mapSensorInfo::iterator it = m_sensorInfo.find(sId);
+
+				if(it != m_sensorInfo.end())
 				{
-					std::cout << "capteur valide " << std::endl;
-					switch(it->second.iType)
+					if((xstrtoi(sData.c_str()) & it->second.iValid) == it->second.iValid)
 					{
-						case SensorInfo::NUMERIC:
+						switch(it->second.iType)
 						{
-							string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
-							GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, it->second.iMax - (xstrtoi(sSubData.c_str())*it->second.iMax/255));
-							break;
-						}
-						case SensorInfo::BINARY:
-						{
-							string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
-							map<int, int>::iterator valueIt = it->second.mapValue.find(xstrtoi(sSubData.c_str()));
-							if(valueIt != it->second.mapValue.end())
+							case SensorInfo::NUMERIC:
 							{
-								GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, valueIt->second);
+								string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
+								int iDataValue = abs(it->second.iMin - (xstrtoi(sSubData.c_str())*abs(it->second.iMax - it->second.iMin)/255));
+								GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, iDataValue);
+								break;
 							}
-							break;
+							case SensorInfo::BINARY:
+							{
+								string sSubData = sData.substr(it->second.iPosData, it->second.iLengthData);
+								map<int, int>::iterator valueIt = it->second.mapValue.find(xstrtoi(sSubData.c_str()));
+								if(valueIt != it->second.mapValue.end())
+								{
+									GhomeBox::SendMessage(m_iBalCenter, it->second.iVirtualId, valueIt->second);
+								}
+								break;
+							}
 						}
 					}
 				}
@@ -154,14 +164,27 @@ void EnOceanSensorModel::Start()
 	infos->port = 5000;
 	infos->bal = m_iBalNetwork;
 
-	pthread_create(&m_thread, NULL, DataContext::sRcvData, (void *)infos);
+	int ret = pthread_create(&m_threadNetwork, NULL, DataContext::sRcvData, (void *)infos);
+	if(ret != 0)
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Lancement du thread DataContext");
+	else
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Lancement du thread DataContext");
+
 
 	AbstractModel::Start();
 }
 
 void EnOceanSensorModel::Stop()
 {
-	pthread_cancel(m_threadNetwork);
+	int ret = pthread_cancel(m_threadNetwork);
+	if(ret != 0)
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Suppression du thread DataContext");
+	else
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Suppression du thread DataContext");
 	AbstractModel::Stop();
-	msgctl(m_iBalNetwork,IPC_RMID,0);
+	ret = msgctl(m_iBalNetwork,IPC_RMID,0);
+	if(ret != 0)
+		SystemLog::AddLog(SystemLog::ERROR, "EnOceanSensorModel : Suppression BalNetwork");
+	else
+		SystemLog::AddLog(SystemLog::SUCCESS, "EnOceanSensorModel : Suppression BalNetwork");
 }

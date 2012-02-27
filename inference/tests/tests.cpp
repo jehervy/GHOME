@@ -5,7 +5,7 @@ using namespace inference;
 void InferenceTestsSimple(Test *test)
 {
 	Actions actions;
-	Engine eng("inference/tests/simple.xml");
+	Engine eng("src/inference/tests/simple.xml");
 
 	actions = eng.run(2, 20);
 	test->assert(actions.size() == 0, "Metric to match is ok.");
@@ -29,7 +29,7 @@ void InferenceTestsSimple(Test *test)
 void InferenceTestsMultipleActions(Test *test)
 {
 	Actions actions;
-	Engine eng("inference/tests/multipleActions.xml");
+	Engine eng("src/inference/tests/multipleActions.xml");
 
 	actions = eng.run(1, 20);
 	test->assert(actions.size() == 2, "All actions are returned.");
@@ -46,7 +46,7 @@ void InferenceTestsMultipleActions(Test *test)
 void InferenceTestsMultipleConditions(Test *test)
 {
 	Actions actions;
-	Engine eng("inference/tests/multipleConditions.xml");
+	Engine eng("src/inference/tests/multipleConditions.xml");
 
 	actions = eng.run(1, 20);
 	test->assert(actions.size() == 0, "With one matching metric, rule does not match.");
@@ -58,7 +58,7 @@ void InferenceTestsMultipleConditions(Test *test)
 void InferenceTestsMultipleRules(Test *test)
 {
 	Actions actions;
-	Engine eng("inference/tests/multipleRules.xml");
+	Engine eng("src/inference/tests/multipleRules.xml");
 
 	actions = eng.run(1, 23);
 	test->assert(

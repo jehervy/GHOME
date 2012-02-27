@@ -3,6 +3,7 @@
 #ifdef TESTING
 #include "tests.h"
 #include "../../tache_mere.h"
+#include <cstdlib>
 
 /*
  * This function tests the result of the xml file parsing method in ActuatorsCenter.
@@ -17,7 +18,7 @@ void ActuatorsTestParsingXmlCenter(Test *test)
 	GhomeBox::SendActuatorBox(actuatorServerBox, 2, 1,3,1);
 
 	// The parsing method is called inside the constructor of the ActuatorCenter
-	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");
+	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "src/etc/actuators.xml");
 	mapActuators parsingResults = actuatorsCenter->GetActuators();
 
 	// Hand made construction of the reference collection based on the xml file
@@ -78,7 +79,7 @@ void ActuatorsTestParsingXmlModel(Test *test)
 	 * The parsing method is called inside the constructor of the ActuatorModel,
 	 * himself initialized by the construtor of the ActuatorsCenter
 	 */
-	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");
+	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "src/etc/actuators.xml");
 
 	/*
 	 * Comparison between parsing result and xml info :
@@ -137,7 +138,7 @@ void ActuatorsTestServerToActuatorTransfer(Test *test)
 
 
 	// The parsing method is called inside the constructor of the ActuatorCenter
-	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml",&balNetwork);
+	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "src/etc/actuators.xml",&balNetwork);
 	actuatorsCenter->Start();
 
 	GhomeBox::SendActuatorBox(actuatorServerBox,2,1,3,randValue);
@@ -167,7 +168,7 @@ void ActuatorsTestIgnoreNonOrders(Test *test)
 	balMessage msg;
 	int actuatorServerBox = msgget (IPC_PRIVATE, IPC_CREAT | DROITS );
 
-	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "etc/actuators.xml");
+	ActuatorsCenter *actuatorsCenter = new ActuatorsCenter(actuatorServerBox, "src/etc/actuators.xml");
 	actuatorsCenter->Start();
 
 	// Stop the model so it won't take the message in the model bal

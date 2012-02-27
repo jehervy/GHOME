@@ -59,7 +59,6 @@ int SensorBoxReader::Run()
 {
 
 	int iId, iMetric, iRoom, iValue, iReturn, bReturn;
-	cout << "Debut du run" << endl;
 
 	GhomeDatabase* logEcriture = new GhomeDatabase("localhost", "boby", "ghome", "GHOME");
 	iReturn = logEcriture->OpenDatabase();
@@ -109,7 +108,9 @@ int SensorBoxReader::Run()
 		  else if(iId==2)
 		  { //C'est un message de type pilotage
 		  	// TODO : base de donnee et actuatorServerBox
-			  iReturn = logEcriture->AddTuple("actuators_commands", iRoom, iMetric, iValue);
+
+
+			  iReturn = logEcriture->AddTuple("actuators_commands", "System",iRoom, iMetric, iValue);
 			  if( iReturn == 0)
 			  {
 				  SystemLog::AddLog(SystemLog::SUCCESS, "Ecriture d'un ordre d'actionneur en BDD");
@@ -153,7 +154,6 @@ void *SensorBoxReader::sInit(void * a_pPtr)
 
 int SensorBoxReader::OpenThreadSensorBoxReader()
 {
-	cout << "On est dans open_thread_sensor_box_reader"<<endl;
 	int iCheck = pthread_create(&m_threadSensorBoxReader, NULL, &SensorBoxReader::sInit, this);
 	if (iCheck < 0)
 	{
