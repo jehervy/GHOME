@@ -1,0 +1,20 @@
+<sensors address="localhost" port="5000">
+    <sensor> <!-- Température dans la chambre 1 -->
+        <virtualId>1</virtualId>
+        <physicalId>00893386</physicalId>
+        <valid>8</valid>
+		<data type="numeric" pos="4" length="2">
+			<min>40</min>
+			<max>0</max>	
+		</data>
+    </sensor>
+    <sensor> <!-- Ouverture fenêtre dans le salon -->
+        <virtualId>2</virtualId>
+        <physicalId>0001B596</physicalId>
+        <valid>8</valid>
+		<data type="binary" pos="6" length="2">
+			<value data="9">0</value>
+			<value data="8">1</value>
+		</data>
+    </sensor>
+</sensors>
